@@ -52,6 +52,17 @@ export const ROUTES = {
   EVENT: "/event",
   EVENT_DISPLAY: "/event/display",
   EVENT_ADMIN: "/event/admin",
+
+  // Inventory Management routes
+  INVENTORY: "/inventory",
+  INVENTORY_DASHBOARD: "/inventory/dashboard",
+  INVENTORY_SCANNER: "/inventory/scanner",
+  INVENTORY_ADD_PRODUCT: "/inventory/add",
+  INVENTORY_PRODUCTS: "/inventory/products",
+  INVENTORY_PRODUCT_DETAIL: "/inventory/products/:id",
+  INVENTORY_PRODUCT_EDIT: "/inventory/products/:id/edit",
+  INVENTORY_PRINT: "/inventory/print",
+  INVENTORY_CREATE_ORDER: "/inventory/create-order",
 };
 
 // Helper to get collection detail route with ID
@@ -67,4 +78,14 @@ export const getNewsDetailRoute = (slug) => {
 // Helper to get product detail route with ID
 export const getProductDetailRoute = (productId) => {
   return ROUTES.PRODUCT_DETAIL.replace(":productId", productId);
+};
+
+// Helper to get inventory product detail route
+export const getInventoryProductDetailRoute = (id) => {
+  return ROUTES.INVENTORY_PRODUCT_DETAIL.replace(":id", id);
+};
+
+// Helper to get inventory product edit route
+export const getInventoryProductEditRoute = (id) => {
+  return ROUTES.INVENTORY_PRODUCT_EDIT.replace(":id", id);
 };

@@ -48,6 +48,7 @@
     "tone": "^15.1.22",
     "uuid": "^13.0.0",
     "webgi": "https://releases.ijewel3d.com/webgi/runtime/bundle-0.10.5.tgz",
+    "xlsx": "^0.18.5",
     "zustand": "^5.0.9"
   },
   "devDependencies": {

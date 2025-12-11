@@ -90,6 +90,16 @@ const EventPage = lazy(() => import("@pages/Event/EventPage"));
 const EventDisplayPage = lazy(() => import("@pages/Event/EventDisplayPage"));
 const EventAdminPage = lazy(() => import("@pages/Event/EventAdminPage"));
 
+// Inventory Management
+const InventoryLayout = lazy(() => import("@components/inventory/InventoryLayout"));
+const InventoryDashboard = lazy(() => import("@components/inventory/Dashboard"));
+const InventoryScanner = lazy(() => import("@components/inventory/Scanner"));
+const InventoryProductForm = lazy(() => import("@components/inventory/ProductForm"));
+const InventoryProductList = lazy(() => import("@components/inventory/ProductList"));
+const InventoryProductDetail = lazy(() => import("@components/inventory/ProductDetail"));
+const InventoryPrintLabel = lazy(() => import("@components/inventory/PrintLabel"));
+const InventoryCreateOrder = lazy(() => import("@components/inventory/CreateOrder"));
+
 export default function AppRoutes() {
   const location = useLocation();
 
@@ -136,6 +146,12 @@ export default function AppRoutes() {
       ROUTES.EVENT,
       ROUTES.EVENT_DISPLAY,
       ROUTES.EVENT_ADMIN,
+      ROUTES.INVENTORY,
+      ROUTES.INVENTORY_DASHBOARD,
+      ROUTES.INVENTORY_SCANNER,
+      ROUTES.INVENTORY_ADD_PRODUCT,
+      ROUTES.INVENTORY_PRODUCTS,
+      ROUTES.INVENTORY_PRINT,
     ];
 
     // Check exact matches
@@ -154,7 +170,8 @@ export default function AppRoutes() {
       location.pathname.startsWith(ROUTES.DASHBOARD_DESIGNER) ||
       location.pathname.startsWith(ROUTES.UNIVERSE_FINAL) ||
       location.pathname.startsWith(ROUTES.SCAVENGER_HUNT) ||
-      location.pathname.startsWith(ROUTES.MILAN_SUBMIT)
+      location.pathname.startsWith(ROUTES.MILAN_SUBMIT) ||
+      location.pathname.startsWith(ROUTES.INVENTORY)
     ) {
       return false;
     }
@@ -175,7 +192,8 @@ export default function AppRoutes() {
     location.pathname === ROUTES.PREMIUM ||
     location.pathname === ROUTES.PREMIUM_DEV ||
     location.pathname === ROUTES.MESH_INSPECTOR ||
-    location.pathname.startsWith(ROUTES.EVENT);
+    location.pathname.startsWith(ROUTES.EVENT) ||
+    location.pathname.startsWith(ROUTES.INVENTORY);
 
   const staticRoutesToHideFooter =
     is404 ||
@@ -190,7 +208,8 @@ export default function AppRoutes() {
     location.pathname === ROUTES.PREMIUM ||
     location.pathname === ROUTES.PREMIUM_DEV ||
     location.pathname === ROUTES.MESH_INSPECTOR ||
-    location.pathname.startsWith(ROUTES.EVENT);
+    location.pathname.startsWith(ROUTES.EVENT) ||
+    location.pathname.startsWith(ROUTES.INVENTORY);
 
   const shouldShowNavbar = !staticRoutesToHideNavBar;
   const shouldShowFooter = !staticRoutesToHideFooter;
@@ -343,6 +362,19 @@ export default function AppRoutes() {
             <Route path={ROUTES.EVENT} element={<EventPage />} />
             <Route path={ROUTES.EVENT_DISPLAY} element={<EventDisplayPage />} />
             <Route path={ROUTES.EVENT_ADMIN} element={<EventAdminPage />} />
+
+            {/* Inventory Management Routes */}
+            <Route path={ROUTES.INVENTORY} element={<InventoryLayout />}>
+              <Route index element={<InventoryDashboard />} />
+              <Route path="dashboard" element={<InventoryDashboard />} />
+              <Route path="create-order" element={<InventoryCreateOrder />} />
+              <Route path="scanner" element={<InventoryScanner />} />
+              <Route path="add" element={<InventoryProductForm />} />
+              <Route path="products" element={<InventoryProductList />} />
+              <Route path="products/:id" element={<InventoryProductDetail />} />
+              <Route path="products/:id/edit" element={<InventoryProductForm isEdit={true} />} />
+              <Route path="print" element={<InventoryPrintLabel />} />
+            </Route>
 
             {/* 404 - Catch all route for non-existent paths */}
             <Route path="*" element={<NotFoundPage />} />
