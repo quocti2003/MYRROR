@@ -90,6 +90,9 @@ const EventPage = lazy(() => import("@pages/Event/EventPage"));
 const EventDisplayPage = lazy(() => import("@pages/Event/EventDisplayPage"));
 const EventAdminPage = lazy(() => import("@pages/Event/EventAdminPage"));
 
+// DB Explorer
+const DBExplorerPage = lazy(() => import("@pages/DBExplorerPage"));
+
 // Inventory Management
 const InventoryLayout = lazy(() => import("@components/inventory/InventoryLayout"));
 const InventoryDashboard = lazy(() => import("@components/inventory/Dashboard"));
@@ -152,6 +155,7 @@ export default function AppRoutes() {
       ROUTES.INVENTORY_ADD_PRODUCT,
       ROUTES.INVENTORY_PRODUCTS,
       ROUTES.INVENTORY_PRINT,
+      ROUTES.DB_EXPLORER,
     ];
 
     // Check exact matches
@@ -193,7 +197,8 @@ export default function AppRoutes() {
     location.pathname === ROUTES.PREMIUM_DEV ||
     location.pathname === ROUTES.MESH_INSPECTOR ||
     location.pathname.startsWith(ROUTES.EVENT) ||
-    location.pathname.startsWith(ROUTES.INVENTORY);
+    location.pathname.startsWith(ROUTES.INVENTORY) ||
+    location.pathname === ROUTES.DB_EXPLORER;
 
   const staticRoutesToHideFooter =
     is404 ||
@@ -209,7 +214,8 @@ export default function AppRoutes() {
     location.pathname === ROUTES.PREMIUM_DEV ||
     location.pathname === ROUTES.MESH_INSPECTOR ||
     location.pathname.startsWith(ROUTES.EVENT) ||
-    location.pathname.startsWith(ROUTES.INVENTORY);
+    location.pathname.startsWith(ROUTES.INVENTORY) ||
+    location.pathname === ROUTES.DB_EXPLORER;
 
   const shouldShowNavbar = !staticRoutesToHideNavBar;
   const shouldShowFooter = !staticRoutesToHideFooter;
@@ -319,6 +325,9 @@ export default function AppRoutes() {
 
             {/* Mesh Inspector Tool */}
             <Route path={ROUTES.MESH_INSPECTOR} element={<SimpleMeshInspector />} />
+
+            {/* DB Explorer - Export CSV/XLSX */}
+            <Route path={ROUTES.DB_EXPLORER} element={<DBExplorerPage />} />
 
             <Route path={ROUTES.SCAVENGER_HUNT} element={<ScavengerHunt />} />
 

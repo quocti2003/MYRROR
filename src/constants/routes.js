@@ -37,6 +37,7 @@ export const ROUTES = {
   PREMIUM: "/premium", // Premium AR Try-On
   PREMIUM_DEV: "/premium-dev", // Premium AR Development
   MESH_INSPECTOR: "/mesh-inspector", // 3D Mesh Inspector Tool
+  DB_EXPLORER: "/db-explorer", // DB Explorer - Export CSV/XLSX
   PRODUCTS_V2: "/7b8e9f0a-3c4d-5e6f-7a8b-9c0d1e2f3a4b",
   PRODUCTS_LEFT: "/4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
   UNIVERSE_FINAL: "/1f2e3d4c-5b6a-7c8d-9e0f-1a2b3c4d5e6f",
