@@ -70,7 +70,7 @@ const ProductDetail = () => {
     if (!product) return;
 
     const printData = {
-      sku: product.sku,
+      sku: product.skuId || product.sku,
       name: product.name,
       price: product.price,
       currency: product.currency,
@@ -95,20 +95,22 @@ const ProductDetail = () => {
 
   const getStatusLabel = (status) => {
     const labels = {
-      available: "Con hang",
-      hold: "Dang giu",
+      in_stock: "Con hang",
+      on_hold: "Dang giu",
       warranty: "Bao hanh",
       sold: "Da ban",
+      DRAFT: "Nhap",
     };
     return labels[status] || status;
   };
 
   const getStatusColor = (status) => {
     const colors = {
-      available: "#10b981",
-      hold: "#f59e0b",
+      in_stock: "#10b981",
+      on_hold: "#f59e0b",
       warranty: "#ef4444",
       sold: "#6b7280",
+      DRAFT: "#9ca3af",
     };
     return colors[status] || "#6b7280";
   };
@@ -204,7 +206,7 @@ const ProductDetail = () => {
             </span>
           </div>
 
-          <p className="product-sku">SKU: {product.sku}</p>
+          <p className="product-sku">SKU: {product.skuId || product.sku}</p>
 
           <div className="product-price">
             {formatCurrency(product.price, product.currency)}

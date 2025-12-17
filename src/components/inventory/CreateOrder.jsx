@@ -1,5 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
+  misaProductStockAPI,
+  getStockStatusColor,
+  getStockStatusText,
+} from "@/services/inventoryApi";
+import {
   ScanLine,
   Package,
   Trash2,
@@ -10,66 +15,9 @@ import {
   AlertCircle,
   CheckCircle,
   RefreshCw,
+  Loader2,
 } from "lucide-react";
 import "./CreateOrder.css";
-
-// Mock data cho demo UI - sau này sẽ thay bằng API call
-const MOCK_PRODUCTS = [
-  {
-    id: "PRD000001",
-    name: "Lumina Diamond Ring",
-    sku: "SKU-LDR-001",
-    price: 22999999.99,
-    currency: "VND",
-    imageUrl: "https://mirror-storage.s3.ap-southeast-1.amazonaws.com/public/dd34bd94-b46d-4746-bd16-4c5b652ab2a3_2a5a8fd0404bf615af5a.jpg",
-    stockQuantity: 15,
-  },
-  {
-    id: "PRD000002",
-    name: "Aurora Pendant",
-    sku: "SKU-AP-001",
-    price: 18000000,
-    currency: "VND",
-    imageUrl: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800",
-    stockQuantity: 8,
-  },
-  {
-    id: "PRD000003",
-    name: "Solaris Gold Ring",
-    sku: "SKU-SGR-001",
-    price: 22000000,
-    currency: "VND",
-    imageUrl: "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=800",
-    stockQuantity: 12,
-  },
-  {
-    id: "PRD000004",
-    name: "Luna Sapphire Earrings",
-    sku: "SKU-LSE-001",
-    price: 32000000,
-    currency: "VND",
-    imageUrl: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800",
-    stockQuantity: 6,
-  },
-  {
-    id: "PRD000009",
-    name: "Diamond Solitaire Engagement Ring",
-    sku: "SKU-DSER-001",
-    price: 25000000,
-    currency: "VND",
-    imageUrl: "https://mirror-storage.s3.ap-southeast-1.amazonaws.com/public/4c191c66-9f05-417c-aca8-6d0c1a5b1743_model_1.svg",
-    stockQuantity: 1,
-  },
-  {
-    id: "PRD000024",
-    name: "Mirror Custom Ring",
-    sku: "SKU-MCR-001",
-    price: 15600,
-    currency: "USD",
-    imageUrl: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800",
-    stockQuantity: 999,
-  },
-];
 
 const CreateOrder = () => {
   const inputRef = useRef(null);
@@ -77,6 +25,7 @@ const CreateOrder = () => {
   const [orderItems, setOrderItems] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
 
@@ -96,11 +45,30 @@ const CreateOrder = () => {
     }
   }, [error, success]);
 
-  // Mock function to find product by SKU - sau này thay bằng API call
-  const findProductBySku = (sku) => {
-    return MOCK_PRODUCTS.find(
-      (p) => p.sku.toLowerCase() === sku.toLowerCase()
-    );
+  // Find product by SKU/Barcode using MISA API
+  const findProductByCode = async (code) => {
+    try {
+      const data = await misaProductStockAPI.getByCode(code);
+      if (data && data.found) {
+        return {
+          id: data.productId,
+          name: data.name,
+          sku: data.code,
+          barcode: data.barcode,
+          price: data.sellingPrice,
+          currency: "VND",
+          imageUrl: data.picture,
+          stockQuantity: data.availableQuantity, // Số lượng có sẵn để bán
+          totalOnHand: data.totalOnHand,
+          stockStatus: data.stockStatus,
+          branchStocks: data.branchStocks,
+        };
+      }
+      return null;
+    } catch (err) {
+      console.error("Error finding product:", err);
+      return null;
+    }
   };
 
   // Handle input change
@@ -111,100 +79,119 @@ const CreateOrder = () => {
 
   // Handle key press - scanner sends Enter after scan
   const handleKeyPress = (e) => {
-    if (e.key === "Enter" && skuInput.trim()) {
+    if (e.key === "Enter" && skuInput.trim() && !loading) {
       handleAddProduct();
     }
   };
 
-  // Add product to order
-  const handleAddProduct = () => {
-    const sku = skuInput.trim();
-    if (!sku) {
-      setError("Vui long nhap ma SKU");
+  // Add product to order - using MISA API
+  const handleAddProduct = async () => {
+    const code = skuInput.trim();
+    if (!code) {
+      setError("Vui long nhap ma SKU hoac barcode");
       return;
     }
 
-    // Find product
-    const product = findProductBySku(sku);
-    if (!product) {
-      setError(`Khong tim thay san pham voi ma SKU: ${sku}`);
-      setSkuInput("");
-      inputRef.current?.focus();
-      return;
-    }
+    // Prevent duplicate requests
+    if (loading) return;
 
-    // Check if product is out of stock
-    if (product.stockQuantity <= 0) {
-      setError(`San pham "${product.name}" da het hang`);
-      setSkuInput("");
-      inputRef.current?.focus();
-      return;
-    }
+    setLoading(true);
 
-    // Check if product already in order
-    const existingItem = orderItems.find((item) => item.id === product.id);
+    try {
+      // Find product using MISA API
+      const product = await findProductByCode(code);
 
-    if (existingItem) {
-      // Check if can add more
-      if (existingItem.quantity >= product.stockQuantity) {
-        setError(`Chi con ${product.stockQuantity} san pham "${product.name}" trong kho`);
+      if (!product) {
+        setError(`Khong tim thay san pham voi ma: ${code}`);
         setSkuInput("");
         inputRef.current?.focus();
         return;
       }
 
-      // Increase quantity
-      setOrderItems((prev) =>
-        prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      );
-      setSuccess(`Da tang so luong "${product.name}" len ${existingItem.quantity + 1}`);
-    } else {
-      // Add new item
-      setOrderItems((prev) => [
-        ...prev,
-        {
-          ...product,
-          quantity: 1,
-        },
-      ]);
-      setSuccess(`Da them "${product.name}" vao don hang`);
-    }
+      // Check if product is out of stock
+      if (product.stockQuantity <= 0) {
+        setError(`San pham "${product.name}" da het hang (${getStockStatusText(product.stockStatus)})`);
+        setSkuInput("");
+        inputRef.current?.focus();
+        return;
+      }
 
-    setSkuInput("");
-    inputRef.current?.focus();
+      // Check if product already in order
+      const existingItem = orderItems.find((item) => item.id === product.id || item.sku === product.sku);
+
+      if (existingItem) {
+        // Check if can add more
+        if (existingItem.quantity >= product.stockQuantity) {
+          setError(`Chi con ${product.stockQuantity} san pham "${product.name}" co san de ban`);
+          setSkuInput("");
+          inputRef.current?.focus();
+          return;
+        }
+
+        // Increase quantity
+        setOrderItems((prev) =>
+          prev.map((item) =>
+            item.id === product.id || item.sku === product.sku
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
+          )
+        );
+        setSuccess(`Da tang so luong "${product.name}" len ${existingItem.quantity + 1}`);
+      } else {
+        // Add new item
+        setOrderItems((prev) => [
+          ...prev,
+          {
+            ...product,
+            quantity: 1,
+          },
+        ]);
+        setSuccess(`Da them "${product.name}" vao don hang`);
+      }
+
+      setSkuInput("");
+      inputRef.current?.focus();
+    } catch (err) {
+      console.error("Add product error:", err);
+      if (err.code === "ERR_NETWORK") {
+        setError("Khong the ket noi den server. Vui long kiem tra mang.");
+      } else {
+        setError("Co loi xay ra khi tim san pham. Vui long thu lai.");
+      }
+      setSkuInput("");
+      inputRef.current?.focus();
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Update item quantity
-  const handleQuantityChange = (itemId, newQuantity) => {
-    const item = orderItems.find((i) => i.id === itemId);
+  // Update item quantity - use SKU as key since MISA products may not have consistent IDs
+  const handleQuantityChange = (itemSku, newQuantity) => {
+    const item = orderItems.find((i) => i.sku === itemSku);
     if (!item) return;
 
     if (newQuantity < 1) {
       // Remove item if quantity < 1
-      handleRemoveItem(itemId);
+      handleRemoveItem(itemSku);
       return;
     }
 
     if (newQuantity > item.stockQuantity) {
-      setError(`Chi con ${item.stockQuantity} san pham "${item.name}" trong kho`);
+      setError(`Chi con ${item.stockQuantity} san pham "${item.name}" co san de ban`);
       return;
     }
 
     setOrderItems((prev) =>
       prev.map((i) =>
-        i.id === itemId ? { ...i, quantity: newQuantity } : i
+        i.sku === itemSku ? { ...i, quantity: newQuantity } : i
       )
     );
   };
 
   // Remove item from order
-  const handleRemoveItem = (itemId) => {
-    const item = orderItems.find((i) => i.id === itemId);
-    setOrderItems((prev) => prev.filter((i) => i.id !== itemId));
+  const handleRemoveItem = (itemSku) => {
+    const item = orderItems.find((i) => i.sku === itemSku);
+    setOrderItems((prev) => prev.filter((i) => i.sku !== itemSku));
     if (item) {
       setSuccess(`Da xoa "${item.name}" khoi don hang`);
     }
@@ -292,7 +279,7 @@ const CreateOrder = () => {
             value={skuInput}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
-            placeholder="Quet hoac nhap ma SKU..."
+            placeholder="Quet ma vach hoac nhap ma SKU..."
             className="sku-input"
             autoFocus
           />
@@ -311,10 +298,19 @@ const CreateOrder = () => {
         <button
           className="add-btn"
           onClick={handleAddProduct}
-          disabled={!skuInput.trim()}
+          disabled={!skuInput.trim() || loading}
         >
-          <Plus size={20} />
-          Them
+          {loading ? (
+            <>
+              <Loader2 size={20} className="spin" />
+              Dang tim...
+            </>
+          ) : (
+            <>
+              <Plus size={20} />
+              Them
+            </>
+          )}
         </button>
       </div>
 
@@ -339,7 +335,7 @@ const CreateOrder = () => {
               </thead>
               <tbody>
                 {orderItems.map((item, index) => (
-                  <tr key={item.id}>
+                  <tr key={item.sku}>
                     <td className="index-cell">{index + 1}</td>
                     <td>
                       <div className="item-image">
@@ -352,8 +348,11 @@ const CreateOrder = () => {
                     </td>
                     <td className="name-cell">
                       <span className="item-name">{item.name}</span>
-                      <span className="stock-info">
-                        Ton kho: {item.stockQuantity}
+                      <span
+                        className="stock-info"
+                        style={{ color: getStockStatusColor(item.stockStatus) }}
+                      >
+                        Co san: {item.stockQuantity} ({getStockStatusText(item.stockStatus)})
                       </span>
                     </td>
                     <td className="sku-cell">{item.sku}</td>
@@ -365,7 +364,7 @@ const CreateOrder = () => {
                         <button
                           className="qty-btn"
                           onClick={() =>
-                            handleQuantityChange(item.id, item.quantity - 1)
+                            handleQuantityChange(item.sku, item.quantity - 1)
                           }
                         >
                           <Minus size={16} />
@@ -375,7 +374,7 @@ const CreateOrder = () => {
                           value={item.quantity}
                           onChange={(e) =>
                             handleQuantityChange(
-                              item.id,
+                              item.sku,
                               parseInt(e.target.value) || 0
                             )
                           }
@@ -385,7 +384,7 @@ const CreateOrder = () => {
                         <button
                           className="qty-btn"
                           onClick={() =>
-                            handleQuantityChange(item.id, item.quantity + 1)
+                            handleQuantityChange(item.sku, item.quantity + 1)
                           }
                           disabled={item.quantity >= item.stockQuantity}
                         >
@@ -402,7 +401,7 @@ const CreateOrder = () => {
                     <td className="action-cell">
                       <button
                         className="remove-btn"
-                        onClick={() => handleRemoveItem(item.id)}
+                        onClick={() => handleRemoveItem(item.sku)}
                         title="Xoa khoi don hang"
                       >
                         <Trash2 size={18} />
@@ -417,7 +416,7 @@ const CreateOrder = () => {
           <div className="empty-order">
             <ShoppingCart size={64} />
             <p>Chua co san pham nao trong don hang</p>
-            <span>Quet ma SKU de them san pham</span>
+            <span>Quet ma vach hoac nhap SKU de them san pham</span>
           </div>
         )}
       </div>

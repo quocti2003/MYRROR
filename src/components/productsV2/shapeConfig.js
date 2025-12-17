@@ -4,25 +4,25 @@
 export const SHAPE_CONFIGS = {
   Fiston: {
     shape: 'Fiston',
-    modelId: 'Cs9yFentQsiL9VOyTa8Rdw',
+    modelId: 'DfRULQ-OSk6TjbYAcB9zkA',
     metal: 'Gold 24k',
     band: 'Single band'
   },
   Myfav: {
     shape: 'Myfav',
-    modelId: 'bTfEBf0fSHaflMHTd4scxw',
+    modelId: 'QAauSV24QiuM5CxA_1797w',
     metal: 'Gold 24k',
     band: 'Single band'
   },
   Oval: {
     shape: 'Oval',
-    modelId: 'Hprd00uZRoq8t0Ou1YlWMg',
+    modelId: 'N1w9lJ3FQfOWsrC7jeeYfA',
     metal: 'Gold 24k',
     band: 'Single band'
   },
   Trilogy: {
     shape: 'Trilogy',
-    modelId: 'HjkNylDSRNSbJboRBLBeOQ',
+    modelId: 'FWV7-qA6QEG_Ju8pjSItuA',
     metal: 'Gold 24k',
     band: 'Single band'
   },
@@ -51,7 +51,7 @@ export const SHAPE_CONFIGS = {
     band: 'Single band'
   },
   Flower: {
-    shape: 'New',
+    shape: 'Flower',
     modelId: 'dGVcGf5ZSwq20ULDHOeaNQ',
     metal: 'Silver',
     band: 'Single band'
@@ -59,6 +59,12 @@ export const SHAPE_CONFIGS = {
   Example: {
     shape: 'Example',
     modelId: 'RUsrBi-vQey2vExitZOYig',
+    metal: 'Gold 24k',
+    band: 'Single band'
+  },
+  Lumex91Cadillac: {
+    shape: 'Lumex91Cadillac',
+    modelId: 'VdiuGY0xSDOOBoxoHU2y-A',
     metal: 'Gold 24k',
     band: 'Single band'
   },

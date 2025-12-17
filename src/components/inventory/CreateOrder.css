@@ -157,6 +157,20 @@
   cursor: not-allowed;
 }
 
+/* Loading spinner animation */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* Order Items Section */
 .order-items-section {
   background: #fff;

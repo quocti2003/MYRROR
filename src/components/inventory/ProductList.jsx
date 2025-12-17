@@ -17,10 +17,11 @@ import "./ProductList.css";
 
 const STATUS_OPTIONS = [
   { value: "", label: "Tat ca trang thai" },
-  { value: "available", label: "Con hang" },
-  { value: "hold", label: "Dang giu" },
+  { value: "in_stock", label: "Con hang" },
+  { value: "on_hold", label: "Dang giu" },
   { value: "warranty", label: "Bao hanh" },
   { value: "sold", label: "Da ban" },
+  { value: "DRAFT", label: "Nhap" },
 ];
 
 const ITEMS_PER_PAGE = 10;
@@ -69,6 +70,7 @@ const ProductList = () => {
       filtered = filtered.filter(
         (p) =>
           p.name?.toLowerCase().includes(term) ||
+          p.skuId?.toLowerCase().includes(term) ||
           p.sku?.toLowerCase().includes(term)
       );
     }
@@ -109,20 +111,22 @@ const ProductList = () => {
 
   const getStatusLabel = (status) => {
     const labels = {
-      available: "Con hang",
-      hold: "Dang giu",
+      in_stock: "Con hang",
+      on_hold: "Dang giu",
       warranty: "Bao hanh",
       sold: "Da ban",
+      DRAFT: "Nhap",
     };
     return labels[status] || status;
   };
 
   const getStatusColor = (status) => {
     const colors = {
-      available: "#10b981",
-      hold: "#f59e0b",
+      in_stock: "#10b981",
+      on_hold: "#f59e0b",
       warranty: "#ef4444",
       sold: "#6b7280",
+      DRAFT: "#9ca3af",
     };
     return colors[status] || "#6b7280";
   };
@@ -287,7 +291,7 @@ const ProductList = () => {
                       )}
                     </div>
                   </td>
-                  <td className="sku-cell">{product.sku}</td>
+                  <td className="sku-cell">{product.skuId || product.sku}</td>
                   <td className="name-cell">{product.name}</td>
                   <td className="metal-cell">
                     {product.metalType} {product.metalPurity}

@@ -43,12 +43,14 @@ const Dashboard = () => {
       const dashboardData = dashboardResponse.data?.data || dashboardResponse.data;
 
       if (dashboardData) {
+        // Map theo API response format mới
+        const statusCounts = dashboardData.productsByStatus || {};
         setStats({
           total: dashboardData.totalProducts || 0,
-          available: dashboardData.availableCount || 0,
-          hold: dashboardData.holdCount || 0,
-          warranty: dashboardData.warrantyCount || 0,
-          totalValue: dashboardData.totalValue || 0,
+          available: statusCounts.in_stock || 0,
+          hold: statusCounts.on_hold || 0,
+          warranty: statusCounts.warranty || 0,
+          totalValue: dashboardData.totalInventoryValue || 0,
         });
         setRecentProducts(dashboardData.recentProducts || []);
       }
@@ -216,7 +218,7 @@ const Dashboard = () => {
                 </div>
                 <div className="recent-product-info">
                   <span className="recent-product-name">{product.name}</span>
-                  <span className="recent-product-sku">{product.sku}</span>
+                  <span className="recent-product-sku">{product.skuId || product.sku}</span>
                 </div>
                 <div className="recent-product-price">
                   {formatCurrency(product.price, product.currency)}

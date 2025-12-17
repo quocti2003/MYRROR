@@ -48,6 +48,7 @@ const PrintLabel = () => {
     const term = searchTerm.toLowerCase();
     return (
       p.name?.toLowerCase().includes(term) ||
+      p.skuId?.toLowerCase().includes(term) ||
       p.sku?.toLowerCase().includes(term)
     );
   });
@@ -77,7 +78,7 @@ const PrintLabel = () => {
   const generateExportData = () => {
     return selectedProducts.map((p) => {
       const data = {};
-      if (labelOptions.includeSku) data.sku = p.sku;
+      if (labelOptions.includeSku) data.sku = p.skuId || p.sku;
       if (labelOptions.includeName) data.name = p.name;
       if (labelOptions.includePrice) {
         data.price = p.price;
@@ -194,7 +195,7 @@ const PrintLabel = () => {
                   </div>
                   <div className="product-info">
                     <span className="product-name">{product.name}</span>
-                    <span className="product-sku">{product.sku}</span>
+                    <span className="product-sku">{product.skuId || product.sku}</span>
                   </div>
                   <div className="product-price">
                     {formatCurrency(product.price, product.currency)}

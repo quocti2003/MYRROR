@@ -1,6 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { inventoryProductsAPI } from "@/services/inventoryApi";
+import {
+  inventoryProductsAPI,
+  misaProductStockAPI,
+  getStockStatusColor,
+  getStockStatusText,
+} from "@/services/inventoryApi";
 import { getInventoryProductDetailRoute, getInventoryProductEditRoute } from "@/constants/routes";
 import {
   ScanLine,
@@ -12,6 +17,10 @@ import {
   X,
   AlertCircle,
   CheckCircle,
+  Warehouse,
+  MapPin,
+  TrendingDown,
+  ShoppingBag,
 } from "lucide-react";
 import "./Scanner.css";
 
@@ -20,10 +29,12 @@ const Scanner = () => {
   const inputRef = useRef(null);
   const [skuInput, setSkuInput] = useState("");
   const [product, setProduct] = useState(null);
+  const [stockInfo, setStockInfo] = useState(null); // MISA stock info
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [showBranchDetails, setShowBranchDetails] = useState(false);
 
   // Auto focus input on mount
   useEffect(() => {
@@ -43,10 +54,10 @@ const Scanner = () => {
     }
   };
 
-  // Search product by SKU
+  // Search product by SKU/Barcode using MISA API
   const handleSearch = async () => {
     if (!skuInput.trim()) {
-      setError("Vui long nhap ma SKU");
+      setError("Vui long nhap ma SKU hoac barcode");
       return;
     }
 
@@ -54,21 +65,56 @@ const Scanner = () => {
       setLoading(true);
       setError("");
       setProduct(null);
+      setStockInfo(null);
+      setShowBranchDetails(false);
 
-      const response = await inventoryProductsAPI.getBySku(skuInput.trim());
-      const productData = response.data?.data || response.data;
+      // Gọi MISA API để lấy thông tin tồn kho real-time
+      const misaData = await misaProductStockAPI.getByCode(skuInput.trim());
 
-      if (productData) {
+      if (misaData && misaData.found) {
+        // Mapping MISA response to product format for display
+        const productData = {
+          id: misaData.productId,
+          sku: misaData.code,
+          name: misaData.name,
+          barcode: misaData.barcode,
+          price: misaData.sellingPrice,
+          costPrice: misaData.costPrice,
+          currency: "VND",
+          imageUrl: misaData.picture,
+          imageUrls: misaData.pictureUrls,
+          description: misaData.description,
+          categoryName: misaData.categoryName,
+          color: misaData.color,
+          size: misaData.size,
+          material: misaData.material,
+          unitName: misaData.unitName,
+        };
+
+        // Lưu stock info riêng biệt
+        const stockData = {
+          totalOnHand: misaData.totalOnHand,
+          totalOrdered: misaData.totalOrdered,
+          totalPreOrdered: misaData.totalPreOrdered,
+          availableQuantity: misaData.availableQuantity,
+          stockStatus: misaData.stockStatus,
+          branchStocks: misaData.branchStocks || [],
+        };
+
         setProduct(productData);
+        setStockInfo(stockData);
       } else {
-        setError("Khong tim thay san pham voi ma SKU nay");
+        // Không tìm thấy trong MISA
+        setError(misaData?.errorMessage || "Khong tim thay san pham voi ma SKU/barcode nay");
       }
     } catch (err) {
       console.error("Search error:", err);
       if (err.response?.status === 404) {
-        setError("Khong tim thay san pham voi ma SKU nay");
+        setError("Khong tim thay san pham voi ma SKU/barcode nay");
+      } else if (err.code === "ERR_NETWORK") {
+        setError("Khong the ket noi den server. Vui long kiem tra mang.");
       } else {
-        setError("Co loi xay ra khi tim kiem. Vui long kiem tra ket noi server.");
+        setError("Co loi xay ra khi tim kiem. Vui long thu lai sau.");
       }
     } finally {
       setLoading(false);
@@ -79,7 +125,9 @@ const Scanner = () => {
   const handleClear = () => {
     setSkuInput("");
     setProduct(null);
+    setStockInfo(null);
     setError("");
+    setShowBranchDetails(false);
     inputRef.current?.focus();
   };
 
@@ -107,7 +155,7 @@ const Scanner = () => {
     if (!product) return;
 
     const printData = {
-      sku: product.sku,
+      sku: product.sku || product.skuId,
       name: product.name,
       price: product.price,
       currency: product.currency,
@@ -118,30 +166,11 @@ const Scanner = () => {
   };
 
   const formatCurrency = (value, currency = "VND") => {
+    if (!value && value !== 0) return "Chua co gia";
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: currency,
     }).format(value);
-  };
-
-  const getStatusLabel = (status) => {
-    const labels = {
-      available: "Con hang",
-      hold: "Dang giu",
-      warranty: "Bao hanh",
-      sold: "Da ban",
-    };
-    return labels[status] || status;
-  };
-
-  const getStatusColor = (status) => {
-    const colors = {
-      available: "#10b981",
-      hold: "#f59e0b",
-      warranty: "#ef4444",
-      sold: "#6b7280",
-    };
-    return colors[status] || "#6b7280";
   };
 
   return (
@@ -161,7 +190,7 @@ const Scanner = () => {
             value={skuInput}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
-            placeholder="Quet hoac nhap ma SKU..."
+            placeholder="Quet ma vach hoac nhap ma SKU..."
             className="scanner-input"
             autoFocus
           />
@@ -208,71 +237,149 @@ const Scanner = () => {
 
             <div className="product-card-info">
               <h3 className="product-card-name">{product.name}</h3>
-              <p className="product-card-sku">SKU: {product.sku}</p>
+              <p className="product-card-sku">SKU: {product.sku || product.skuId}</p>
+              {product.barcode && (
+                <p className="product-card-barcode">Barcode: {product.barcode}</p>
+              )}
 
               <div className="product-card-details">
                 <div className="detail-row">
-                  <span className="detail-label">Gia:</span>
-                  <span className="detail-value">
+                  <span className="detail-label">Gia ban:</span>
+                  <span className="detail-value price">
                     {formatCurrency(product.price, product.currency)}
                   </span>
                 </div>
-                {product.metalType && (
+                {product.categoryName && (
                   <div className="detail-row">
-                    <span className="detail-label">Kim loai:</span>
-                    <span className="detail-value">
-                      {product.metalType} {product.metalPurity}
-                    </span>
+                    <span className="detail-label">Danh muc:</span>
+                    <span className="detail-value">{product.categoryName}</span>
                   </div>
                 )}
-                {product.stoneType && (
+                {product.color && (
                   <div className="detail-row">
-                    <span className="detail-label">Loai da:</span>
-                    <span className="detail-value">{product.stoneType}</span>
+                    <span className="detail-label">Mau:</span>
+                    <span className="detail-value">{product.color}</span>
                   </div>
                 )}
-                {product.weightGrams && (
+                {product.size && (
                   <div className="detail-row">
-                    <span className="detail-label">Trong luong:</span>
-                    <span className="detail-value">{product.weightGrams}g</span>
+                    <span className="detail-label">Size:</span>
+                    <span className="detail-value">{product.size}</span>
                   </div>
                 )}
-                <div className="detail-row">
-                  <span className="detail-label">Trang thai:</span>
-                  <span
-                    className="status-badge"
-                    style={{ backgroundColor: getStatusColor(product.status) }}
-                  >
-                    {getStatusLabel(product.status)}
-                  </span>
-                </div>
+                {product.material && (
+                  <div className="detail-row">
+                    <span className="detail-label">Chat lieu:</span>
+                    <span className="detail-value">{product.material}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
+          {/* Stock Status Section - MISA */}
+          {stockInfo && (
+            <div
+              className="stock-status-section"
+              style={{ backgroundColor: getStockStatusColor(stockInfo.stockStatus) }}
+            >
+              <div className="stock-status-header">
+                <Warehouse size={20} />
+                <span className="stock-status-badge">
+                  {getStockStatusText(stockInfo.stockStatus)}
+                </span>
+              </div>
+              <div className="stock-numbers">
+                <div className="stock-item">
+                  <span className="stock-label">Ton kho:</span>
+                  <span className="stock-value">{stockInfo.totalOnHand}</span>
+                </div>
+                <div className="stock-item">
+                  <span className="stock-label">Co san:</span>
+                  <span className="stock-value">{stockInfo.availableQuantity}</span>
+                </div>
+                {stockInfo.totalOrdered > 0 && (
+                  <div className="stock-item">
+                    <ShoppingBag size={16} />
+                    <span className="stock-label">Dang dat:</span>
+                    <span className="stock-value">{stockInfo.totalOrdered}</span>
+                  </div>
+                )}
+              </div>
+              {stockInfo.branchStocks && stockInfo.branchStocks.length > 0 && (
+                <button
+                  className="toggle-branch-btn"
+                  onClick={() => setShowBranchDetails(!showBranchDetails)}
+                >
+                  <MapPin size={16} />
+                  {showBranchDetails ? "An chi nhanh" : `Xem ${stockInfo.branchStocks.length} chi nhanh`}
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Branch Details Table */}
+          {showBranchDetails && stockInfo?.branchStocks?.length > 0 && (
+            <div className="branch-stocks-table">
+              <h4>Chi tiet theo chi nhanh:</h4>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Chi nhanh</th>
+                    <th>Ton kho</th>
+                    <th>Dang dat</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stockInfo.branchStocks.map((branch, index) => (
+                    <tr key={branch.branchId || index}>
+                      <td>{branch.branchName}</td>
+                      <td className={branch.onHand <= 0 ? "out-of-stock" : ""}>
+                        {branch.onHand}
+                      </td>
+                      <td>{branch.ordered}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Low Stock Warning */}
+          {stockInfo && stockInfo.stockStatus === "LOW_STOCK" && (
+            <div className="stock-warning">
+              <TrendingDown size={18} />
+              <span>Canh bao: San pham sap het hang!</span>
+            </div>
+          )}
+
           {/* Action Buttons */}
           <div className="product-actions">
-            <button
-              className="action-btn view-btn"
-              onClick={() => navigate(getInventoryProductDetailRoute(product.id))}
-            >
-              <Package size={20} />
-              Xem chi tiet
-            </button>
-            <button
-              className="action-btn edit-btn"
-              onClick={() => navigate(getInventoryProductEditRoute(product.id))}
-            >
-              <Edit size={20} />
-              Sua
-            </button>
-            <button
-              className="action-btn delete-btn"
-              onClick={() => setShowDeleteConfirm(true)}
-            >
-              <Trash2 size={20} />
-              Xoa
-            </button>
+            {product.id && (
+              <>
+                <button
+                  className="action-btn view-btn"
+                  onClick={() => navigate(getInventoryProductDetailRoute(product.id))}
+                >
+                  <Package size={20} />
+                  Xem chi tiet
+                </button>
+                <button
+                  className="action-btn edit-btn"
+                  onClick={() => navigate(getInventoryProductEditRoute(product.id))}
+                >
+                  <Edit size={20} />
+                  Sua
+                </button>
+                <button
+                  className="action-btn delete-btn"
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  <Trash2 size={20} />
+                  Xoa
+                </button>
+              </>
+            )}
             <button className="action-btn print-btn" onClick={handleCopyForPrint}>
               <Printer size={20} />
               Copy de in

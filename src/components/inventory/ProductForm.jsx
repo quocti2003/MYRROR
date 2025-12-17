@@ -18,16 +18,17 @@ const METAL_TYPES = ["Gold", "Silver", "Platinum", "White Gold", "Rose Gold"];
 const METAL_PURITIES = ["10K", "14K", "18K", "22K", "24K", "925", "950"];
 const STONE_TYPES = ["Diamond", "Ruby", "Sapphire", "Emerald", "Pearl", "None"];
 const STATUS_OPTIONS = [
-  { value: "available", label: "Con hang" },
-  { value: "hold", label: "Dang giu" },
+  { value: "in_stock", label: "Con hang" },
+  { value: "on_hold", label: "Dang giu" },
   { value: "warranty", label: "Bao hanh" },
   { value: "sold", label: "Da ban" },
+  { value: "DRAFT", label: "Nhap" },
 ];
 const CURRENCY_OPTIONS = ["VND", "USD"];
 
 const initialFormData = {
   name: "",
-  sku: "",
+  skuId: "",
   description: "",
   price: "",
   currency: "VND",
@@ -36,7 +37,7 @@ const initialFormData = {
   stoneType: "",
   weightGrams: "",
   dimensions: "",
-  status: "available",
+  status: "in_stock",
   imageUrl: "",
 };
 
@@ -67,7 +68,7 @@ const ProductForm = ({ isEdit = false }) => {
       if (product) {
         const data = {
           name: product.name || "",
-          sku: product.sku || "",
+          skuId: product.skuId || product.sku || "",
           description: product.description || "",
           price: product.price?.toString() || "",
           currency: product.currency || "VND",
@@ -76,12 +77,12 @@ const ProductForm = ({ isEdit = false }) => {
           stoneType: product.stoneType || "",
           weightGrams: product.weightGrams?.toString() || "",
           dimensions: product.dimensions || "",
-          status: product.status || "available",
+          status: product.status || "in_stock",
           imageUrl: product.imageUrl || "",
         };
         setFormData(data);
         setOriginalData(data);
-        setOriginalSku(product.sku); // Lưu SKU gốc
+        setOriginalSku(product.skuId || product.sku); // Lưu SKU gốc
       }
     } catch (err) {
       console.error("Error fetching product:", err);
@@ -102,7 +103,7 @@ const ProductForm = ({ isEdit = false }) => {
       setError("Vui long nhap ten san pham");
       return false;
     }
-    if (!formData.sku.trim()) {
+    if (!formData.skuId.trim()) {
       setError("Vui long nhap ma SKU");
       return false;
     }
@@ -158,7 +159,7 @@ const ProductForm = ({ isEdit = false }) => {
 
   const handleCopyForPrint = () => {
     const printData = {
-      sku: formData.sku,
+      sku: formData.skuId,
       name: formData.name,
       price: formData.price,
       currency: formData.currency,
@@ -240,12 +241,12 @@ const ProductForm = ({ isEdit = false }) => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="sku">Ma SKU *</label>
+                <label htmlFor="skuId">Ma SKU *</label>
                 <input
                   type="text"
-                  id="sku"
-                  name="sku"
-                  value={formData.sku}
+                  id="skuId"
+                  name="skuId"
+                  value={formData.skuId}
                   onChange={handleChange}
                   placeholder="Nhap ma SKU"
                   disabled={true} // SKU không được sửa
@@ -447,7 +448,7 @@ const ProductForm = ({ isEdit = false }) => {
               Huy
             </button>
 
-            {formData.sku && (
+            {formData.skuId && (
               <button
                 type="button"
                 className="btn-secondary"
@@ -476,15 +477,15 @@ const ProductForm = ({ isEdit = false }) => {
           <div className="qr-preview-card">
             <h3>Preview Label</h3>
             <div className="qr-preview-content">
-              {formData.sku ? (
+              {formData.skuId ? (
                 <>
                   <div className="qr-code-placeholder">
                     <Package size={64} />
-                    <span>QR: {formData.sku}</span>
+                    <span>QR: {formData.skuId}</span>
                   </div>
                   <div className="label-preview">
                     <p className="label-name">{formData.name || "Ten san pham"}</p>
-                    <p className="label-sku">{formData.sku}</p>
+                    <p className="label-sku">{formData.skuId}</p>
                     <p className="label-price">
                       {formData.price
                         ? new Intl.NumberFormat("vi-VN", {
