@@ -5,8 +5,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6rem 2rem;
-  background: #ffffff;
+  padding: 3rem 2rem;
+  background: #f6f6f6;
 }
 
 .product-media-container {
@@ -81,7 +81,7 @@
 /* Media Content */
 .media-content {
   min-height: 500px;
-  background: #f8fafc;
+  background: #f6f6f6;
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 2rem;

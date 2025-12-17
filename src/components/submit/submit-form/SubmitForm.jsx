@@ -5,7 +5,7 @@ import "./SubmitForm.css";
 import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
 import ShineGlassButton from "@components/common/button/ShineGlassButton";
-import { fileUploadAPI, notificationsAPI } from "@services/api";
+import { r2API, notificationsAPI } from "@services/api";
 import { ROUTES } from "@/constants/routes";
 
 const TURNSTILE_SITE_KEY = "0x4AAAAAAB5BOMtJV6dfw_JE";
@@ -490,48 +490,23 @@ const SubmitForm = () => {
     try {
       // Upload portfolio file if exists
       if (formData.portfolioFile) {
-        const portfolioResponse = await fileUploadAPI.upload(
+        const portfolioResponse = await r2API.upload(
           formData.portfolioFile,
-          "Portfolio submission",
-          "mirror-storage",
           "submissions/portfolios"
         );
-
-        const fileUrl =
-          portfolioResponse.data?.publicUrl ||
-          portfolioResponse.data?.url ||
-          portfolioResponse.data?.fileUrl ||
-          portfolioResponse.data?.downloadUrl ||
-          portfolioResponse.url ||
-          portfolioResponse.fileUrl;
-
-        uploadedFiles.portfolioFileUrl = fileUrl;
+        uploadedFiles.portfolioFileUrl = portfolioResponse.data.publicUrl;
       }
 
       // Upload hero images if exist
       if (formData.heroImages && formData.heroImages.length > 0) {
-        const heroImagePromises = formData.heroImages.map((file, index) =>
-          fileUploadAPI.upload(
-            file,
-            `Hero image ${index + 1}`,
-            "mirror-storage",
-            "submissions/hero-images"
-          )
+        const heroImagePromises = formData.heroImages.map((file) =>
+          r2API.upload(file, "submissions/hero-images")
         );
 
         const heroImageResponses = await Promise.all(heroImagePromises);
-
-        uploadedFiles.heroImagesUrls = heroImageResponses.map((response) => {
-          const fileUrl =
-            response.data?.publicUrl ||
-            response.data?.url ||
-            response.data?.fileUrl ||
-            response.data?.downloadUrl ||
-            response.url ||
-            response.fileUrl;
-
-          return fileUrl;
-        });
+        uploadedFiles.heroImagesUrls = heroImageResponses.map(
+          (response) => response.data.publicUrl
+        );
       }
 
       return uploadedFiles;

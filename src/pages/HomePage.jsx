@@ -33,11 +33,6 @@ export default function HomePage() {
   });
   const { theme: arrowTheme } = useBottomTheme();
 
-  // Handle immersive button click
-  const handleImmersiveClick = () => {
-    console.log("Immersive button clicked");
-  };
-
   // Detect scroll to collapse immersive button and show scroll-to-top
   useEffect(() => {
     const handleScroll = () => {

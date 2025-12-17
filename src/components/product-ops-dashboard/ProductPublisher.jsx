@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { productsAPI } from '@/services/api';
 
 /**
  * ProductPublisher - Final product review and publication
@@ -18,10 +19,10 @@ import React, { useState, useEffect } from 'react';
 const ProductPublisher = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [filter, setFilter] = useState('READY');
   const [lastRefresh, setLastRefresh] = useState(new Date());
   const [publishModal, setPublishModal] = useState(null);
+  const [error, setError] = useState(null);
 
   // Filter options
   const filters = [
@@ -36,102 +37,61 @@ const ProductPublisher = () => {
 
   const fetchProducts = async () => {
     setLoading(true);
+    setError(null);
     try {
-      // TODO: Implement actual API call
-      // const response = await productOpsAPI.getPublishableProducts(filter);
-      // setProducts(response.data);
+      let response;
+      if (filter === 'READY') {
+        response = await productsAPI.getReadyForRelease();
+      } else if (filter === 'PUBLISHED') {
+        response = await productsAPI.getPublished();
+      } else {
+        // ALL: fetch both and combine
+        const [readyRes, publishedRes] = await Promise.all([
+          productsAPI.getReadyForRelease(),
+          productsAPI.getPublished()
+        ]);
+        const allProducts = [
+          ...(readyRes.data || []).map(p => ({ ...p, status: 'READY_FOR_RELEASE' })),
+          ...(publishedRes.data || []).map(p => ({ ...p, status: 'PUBLISHED' }))
+        ];
+        setProducts(allProducts);
+        setLastRefresh(new Date());
+        setLoading(false);
+        return;
+      }
 
-      // Mock data
-      const mockProducts = [
-        {
-          id: 'prod-002',
-          name: 'Emerald Tennis Bracelet',
-          internalSKU: 'SKU-BR-2401-002',
-          misaSKU: 'MISA-BR-2401-002',
-          status: 'READY',
-          thumbnail: '/api/placeholder/120/120',
-          imageUrls: ['/api/placeholder/400/400', '/api/placeholder/400/400'],
-          shortDescription: 'Elegant emerald tennis bracelet in 18K white gold',
-          description: 'A stunning tennis bracelet featuring high-quality emeralds...',
-          category: 'Bracelets',
-          collection: 'Luxury',
-          specifications: {
-            metal: '18K White Gold',
-            gemstone: 'Emerald',
-            weight: '15.2g',
-            dimensions: '7 inches'
-          },
-          tags: ['emerald', 'tennis bracelet', 'luxury'],
-          markedReadyAt: '2024-01-16T09:00:00Z',
-          markedReadyBy: 'Jane Smith',
-          checklist: {
-            hasImages: true,
-            hasDescription: true,
-            hasMISASKU: true,
-            hasSpecifications: true,
-            hasCategory: true
-          }
-        },
-        {
-          id: 'prod-007',
-          name: 'Amethyst Drop Earrings',
-          internalSKU: 'SKU-ER-2401-007',
-          misaSKU: 'MISA-ER-2401-007',
-          status: 'READY',
-          thumbnail: '/api/placeholder/120/120',
-          imageUrls: ['/api/placeholder/400/400'],
-          shortDescription: 'Beautiful amethyst drop earrings',
-          description: 'Elegant drop earrings featuring deep purple amethysts...',
-          category: 'Earrings',
-          specifications: {
-            metal: '14K Yellow Gold',
-            gemstone: 'Amethyst'
-          },
-          tags: ['amethyst', 'earrings'],
-          markedReadyAt: '2024-01-15T14:00:00Z',
-          markedReadyBy: 'John Doe',
-          checklist: {
-            hasImages: true,
-            hasDescription: true,
-            hasMISASKU: true,
-            hasSpecifications: true,
-            hasCategory: true
-          }
-        },
-        {
-          id: 'prod-001',
-          name: 'Diamond Solitaire Ring',
-          internalSKU: 'SKU-RG-2401-001',
-          misaSKU: 'MISA-RG-2401-001',
-          status: 'PUBLISHED',
-          thumbnail: '/api/placeholder/120/120',
-          publishedAt: '2024-01-15T14:30:00Z',
-          publishedBy: 'John Doe',
-          category: 'Rings'
-        },
-        {
-          id: 'prod-008',
-          name: 'White Gold Chain',
-          internalSKU: 'SKU-NC-2401-008',
-          misaSKU: 'MISA-NC-2401-008',
-          status: 'PUBLISHED',
-          thumbnail: '/api/placeholder/120/120',
-          publishedAt: '2024-01-14T10:00:00Z',
-          publishedBy: 'Jane Smith',
-          category: 'Necklaces'
+      // Map backend response to frontend format
+      const mappedProducts = (response.data || []).map(p => ({
+        id: p.id,
+        name: p.name,
+        internalSKU: p.skuCode,
+        status: p.status,
+        thumbnail: p.imageUrl || (p.imageUrls && p.imageUrls[0]) || '/api/placeholder/120/120',
+        imageUrls: p.imageUrls || [],
+        description: p.description,
+        category: p.category,
+        categoryName: p.categoryName,
+        metalType: p.metalType,
+        stoneType: p.stoneType,
+        price: p.price,
+        currency: p.currency,
+        certificateCodes: p.certificateCodes || [],
+        model3dId: p.model3dId,
+        publishedAt: p.publishedAt,
+        checklist: {
+          hasImages: (p.imageUrls && p.imageUrls.length > 0) || !!p.imageUrl,
+          hasDescription: !!p.description && p.description.trim().length > 0,
+          hasCertificates: (p.certificateCodes && p.certificateCodes.length > 0) || p.certificatesNotRequired === true,
+          hasCategory: !!p.category || !!p.categoryName,
+          hasModel3d: (!!p.model3dId && p.model3dId.trim().length > 0) || p.model3dNotRequired === true
         }
-      ];
+      }));
 
-      // Filter products
-      const filtered = mockProducts.filter(p => {
-        if (filter === 'ALL') return true;
-        return p.status === filter;
-      });
-
-      setProducts(filtered);
+      setProducts(mappedProducts);
       setLastRefresh(new Date());
-    } catch (error) {
-      console.error('Error fetching products:', error);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+      setError(err.response?.data?.message || 'Failed to load products');
     } finally {
       setLoading(false);
     }
@@ -156,18 +116,12 @@ const ProductPublisher = () => {
    */
   const handlePublish = async (productId) => {
     try {
-      // TODO: Implement actual API call
-      // await productOpsAPI.publishProduct(productId);
-
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      alert('Product published successfully! 🎉');
+      await productsAPI.publish(productId);
       closePublishModal();
       fetchProducts();
-    } catch (error) {
-      console.error('Error publishing product:', error);
-      alert('Failed to publish product. Please try again.');
+    } catch (err) {
+      console.error('Error publishing product:', err);
+      alert(err.response?.data?.message || 'Failed to publish product. Please try again.');
     }
   };
 
@@ -178,38 +132,11 @@ const ProductPublisher = () => {
     if (!window.confirm('Unpublish this product from the website?')) return;
 
     try {
-      // TODO: Implement actual API call
-      // await productOpsAPI.unpublishProduct(productId);
-
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      alert('Product unpublished successfully!');
+      await productsAPI.unpublish(productId);
       fetchProducts();
-    } catch (error) {
-      console.error('Error unpublishing product:', error);
-      alert('Failed to unpublish product. Please try again.');
-    }
-  };
-
-  /**
-   * Mark product as ready
-   */
-  const handleMarkReady = async (productId) => {
-    if (!window.confirm('Mark this product as ready for publication?')) return;
-
-    try {
-      // TODO: Implement actual API call
-      // await productOpsAPI.markProductReady(productId);
-
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      alert('Product marked as ready!');
-      fetchProducts();
-    } catch (error) {
-      console.error('Error marking product ready:', error);
-      alert('Failed to mark product ready. Please try again.');
+    } catch (err) {
+      console.error('Error unpublishing product:', err);
+      alert(err.response?.data?.message || 'Failed to unpublish product. Please try again.');
     }
   };
 
@@ -227,13 +154,6 @@ const ProductPublisher = () => {
     });
   };
 
-  /**
-   * Check if all checklist items are complete
-   */
-  const isChecklistComplete = (checklist) => {
-    if (!checklist) return false;
-    return Object.values(checklist).every(value => value === true);
-  };
 
   if (loading) {
     return (
@@ -245,6 +165,21 @@ const ProductPublisher = () => {
 
   return (
     <div>
+      {/* Error Alert */}
+      {error && (
+        <div style={{
+          padding: '0.75rem 1rem',
+          marginBottom: '1rem',
+          backgroundColor: '#fef2f2',
+          border: '1px solid #fecaca',
+          borderRadius: '6px',
+          color: '#dc2626',
+          fontSize: '0.875rem'
+        }}>
+          {error}
+        </div>
+      )}
+
       {/* Header */}
       <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
@@ -350,7 +285,7 @@ const ProductPublisher = () => {
               </div>
 
               {/* Status */}
-              {product.status === 'READY' && (
+              {product.status === 'READY_FOR_RELEASE' && (
                 <div style={{
                   padding: '0.75rem',
                   backgroundColor: '#fef3c7',
@@ -360,12 +295,6 @@ const ProductPublisher = () => {
                 }}>
                   <div style={{ fontSize: '0.8125rem', color: '#854d0e', marginBottom: '0.25rem', fontWeight: '500' }}>
                     ✓ Ready for Publication
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: '#92400e' }}>
-                    Marked ready: {formatDate(product.markedReadyAt)}
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: '#92400e' }}>
-                    By: {product.markedReadyBy}
                   </div>
                 </div>
               )}
@@ -379,19 +308,18 @@ const ProductPublisher = () => {
                   borderLeft: '3px solid #10b981'
                 }}>
                   <div style={{ fontSize: '0.8125rem', color: '#166534', marginBottom: '0.25rem', fontWeight: '500' }}>
-                    🚀 Live on Website
+                    Live on Website
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: '#166534' }}>
-                    Published: {formatDate(product.publishedAt)}
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: '#166534' }}>
-                    By: {product.publishedBy}
-                  </div>
+                  {product.publishedAt && (
+                    <div style={{ fontSize: '0.75rem', color: '#166534' }}>
+                      Published: {formatDate(product.publishedAt)}
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* Checklist Preview (for ready products) */}
-              {product.status === 'READY' && product.checklist && (
+              {product.status === 'READY_FOR_RELEASE' && product.checklist && (
                 <div style={{
                   marginBottom: '1rem',
                   padding: '0.75rem',
@@ -414,21 +342,14 @@ const ProductPublisher = () => {
 
               {/* Actions */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {product.status === 'READY' && (
+                {product.status === 'READY_FOR_RELEASE' && (
                   <>
                     <button
                       onClick={() => openPublishModal(product)}
                       className="admin-button admin-button-primary"
                       style={{ width: '100%', fontSize: '0.8125rem' }}
-                      disabled={!isChecklistComplete(product.checklist)}
                     >
-                      🚀 Publish to Website
-                    </button>
-                    <button
-                      className="admin-button admin-button-secondary"
-                      style={{ width: '100%', fontSize: '0.8125rem' }}
-                    >
-                      👁️ Preview
+                      Publish to Website
                     </button>
                   </>
                 )}
@@ -436,17 +357,11 @@ const ProductPublisher = () => {
                 {product.status === 'PUBLISHED' && (
                   <>
                     <button
-                      className="admin-button admin-button-secondary"
-                      style={{ width: '100%', fontSize: '0.8125rem' }}
-                    >
-                      🔗 View Live
-                    </button>
-                    <button
                       onClick={() => handleUnpublish(product.id)}
                       className="admin-button admin-button-secondary"
                       style={{ width: '100%', fontSize: '0.8125rem' }}
                     >
-                      📥 Unpublish
+                      Unpublish
                     </button>
                   </>
                 )}
@@ -533,7 +448,7 @@ const ProductPublisher = () => {
                       {publishModal.name}
                     </div>
                     <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                      {publishModal.category} • {publishModal.collection}
+                      {publishModal.categoryName || publishModal.category || 'No Category'}
                     </div>
                   </div>
                 </div>
@@ -550,7 +465,7 @@ const ProductPublisher = () => {
                     ✓ All Requirements Met
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
-                    {publishModal.checklist && Object.entries(publishModal.checklist).map(([key, value]) => (
+                    {publishModal.checklist && Object.keys(publishModal.checklist).map((key) => (
                       <div key={key} style={{ fontSize: '0.8125rem', color: '#166534', display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
                         <span>✓</span>
                         <span>{key.replace(/([A-Z])/g, ' $1').replace(/^has /, '')}</span>

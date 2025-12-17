@@ -868,7 +868,7 @@ html {
   display: flex;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
+  transition: opacity 0.3s ease, visibility 0.3s ease, bottom 0.3s ease;
 }
 
 .fixed-scroll-top-container.visible {
@@ -876,14 +876,27 @@ html {
   visibility: visible;
 }
 
+/* When no immersive button (e.g., on Immersive Showroom page), move to immersive button position */
+.fixed-scroll-top-container.no-immersive-btn {
+  bottom: 24px;
+}
+
 @media (max-width: 768px) {
   .fixed-scroll-top-container {
     bottom: 78px; /* 24px + 42px + 12px - adjusted for smaller button */
+  }
+
+  .fixed-scroll-top-container.no-immersive-btn {
+    bottom: 24px;
   }
 }
 
 @media (max-width: 480px) {
   .fixed-scroll-top-container {
     bottom: 74px; /* 24px + 38px + 12px - adjusted for smallest button */
+  }
+
+  .fixed-scroll-top-container.no-immersive-btn {
+    bottom: 24px;
   }
 }

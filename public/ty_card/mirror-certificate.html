@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MIRROR Certificate Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background-color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      color: #333;
+    }
+
+    /* Left Panel - Controls */
+    .controls-panel {
+      width: 350px;
+      background: #fff;
+      padding: 25px;
+      overflow-y: auto;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      border-right: 1px solid #e0e0e0;
+    }
+
+    .controls-panel h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #333;
+      text-align: center;
+      border-bottom: 2px solid #d4af37;
+      padding-bottom: 15px;
+    }
+
+    .control-group {
+      margin-bottom: 18px;
+    }
+
+    .control-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .control-group input,
+    .control-group select,
+    .control-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .control-group input:focus,
+    .control-group select:focus,
+    .control-group textarea:focus {
+      outline: none;
+      border-color: #d4af37;
+    }
+
+    .control-group textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      padding-right: 35px;
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+
+    .product-list {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+
+    .product-item {
+      padding: 10px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      transition: background 0.2s;
+    }
+
+    .product-item:hover {
+      background: #f5f5f5;
+    }
+
+    .product-item.selected {
+      background: #fff9e6;
+      border-left: 3px solid #d4af37;
+    }
+
+    .product-item:last-child {
+      border-bottom: none;
+    }
+
+    .product-item-name {
+      font-weight: 600;
+      font-size: 13px;
+      color: #333;
+    }
+
+    .product-item-sku {
+      font-size: 11px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #d4af37 0%, #b8962e 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+    }
+
+    .btn-secondary {
+      background: #333;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #888;
+    }
+
+    .error {
+      background: #fee;
+      color: #c00;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 13px;
+    }
+
+    /* Right Panel - Preview */
+    .preview-panel {
+      flex: 1;
+      margin-left: 350px;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #2a2a2a;
+    }
+
+    /* Certificate Design */
+    .certificate {
+      width: 800px;
+      min-height: 600px;
+      background: linear-gradient(135deg, #fefefe 0%, #f8f8f8 100%);
+      position: relative;
+      padding: 50px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .certificate-border {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      right: 15px;
+      bottom: 15px;
+      border: 2px solid #d4af37;
+      pointer-events: none;
+    }
+
+    .certificate-border-inner {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      border: 1px solid #e8d5a3;
+      pointer-events: none;
+    }
+
+    .certificate-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .certificate-logo {
+      font-family: 'Times New Roman', serif;
+      font-size: 42px;
+      font-weight: 400;
+      letter-spacing: 8px;
+      color: #1a1a1a;
+      margin-bottom: 5px;
+    }
+
+    .certificate-tagline {
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: #888;
+      text-transform: uppercase;
+    }
+
+    .certificate-title {
+      text-align: center;
+      margin: 25px 0;
+    }
+
+    .certificate-title h1 {
+      font-size: 28px;
+      font-weight: 400;
+      color: #d4af37;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .certificate-body {
+      display: flex;
+      gap: 40px;
+      margin-top: 30px;
+    }
+
+    .certificate-image {
+      width: 250px;
+      flex-shrink: 0;
+    }
+
+    .certificate-image img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+    }
+
+    .certificate-image-placeholder {
+      width: 100%;
+      height: 250px;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #999;
+      font-size: 13px;
+      border: 1px solid #ddd;
+    }
+
+    .certificate-details {
+      flex: 1;
+    }
+
+    .detail-row {
+      display: flex;
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      width: 140px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      font-weight: 600;
+    }
+
+    .detail-value {
+      flex: 1;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .certificate-footer {
+      margin-top: 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .certificate-qr {
+      width: 80px;
+      height: 80px;
+    }
+
+    .certificate-qr img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .certificate-signature {
+      text-align: right;
+    }
+
+    .signature-line {
+      width: 180px;
+      border-top: 1px solid #333;
+      margin-bottom: 5px;
+    }
+
+    .signature-text {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .certificate-date {
+      text-align: center;
+      font-size: 11px;
+      color: #888;
+      margin-top: 20px;
+    }
+
+    .certificate-id {
+      font-family: monospace;
+      font-size: 10px;
+      color: #bbb;
+      position: absolute;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* No product selected state */
+    .no-product {
+      text-align: center;
+      color: #999;
+      padding: 100px 50px;
+    }
+
+    .no-product h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <!-- Controls Panel -->
+  <div class="controls-panel">
+    <h2>MIRROR Certificate</h2>
+
+    <div id="errorMsg" class="error" style="display: none;"></div>
+
+    <!-- Authentication -->
+    <div class="control-group">
+      <label>Access Token <span id="tokenStatus" style="font-weight: normal; font-size: 10px;"></span></label>
+      <input type="password" id="tokenInput" placeholder="Paste your access token here...">
+      <button class="btn btn-secondary" style="margin-top: 8px; padding: 8px 12px; font-size: 12px;" onclick="setToken()">
+        Load Products
+      </button>
+      <small style="display: block; margin-top: 6px; color: #888; font-size: 10px;">
+        Get token: Login as Admin → Open DevTools (F12) → Console → type: localStorage.getItem('accessToken')
+      </small>
+    </div>
+
+    <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+
+    <!-- Product Search -->
+    <div class="control-group">
+      <label>Search Product</label>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search by name or SKU..." oninput="filterProducts()">
+        <span class="search-icon">🔍</span>
+      </div>
+    </div>
+
+    <!-- Product List -->
+    <div class="control-group">
+      <label>Select Product</label>
+      <div class="product-list" id="productList">
+        <div class="loading">Loading products...</div>
+      </div>
+    </div>
+
+    <!-- Manual Override Fields -->
+    <div class="control-group">
+      <label>Certificate Number (Optional Override)</label>
+      <input type="text" id="certNumber" placeholder="Auto-generated" oninput="updateCertificate()">
+    </div>
+
+    <div class="control-group">
+      <label>Issue Date</label>
+      <input type="date" id="issueDate" oninput="updateCertificate()">
+    </div>
+
+    <div class="control-group">
+      <label>Additional Notes</label>
+      <textarea id="additionalNotes" placeholder="Any additional notes..." oninput="updateCertificate()"></textarea>
+    </div>
+
+    <button class="btn" onclick="printCertificate()">Print Certificate</button>
+    <button class="btn btn-secondary" onclick="downloadCertificate()">Download as Image</button>
+  </div>
+
+  <!-- Preview Panel -->
+  <div class="preview-panel">
+    <div class="certificate" id="certificatePreview">
+      <div class="certificate-border"></div>
+      <div class="certificate-border-inner"></div>
+
+      <!-- Header -->
+      <div class="certificate-header">
+        <div class="certificate-logo">MIRROR</div>
+        <div class="certificate-tagline">Created by Science, Crafted for Eternity</div>
+      </div>
+
+      <!-- Title -->
+      <div class="certificate-title">
+        <h1>Certificate of Authenticity</h1>
+      </div>
+
+      <!-- Body - No Product Selected -->
+      <div id="noProductState" class="no-product">
+        <h3>No Product Selected</h3>
+        <p>Please select a product from the list to generate certificate</p>
+      </div>
+
+      <!-- Body - Product Selected -->
+      <div id="productState" style="display: none;">
+        <div class="certificate-body">
+          <div class="certificate-image">
+            <img id="productImage" src="" alt="Product Image" style="display: none;">
+            <div id="productImagePlaceholder" class="certificate-image-placeholder">No Image</div>
+          </div>
+
+          <div class="certificate-details">
+            <div class="detail-row">
+              <div class="detail-label">Product Name</div>
+              <div class="detail-value" id="detailName">-</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">SKU</div>
+              <div class="detail-value" id="detailSku">-</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Metal Type</div>
+              <div class="detail-value" id="detailMetal">-</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Metal Purity</div>
+              <div class="detail-value" id="detailPurity">-</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Stone Type</div>
+              <div class="detail-value" id="detailStone">-</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Weight</div>
+              <div class="detail-value" id="detailWeight">-</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Dimensions</div>
+              <div class="detail-value" id="detailDimensions">-</div>
+            </div>
+            <div class="detail-row">
+              <div class="detail-label">Certificate</div>
+              <div class="detail-value" id="detailCertificates">-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="certificate-footer">
+          <div class="certificate-qr">
+            <img id="qrCode" src="" alt="QR Code">
+          </div>
+          <div class="certificate-signature">
+            <div class="signature-line"></div>
+            <div class="signature-text">Authorized Signature</div>
+          </div>
+        </div>
+
+        <div class="certificate-date" id="certDate">Issue Date: -</div>
+      </div>
+
+      <div class="certificate-id" id="certId">CERT-000000</div>
+    </div>
+  </div>
+
+  <!-- html2canvas for export -->
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+  <script>
+    // API Configuration
+    const API_BASE_URL = 'https://xpxr4xbvim.ap-southeast-1.awsapprunner.com';
+
+    let allProducts = [];
+    let selectedProduct = null;
+    let accessToken = '';
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set default date to today
+      document.getElementById('issueDate').value = new Date().toISOString().split('T')[0];
+
+      // Try to get token from localStorage
+      try {
+        // First try main app's token
+        accessToken = localStorage.getItem('accessToken') || '';
+
+        // If not found, try certificate-specific saved token
+        if (!accessToken) {
+          accessToken = localStorage.getItem('certificate_access_token') || '';
+        }
+
+        if (accessToken) {
+          document.getElementById('tokenInput').value = '••••••••' + accessToken.slice(-10);
+          document.getElementById('tokenStatus').textContent = '✓ Token found';
+          document.getElementById('tokenStatus').style.color = '#22c55e';
+        }
+      } catch (e) {
+        console.log('Could not access localStorage');
+      }
+
+      // Load products
+      loadProducts();
+    });
+
+    // Set token and reload products
+    function setToken() {
+      const tokenInput = document.getElementById('tokenInput');
+      const tokenStatus = document.getElementById('tokenStatus');
+      const inputValue = tokenInput.value.trim();
+
+      // Don't update if it's the masked value
+      if (inputValue && !inputValue.startsWith('••••')) {
+        accessToken = inputValue;
+        tokenInput.value = '••••••••' + accessToken.slice(-10);
+        tokenStatus.textContent = '✓ Token set';
+        tokenStatus.style.color = '#22c55e';
+
+        // Save to localStorage for future use
+        try {
+          localStorage.setItem('certificate_access_token', accessToken);
+        } catch (e) {}
+      }
+
+      loadProducts();
+    }
+
+    // Load products from API
+    async function loadProducts() {
+      const productList = document.getElementById('productList');
+
+      // Check for token
+      if (!accessToken) {
+        productList.innerHTML = `
+          <div style="padding: 15px; color: #888; text-align: center;">
+            <p>Please enter access token to load products</p>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/products/all`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error('Unauthorized - Invalid or expired token');
+          }
+          throw new Error('Failed to load products');
+        }
+
+        allProducts = await response.json();
+        renderProductList(allProducts);
+
+      } catch (error) {
+        console.error('Error loading products:', error);
+        productList.innerHTML = `
+          <div style="padding: 15px; color: #888; text-align: center;">
+            <p>Could not load products from API</p>
+            <p style="font-size: 11px; margin-top: 5px;">Using demo mode</p>
+          </div>
+        `;
+
+        // Demo products for testing
+        allProducts = [
+          {
+            id: 'PRD-001',
+            name: 'Eternal Love Diamond Ring',
+            sku: 'RNG-DIA-001',
+            metalType: 'GOLD',
+            metalPurity: '18K',
+            stoneType: 'Lab-Grown Diamond',
+            weightGrams: 4.5,
+            dimensions: '16mm x 8mm',
+            imageUrl: '',
+            certificateCodes: ['IGI-123456789']
+          },
+          {
+            id: 'PRD-002',
+            name: 'Lumex 91 Pendant',
+            sku: 'PND-LMX-002',
+            metalType: 'PLATINUM',
+            metalPurity: '950',
+            stoneType: 'Lumex 91 Diamond',
+            weightGrams: 3.2,
+            dimensions: '20mm x 15mm',
+            imageUrl: '',
+            certificateCodes: ['IGI-987654321']
+          }
+        ];
+        renderProductList(allProducts);
+      }
+    }
+
+    // Render product list
+    function renderProductList(products) {
+      const productList = document.getElementById('productList');
+
+      if (products.length === 0) {
+        productList.innerHTML = '<div style="padding: 15px; color: #888; text-align: center;">No products found</div>';
+        return;
+      }
+
+      productList.innerHTML = products.map(product => `
+        <div class="product-item ${selectedProduct?.id === product.id ? 'selected' : ''}"
+             onclick="selectProduct('${product.id}')">
+          <div class="product-item-name">${product.name || 'Unnamed Product'}</div>
+          <div class="product-item-sku">${product.sku || product.id}</div>
+        </div>
+      `).join('');
+    }
+
+    // Filter products by search
+    function filterProducts() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+
+      const filtered = allProducts.filter(product => {
+        const name = (product.name || '').toLowerCase();
+        const sku = (product.sku || '').toLowerCase();
+        return name.includes(search) || sku.includes(search);
+      });
+
+      renderProductList(filtered);
+    }
+
+    // Select a product
+    function selectProduct(productId) {
+      selectedProduct = allProducts.find(p => p.id === productId);
+
+      if (!selectedProduct) return;
+
+      // Update list selection
+      document.querySelectorAll('.product-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+      event.currentTarget.classList.add('selected');
+
+      // Update certificate
+      updateCertificate();
+    }
+
+    // Update certificate display
+    function updateCertificate() {
+      const noProductState = document.getElementById('noProductState');
+      const productState = document.getElementById('productState');
+
+      if (!selectedProduct) {
+        noProductState.style.display = 'block';
+        productState.style.display = 'none';
+        return;
+      }
+
+      noProductState.style.display = 'none';
+      productState.style.display = 'block';
+
+      // Update product details
+      document.getElementById('detailName').textContent = selectedProduct.name || '-';
+      document.getElementById('detailSku').textContent = selectedProduct.sku || selectedProduct.id || '-';
+      document.getElementById('detailMetal').textContent = formatMetalType(selectedProduct.metalType) || '-';
+      document.getElementById('detailPurity').textContent = selectedProduct.metalPurity || '-';
+      document.getElementById('detailStone').textContent = selectedProduct.stoneType || '-';
+      document.getElementById('detailWeight').textContent = selectedProduct.weightGrams ? `${selectedProduct.weightGrams}g` : '-';
+      document.getElementById('detailDimensions').textContent = selectedProduct.dimensions || '-';
+      document.getElementById('detailCertificates').textContent =
+        (selectedProduct.certificateCodes && selectedProduct.certificateCodes.length > 0)
+          ? selectedProduct.certificateCodes.join(', ')
+          : '-';
+
+      // Update image
+      const productImage = document.getElementById('productImage');
+      const productImagePlaceholder = document.getElementById('productImagePlaceholder');
+      const imageUrl = selectedProduct.imageUrl || (selectedProduct.imageUrls && selectedProduct.imageUrls[0]);
+
+      if (imageUrl) {
+        productImage.src = imageUrl;
+        productImage.style.display = 'block';
+        productImagePlaceholder.style.display = 'none';
+      } else {
+        productImage.style.display = 'none';
+        productImagePlaceholder.style.display = 'flex';
+      }
+
+      // Update certificate number
+      const certNumber = document.getElementById('certNumber').value || generateCertNumber(selectedProduct);
+      document.getElementById('certId').textContent = certNumber;
+
+      // Update date
+      const issueDate = document.getElementById('issueDate').value;
+      document.getElementById('certDate').textContent = `Issue Date: ${formatDate(issueDate)}`;
+
+      // Update QR code
+      const qrData = `${API_BASE_URL}/certificate/${certNumber}`;
+      document.getElementById('qrCode').src =
+        `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(qrData)}`;
+    }
+
+    // Format metal type
+    function formatMetalType(type) {
+      const types = {
+        'GOLD': 'Gold',
+        'WHITE_GOLD': 'White Gold',
+        'ROSE_GOLD': 'Rose Gold',
+        'PLATINUM': 'Platinum',
+        'SILVER': 'Silver'
+      };
+      return types[type] || type;
+    }
+
+    // Generate certificate number
+    function generateCertNumber(product) {
+      const date = new Date();
+      const year = date.getFullYear().toString().slice(-2);
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+      return `CERT-${year}${month}-${random}`;
+    }
+
+    // Format date
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+
+    // Print certificate
+    function printCertificate() {
+      if (!selectedProduct) {
+        alert('Please select a product first');
+        return;
+      }
+
+      const certificate = document.getElementById('certificatePreview');
+      const printWindow = window.open('', '_blank');
+
+      printWindow.document.write(`
+        <html>
+        <head>
+          <title>MIRROR Certificate - ${selectedProduct.name}</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              min-height: 100vh;
+              font-family: 'Georgia', 'Times New Roman', serif;
+            }
+            ${document.querySelector('style').textContent}
+            @media print {
+              body { margin: 0; }
+              .certificate { box-shadow: none; }
+            }
+          </style>
+        </head>
+        <body>
+          ${certificate.outerHTML}
+        </body>
+        </html>
+      `);
+
+      printWindow.document.close();
+      setTimeout(() => printWindow.print(), 500);
+    }
+
+    // Download as image
+    function downloadCertificate() {
+      if (!selectedProduct) {
+        alert('Please select a product first');
+        return;
+      }
+
+      const certificate = document.getElementById('certificatePreview');
+
+      html2canvas(certificate, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `MIRROR-Certificate-${selectedProduct.sku || selectedProduct.id}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(err => {
+        alert('Error generating image. Please try again.');
+        console.error(err);
+      });
+    }
+  </script>
+</body>
+</html>

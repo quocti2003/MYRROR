@@ -1,21 +1,35 @@
+import { useLocation } from "react-router-dom";
+import { ROUTES } from "@/constants/routes";
+import { useImmersiveModal } from "@/contexts/ImmersiveModalContext";
 import "./ImmersiveButton.css";
 
 /**
  * ImmersiveButton component - Globe icon button for immersive experience
  * Supports expanded state with text and collapsed state with icon only
+ * Opens fullscreen immersive iframe modal when clicked
  *
  * @param {string} className - Additional CSS classes
  * @param {string} theme - Theme variant: "white" | "black" | "blend" (default: "blend")
  * @param {boolean} isCollapsed - Whether button is collapsed (icon only) or expanded (with text)
- * @param {function} onClick - Click handler
  */
 const ImmersiveButton = ({
   className = "",
   theme = "blend",
   isCollapsed = false,
-  onClick,
   ...props
 }) => {
+  const location = useLocation();
+  const { openModal } = useImmersiveModal();
+
+  // Don't render on Immersive Showroom page
+  if (location.pathname === ROUTES.IMMERSIVE_SHOWROOM) {
+    return null;
+  }
+
+  const handleClick = () => {
+    openModal();
+  };
+
   return (
     <button
       className={`immersive-globe-btn immersive-globe-btn--${theme} ${
@@ -24,7 +38,7 @@ const ImmersiveButton = ({
           : "immersive-globe-btn--expanded"
       } ${className}`}
       aria-label="Immersive Showroom"
-      onClick={onClick}
+      onClick={handleClick}
       {...props}
     >
       <svg

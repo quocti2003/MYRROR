@@ -1,11 +1,11 @@
 /* Section 2: Product Specifications */
 .section2-product-specs {
   width: 100%;
-  min-height: 100vh;
+  min-height: 60vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6rem 2rem;
+  padding: 0rem 2rem;
   background: #ffffff;
 }
 

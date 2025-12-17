@@ -1,3 +1,6 @@
+import { useLocation } from "react-router-dom";
+import { ROUTES } from "@/constants/routes";
+import { useImmersiveModal } from "@/contexts/ImmersiveModalContext";
 import "./GlassThemeButton.css";
 
 // Arrow down icon
@@ -111,12 +114,31 @@ export default function GlassThemeButton({
   icon = null, // "arrow" | "arrow-up" | "globe" | React element | null
   isCollapsed = false, // For expandable buttons (like immersive)
 }) {
+  const location = useLocation();
+  const { openModal } = useImmersiveModal();
+
   const renderIcon = () => {
     if (!icon) return null;
     if (icon === "arrow") return <ArrowDownIcon />;
     if (icon === "arrow-up") return <ArrowUpIcon />;
     if (icon === "globe") return <ImmersiveIcon />;
     return icon;
+  };
+
+  const isImmersiveShowroomPage = location.pathname === ROUTES.IMMERSIVE_SHOWROOM;
+
+  // Don't render globe button on Immersive Showroom page
+  if (icon === "globe" && isImmersiveShowroomPage) {
+    return null;
+  }
+
+  // Handle click - for globe icon, open immersive modal
+  const handleClick = (e) => {
+    if (icon === "globe") {
+      openModal();
+    } else if (onClick) {
+      onClick(e);
+    }
   };
 
   const isIconOnly = icon && !children;
@@ -136,7 +158,7 @@ export default function GlassThemeButton({
     <button
       type={type}
       className={`glass-theme-button glass-theme-button--${theme} ${variantClass} ${className}`}
-      onClick={onClick}
+      onClick={handleClick}
     >
       {children && <span className="glass-theme-btn-text">{children}</span>}
       {icon && <span className="glass-theme-btn-icon">{renderIcon()}</span>}

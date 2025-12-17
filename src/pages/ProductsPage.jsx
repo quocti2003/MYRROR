@@ -18,11 +18,6 @@ const ProductsPage = () => {
   const [isImmersiveCollapsed, setIsImmersiveCollapsed] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  // Handle immersive button click
-  const handleImmersiveClick = () => {
-    console.log("Immersive button clicked");
-  };
-
   // Detect scroll to collapse immersive button and show scroll-to-top
   useEffect(() => {
     const handleScroll = () => {
@@ -67,7 +62,6 @@ const ProductsPage = () => {
           theme={arrowTheme === "white" ? "dark" : "light"}
           icon="globe"
           isCollapsed={isImmersiveCollapsed}
-          onClick={handleImmersiveClick}
         >
           Immersive Showroom
         </GlassThemeButton>

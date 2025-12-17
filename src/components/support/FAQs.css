@@ -111,31 +111,61 @@
 
 .search-container {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 16px;
   width: 100%;
   max-width: 635px;
   margin: 0 auto;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 12px;
+  transition: border-color 0.3s ease;
+}
+
+.search-container:focus-within {
+  border-bottom-color: #000;
+}
+
+.search-icon {
+  color: #ccc;
+  flex-shrink: 0;
+  transition: color 0.3s ease;
+}
+
+.search-container:focus-within .search-icon {
+  color: #000;
 }
 
 .search-input {
   flex: 1;
-  max-width: 660px;
   border: none;
-  border-bottom: 1px solid #ddd;
   background: transparent;
   color: #000;
   outline: none;
   border-radius: 0;
   text-align: left;
+  padding: 0;
 }
 
 .search-input::placeholder {
-  color: #999;
+  color: #ccc;
 }
 
-/* Button styles now handled by ShineGlassButton component */
+.search-arrow {
+  color: #ccc;
+  flex-shrink: 0;
+}
+
+/* Search Results */
+.faq-search-results {
+  width: 100%;
+}
+
+.faq-no-results {
+  text-align: center;
+  padding: 60px 0;
+  color: #999;
+}
 
 .faq-sections {
   display: flex;
@@ -324,7 +354,7 @@
   /* .faq-nav .nav-item a - Typography handled by bodytext-4--no-margin class */
 
   .search-input {
-    padding: 13px 18px;
+    padding: 0;
   }
 
   .faq-question {
@@ -364,7 +394,7 @@
   }
 
   .search-input {
-    padding: 12px 16px;
+    padding: 0;
   }
 
   .faq-question {
@@ -428,8 +458,8 @@
   }
 
   .search-input {
-    padding: 12px 15px;
-    text-align: center;
+    padding: 0;
+    text-align: left;
   }
 
   .faq-question {
@@ -539,7 +569,7 @@
   }
 
   .search-input {
-    padding: 10px 12px;
+    padding: 0;
   }
 
   .faq-question {

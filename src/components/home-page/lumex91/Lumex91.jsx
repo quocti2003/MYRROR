@@ -18,7 +18,7 @@ const Lumex91 = ({ externalProgress = null }) => {
   const rafRef = useRef(null);
   const navigate = useNavigate();
 
-  // Preload all frames when in viewport
+  // Preload all frames when approaching viewport (earlier trigger)
   useEffect(() => {
     if (!videoBoxRef.current) return;
 
@@ -32,8 +32,8 @@ const Lumex91 = ({ externalProgress = null }) => {
         });
       },
       {
-        rootMargin: "200px",
-        threshold: 0.1,
+        rootMargin: "1500px", // Load much earlier - when ~1500px away from viewport
+        threshold: 0,
       }
     );
 
@@ -42,27 +42,30 @@ const Lumex91 = ({ externalProgress = null }) => {
     return () => observer.disconnect();
   }, []);
 
-  // Preload all frame images
+  // Preload all frame images in parallel using Promise.all
   useEffect(() => {
     if (!shouldLoadFrames) return;
 
-    let loadedCount = 0;
-    const images = [];
+    const loadImage = (index) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const frameNum = String(index).padStart(3, "0");
+        img.src = `${FRAME_PATH}${frameNum}.webp`;
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(img); // Still resolve to not block others
+      });
+    };
 
+    // Load all frames in parallel
+    const imagePromises = [];
     for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const img = new Image();
-      const frameNum = String(i).padStart(3, "0");
-      img.src = `${FRAME_PATH}${frameNum}.webp`;
-      img.onload = () => {
-        loadedCount++;
-        if (loadedCount === TOTAL_FRAMES) {
-          setFramesLoaded(true);
-        }
-      };
-      images.push(img);
+      imagePromises.push(loadImage(i));
     }
 
-    imagesRef.current = images;
+    Promise.all(imagePromises).then((loadedImages) => {
+      imagesRef.current = loadedImages;
+      setFramesLoaded(true);
+    });
   }, [shouldLoadFrames]);
 
   // Scroll-controlled frame display

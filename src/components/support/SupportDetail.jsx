@@ -49,12 +49,12 @@ const SupportDetail = () => {
     }
   };
 
-  // Determine hero variant based on active tab
-  const heroVariant = activeTab === "return-exchange" ? "image" : "gradient";
-
   return (
     <>
-      <div className={`support-hero-section support-hero-section--${heroVariant}`} data-navbar-theme="white">
+      <div
+        className={`support-hero-section support-hero-section--image support-hero-section--${activeTab}`}
+        data-navbar-theme="white"
+      >
         <div className="hero-content">
           <h1>Support</h1>
         </div>

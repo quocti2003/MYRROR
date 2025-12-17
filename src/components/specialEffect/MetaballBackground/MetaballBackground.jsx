@@ -9,6 +9,7 @@ const MetaballBackground = ({ className }) => {
   const metaballsRef = useRef([]);
   const mouseRef = useRef({ x: 0, y: 0 });
   const mouseMetaballRef = useRef(null);
+  const isInitializedRef = useRef(false);
 
   // Shader sources
   const vertexShaderSource = `
@@ -146,8 +147,8 @@ const MetaballBackground = ({ className }) => {
       this.lerpFactor = 0.05; // Match original lerp factor
     }
 
-    update(delta) {
-      // Smoothly interpolate towards mouse position
+    update() {
+      // Smoothly interpolate towards mouse position (lerp doesn't need delta)
       this.position.x +=
         (mouseRef.current.x - this.position.x) * this.lerpFactor;
       this.position.y +=
@@ -217,6 +218,9 @@ const MetaballBackground = ({ className }) => {
     const displayWidth = canvas.offsetWidth;
     const displayHeight = canvas.offsetHeight;
 
+    // Skip if canvas is hidden (display: none)
+    if (displayWidth === 0 || displayHeight === 0) return;
+
     canvas.width = displayWidth * dpr;
     canvas.height = displayHeight * dpr;
 
@@ -231,63 +235,99 @@ const MetaballBackground = ({ className }) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const gl = canvas.getContext("webgl");
-    if (!gl) {
-      console.error("WebGL not supported");
+    // Store references for render loop
+    let shaderProgram = null;
+    let rectanglePosition = null;
+    let vertexPositionAttribute = null;
+    let metaballsLocation = null;
+    let metaballsAmountLocation = null;
+    let spreadLocation = null;
+    let stepsLocation = null;
+    let blurStrengthLocation = null;
+    let foregroundColorLocation = null;
+    let color2Location = null;
+    let color1Location = null;
+    let backgroundColorLocation = null;
+
+    // Initialize WebGL - can be called on mount and context restore
+    const initWebGL = () => {
+      const gl = canvas.getContext("webgl");
+      if (!gl) {
+        console.error("WebGL not supported");
+        return false;
+      }
+
+      glRef.current = gl;
+
+      // Initialize shaders and buffers
+      shaderProgram = initShaderProgram(
+        gl,
+        vertexShaderSource,
+        fragmentShaderSource
+      );
+
+      // Check if shader compilation failed
+      if (!shaderProgram) {
+        console.error("Failed to initialize shader program");
+        return false;
+      }
+
+      rectanglePosition = initRectangleBuffer(gl);
+      shaderProgramRef.current = shaderProgram;
+
+      // Get uniform locations
+      vertexPositionAttribute = gl.getAttribLocation(
+        shaderProgram,
+        "aVertexPosition"
+      );
+      metaballsLocation = gl.getUniformLocation(shaderProgram, "metaballs");
+      metaballsAmountLocation = gl.getUniformLocation(
+        shaderProgram,
+        "metaballsAmount"
+      );
+      spreadLocation = gl.getUniformLocation(shaderProgram, "spread");
+      stepsLocation = gl.getUniformLocation(shaderProgram, "steps");
+      blurStrengthLocation = gl.getUniformLocation(
+        shaderProgram,
+        "blurStrength"
+      );
+      foregroundColorLocation = gl.getUniformLocation(
+        shaderProgram,
+        "foreground"
+      );
+      color2Location = gl.getUniformLocation(shaderProgram, "color2");
+      color1Location = gl.getUniformLocation(shaderProgram, "color1");
+      backgroundColorLocation = gl.getUniformLocation(
+        shaderProgram,
+        "background"
+      );
+
+      isInitializedRef.current = true;
+      return true;
+    };
+
+    // Initialize metaballs (only once)
+    const initMetaballs = () => {
+      if (metaballsRef.current.length > 0) return;
+
+      const metaballs = [];
+      for (let i = 0; i < 8; i++) {
+        metaballs.push(new Metaball());
+      }
+
+      const mouseMetaball = new MouseMetaball();
+      metaballs.push(mouseMetaball);
+      metaballsRef.current = metaballs;
+      mouseMetaballRef.current = mouseMetaball;
+    };
+
+    // Try to initialize WebGL
+    if (!initWebGL()) {
       return;
     }
 
-    glRef.current = gl;
     updateCanvasSize();
-
-    // Initialize shaders and buffers
-    const shaderProgram = initShaderProgram(
-      gl,
-      vertexShaderSource,
-      fragmentShaderSource
-    );
-    const rectanglePosition = initRectangleBuffer(gl);
-    shaderProgramRef.current = shaderProgram;
-
-    // Get uniform locations
-    const vertexPositionAttribute = gl.getAttribLocation(
-      shaderProgram,
-      "aVertexPosition"
-    );
-    const metaballsLocation = gl.getUniformLocation(shaderProgram, "metaballs");
-    const metaballsAmountLocation = gl.getUniformLocation(
-      shaderProgram,
-      "metaballsAmount"
-    );
-    const spreadLocation = gl.getUniformLocation(shaderProgram, "spread");
-    const stepsLocation = gl.getUniformLocation(shaderProgram, "steps");
-    const blurStrengthLocation = gl.getUniformLocation(
-      shaderProgram,
-      "blurStrength"
-    );
-    const foregroundColorLocation = gl.getUniformLocation(
-      shaderProgram,
-      "foreground"
-    );
-    const color2Location = gl.getUniformLocation(shaderProgram, "color2");
-    const color1Location = gl.getUniformLocation(shaderProgram, "color1");
-    const backgroundColorLocation = gl.getUniformLocation(
-      shaderProgram,
-      "background"
-    );
-
-    // Initialize metaballs
-    const metaballs = [];
-    for (let i = 0; i < 8; i++) {
-      // Fewer metaballs for performance
-      metaballs.push(new Metaball());
-    }
-
-    // Add mouse metaball
-    const mouseMetaball = new MouseMetaball();
-    metaballs.push(mouseMetaball);
-    metaballsRef.current = metaballs;
-    mouseMetaballRef.current = mouseMetaball;
+    initMetaballs();
 
     // Animation loop
     let lastTime = 0;
@@ -295,6 +335,26 @@ const MetaballBackground = ({ className }) => {
       const delta = (time - lastTime) / 1000;
       metaballsRef.current.forEach((mb) => mb.update(delta || 0));
       lastTime = time;
+
+      const gl = glRef.current;
+
+      // Skip rendering if not initialized or canvas is hidden
+      if (!isInitializedRef.current || !gl || !shaderProgram) {
+        animationRef.current = requestAnimationFrame(render);
+        return;
+      }
+
+      // Skip rendering if canvas is hidden or has invalid size
+      if (canvas.width === 0 || canvas.height === 0) {
+        animationRef.current = requestAnimationFrame(render);
+        return;
+      }
+
+      // Check for WebGL context loss
+      if (gl.isContextLost()) {
+        animationRef.current = requestAnimationFrame(render);
+        return;
+      }
 
       // Clear the canvas
       gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -354,8 +414,10 @@ const MetaballBackground = ({ className }) => {
 
     // Initialize mouse position with DPR scaling
     const dpr = window.devicePixelRatio || 1;
-    mouseRef.current.x = (canvas.offsetWidth / 2) * dpr;
-    mouseRef.current.y = (canvas.offsetHeight / 2) * dpr;
+    const initialX = canvas.offsetWidth > 0 ? (canvas.offsetWidth / 2) * dpr : 0;
+    const initialY = canvas.offsetHeight > 0 ? (canvas.offsetHeight / 2) * dpr : 0;
+    mouseRef.current.x = initialX;
+    mouseRef.current.y = initialY;
 
     // Mouse event listener that works with absolute positioning
     const handleMouseMove = (event) => {
@@ -372,6 +434,26 @@ const MetaballBackground = ({ className }) => {
 
     // Add mouse event to the canvas
     canvas.addEventListener("mousemove", handleMouseMove);
+
+    // Handle WebGL context loss and restoration
+    const handleContextLost = (event) => {
+      event.preventDefault();
+      isInitializedRef.current = false;
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+
+    const handleContextRestored = () => {
+      // Reinitialize WebGL completely
+      if (initWebGL()) {
+        updateCanvasSize();
+        animationRef.current = requestAnimationFrame(render);
+      }
+    };
+
+    canvas.addEventListener("webglcontextlost", handleContextLost);
+    canvas.addEventListener("webglcontextrestored", handleContextRestored);
 
     // Add to the document to catch all mouse movements over the canvas area
     const handleDocumentMouseMove = (event) => {
@@ -402,14 +484,41 @@ const MetaballBackground = ({ className }) => {
     };
     window.addEventListener("resize", handleResize);
 
+    // ResizeObserver to detect visibility changes (mobile <-> desktop)
+    let resizeObserver = null;
+    if (typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const { width, height } = entry.contentRect;
+          // Canvas became visible (was hidden before)
+          if (width > 0 && height > 0) {
+            updateCanvasSize();
+            // Reinitialize mouse position when canvas becomes visible
+            const dpr = window.devicePixelRatio || 1;
+            if (mouseRef.current.x === 0 && mouseRef.current.y === 0) {
+              mouseRef.current.x = (width / 2) * dpr;
+              mouseRef.current.y = (height / 2) * dpr;
+            }
+          }
+        }
+      });
+      resizeObserver.observe(canvas);
+    }
+
     // Cleanup
     return () => {
+      isInitializedRef.current = false;
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
       canvas.removeEventListener("mousemove", handleMouseMove);
+      canvas.removeEventListener("webglcontextlost", handleContextLost);
+      canvas.removeEventListener("webglcontextrestored", handleContextRestored);
       document.removeEventListener("mousemove", handleDocumentMouseMove);
       window.removeEventListener("resize", handleResize);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
     };
   }, []);
 

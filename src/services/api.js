@@ -263,8 +263,13 @@ export const productsAPI = {
   fulfill: (id, fulfillmentData) =>
     api.post(`/api/products/${id}/fulfill`, fulfillmentData),
   markReadyForRelease: (id) =>
-    api.post(`/api/products/${id}/mark-ready-for-release`),
+    api.put(`/api/products/${id}/ready-for-release`),
+
+  // Product Publisher operations
+  getReadyForRelease: () => api.get("/api/products/ready-for-release"),
+  getPublished: () => api.get("/api/products/published"),
   publish: (id) => api.post(`/api/products/${id}/publish`),
+  unpublish: (id) => api.post(`/api/products/${id}/unpublish`),
   archive: (id) => api.post(`/api/products/${id}/archive`),
 };
 
@@ -530,6 +535,30 @@ export const categoriesAPI = {
   delete: () => {
     throw new Error("Categories must be deleted in MISA ERP and will sync automatically");
   },
+};
+
+// ===== CERTIFICATES API =====
+export const certificatesAPI = {
+  // Get all certificates
+  getAll: () => api.get("/api/certificates"),
+
+  // Get certificate by ID
+  getById: (id) => api.get(`/api/certificates/${id}`),
+
+  // Get certificate by code
+  getByCode: (code) => api.get(`/api/certificates/by-code?code=${encodeURIComponent(code)}`),
+
+  // Get certificates by type (IGI, etc.)
+  getByType: (type) => api.get(`/api/certificates/by-type?type=${type}`),
+
+  // Create new certificate
+  create: (certificateData) => api.post("/api/certificates", certificateData),
+
+  // Update certificate
+  update: (id, certificateData) => api.put(`/api/certificates/${id}`, certificateData),
+
+  // Delete certificate (soft delete)
+  delete: (id) => api.delete(`/api/certificates/${id}`),
 };
 
 // ===== COMPONENTS API =====
@@ -1001,6 +1030,51 @@ export const fileUploadAPI = {
       timeout: 60000, // 60 seconds for file upload
     });
   },
+};
+
+// ===== CLOUDFLARE R2 API =====
+// Requires authentication
+// Staff roles: no rate limit | USER role: 20 uploads/hour
+export const r2API = {
+  // Upload file directly to R2 (requires auth)
+  upload: (file, folder = "uploads") => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", folder);
+
+    const token = localStorage.getItem("accessToken");
+    const headers = {
+      "Content-Type": "multipart/form-data",
+    };
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    return axios.post(`${API_BASE_URL}/api/r2/upload`, formData, {
+      headers,
+      timeout: 60000,
+    });
+  },
+
+  // Get presigned URL for direct upload (optional - for large files)
+  getPresignedUploadUrl: (filename, folder = "uploads", contentType = "application/octet-stream") => {
+    return api.post("/api/r2/presigned-upload", null, {
+      params: { filename, folder, contentType }
+    });
+  },
+
+  // Get public URL for a file
+  getPublicUrl: (key) => {
+    return api.get("/api/r2/public-url", { params: { key } });
+  },
+
+  // Delete file from R2
+  deleteFile: (key) => {
+    return api.delete("/api/r2/files", { params: { key } });
+  },
+
+  // Health check
+  health: () => api.get("/api/r2/health"),
 };
 
 // ===== NOTIFICATIONS API =====

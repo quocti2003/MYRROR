@@ -3,14 +3,20 @@ import {
   productsAPI,
   categoriesAPI,
   vendorsAPI,
-  fileUploadAPI,
+  r2API,
+  certificatesAPI,
   handleAPIError,
 } from "@services/api";
+
+const CERTIFICATE_TYPES = [
+  { value: "IGI", label: "IGI - International Gemological Institute" },
+];
 
 const ProductsManager = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [vendors, setVendors] = useState([]);
+  const [certificates, setCertificates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,6 +26,15 @@ const ProductsManager = () => {
   const [uploading, setUploading] = useState(false);
   const [imageFiles, setImageFiles] = useState([]); // Array of {file, preview, uploaded, url}
   const [existingImages, setExistingImages] = useState([]); // Existing image URLs from server
+
+  // Certificate modal state
+  const [isCertificateModalOpen, setIsCertificateModalOpen] = useState(false);
+  const [certificateFormData, setCertificateFormData] = useState({
+    certificateCode: "",
+    certificateType: "IGI",
+    certificateUrl: "",
+  });
+  const [certificateError, setCertificateError] = useState(null);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -41,6 +56,7 @@ const ProductsManager = () => {
     featured: false,
     stockQuantity: "",
     minStockLevel: "",
+    certificateCodes: [],
   });
 
   useEffect(() => {
@@ -50,15 +66,17 @@ const ProductsManager = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [productsRes, categoriesRes, vendorsRes] = await Promise.all([
+      const [productsRes, categoriesRes, vendorsRes, certificatesRes] = await Promise.all([
         productsAPI.getAllIncludingInactive(),
         categoriesAPI.getAll(),
         vendorsAPI.getAll().catch(() => ({ data: [] })), // Fallback if vendors API fails
+        certificatesAPI.getAll().catch(() => ({ data: [] })), // Fallback if certificates API fails
       ]);
 
       setProducts(productsRes.data || []);
       setCategories(categoriesRes.data || []);
       setVendors(vendorsRes.data || []);
+      setCertificates(certificatesRes.data || []);
     } catch (err) {
       const errorInfo = handleAPIError(err, "Failed to load data");
       setError(errorInfo.message);
@@ -88,6 +106,7 @@ const ProductsManager = () => {
       featured: false,
       stockQuantity: "",
       minStockLevel: "",
+      certificateCodes: [],
     });
     setEditingProduct(null);
     // Cleanup preview URLs to prevent memory leak
@@ -137,15 +156,9 @@ const ProductsManager = () => {
   const uploadAllImages = async () => {
     const uploadPromises = imageFiles
       .filter(img => !img.uploaded && img.file)
-      .map(async (img, index) => {
+      .map(async (img) => {
         try {
-          const response = await fileUploadAPI.upload(
-            img.file,
-            `Product image: ${formData.name || "New product"} - ${index + 1}`,
-            "mirror-storage",
-            "public"
-          );
-
+          const response = await r2API.upload(img.file, "products");
           const publicUrl = response.data.publicUrl;
           if (publicUrl) {
             img.uploaded = true;
@@ -230,6 +243,7 @@ const ProductsManager = () => {
       featured: product.featured || false,
       stockQuantity: product.stockQuantity?.toString() || "",
       minStockLevel: product.minStockLevel?.toString() || "",
+      certificateCodes: product.certificateCodes || (product.certificateCode ? [product.certificateCode] : []),
     });
 
     // Populate existing images
@@ -884,6 +898,82 @@ const ProductsManager = () => {
                     </div>
                   </div>
 
+                  {/* Included Certificates */}
+                  <div>
+                    <label
+                      style={{
+                        display: "block",
+                        marginBottom: "0.5rem",
+                        fontWeight: "500",
+                      }}
+                    >
+                      Included Certificates
+                    </label>
+
+                    {/* Added Certificates List */}
+                    {formData.certificateCodes.length > 0 && (
+                      <div style={{ marginBottom: "0.75rem" }}>
+                        {formData.certificateCodes.map((code) => {
+                          const cert = certificates.find(c => c.certificateCode === code);
+                          return (
+                            <div
+                              key={code}
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "0.5rem",
+                                padding: "0.375rem 0.75rem",
+                                backgroundColor: "#dbeafe",
+                                border: "1px solid #3b82f6",
+                                borderRadius: "9999px",
+                                marginRight: "0.5rem",
+                                marginBottom: "0.5rem",
+                                fontSize: "0.8125rem",
+                              }}
+                            >
+                              <span style={{ fontWeight: "500", color: "#1d4ed8" }}>
+                                {cert?.certificateType || "IGI"}: {code}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setFormData({
+                                    ...formData,
+                                    certificateCodes: formData.certificateCodes.filter(c => c !== code),
+                                  });
+                                }}
+                                style={{
+                                  background: "none",
+                                  border: "none",
+                                  cursor: "pointer",
+                                  padding: "0",
+                                  color: "#dc2626",
+                                  fontWeight: "bold",
+                                  fontSize: "1rem",
+                                  lineHeight: "1",
+                                }}
+                              >
+                                ×
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Add Certificate Button */}
+                    <button
+                      type="button"
+                      onClick={() => setIsCertificateModalOpen(true)}
+                      className="admin-btn admin-btn-secondary"
+                    >
+                      + Add Certificate
+                    </button>
+                    <div style={{ fontSize: "0.75rem", color: "#64748b", marginTop: "0.25rem" }}>
+                      Add diamond certificates (IGI, GIA, etc.) for this product
+                    </div>
+                  </div>
+
                   <div>
                     <label
                       style={{
@@ -1127,6 +1217,240 @@ const ProductsManager = () => {
                 </div>
               </form>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Certificate Modal */}
+      {isCertificateModalOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.6)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 10000,
+          }}
+          onClick={() => {
+            setIsCertificateModalOpen(false);
+            setCertificateError(null);
+            setCertificateFormData({
+              certificateCode: "",
+              certificateType: "IGI",
+              certificateUrl: "",
+            });
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: "white",
+              borderRadius: "8px",
+              padding: "1.5rem",
+              width: "100%",
+              maxWidth: "450px",
+              boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <h3
+              style={{
+                margin: "0 0 1.5rem 0",
+                fontSize: "1.125rem",
+                fontWeight: "600",
+                color: "#0f172a",
+              }}
+            >
+              Add New Certificate
+            </h3>
+
+            {certificateError && (
+              <div
+                style={{
+                  padding: "0.75rem",
+                  marginBottom: "1rem",
+                  backgroundColor: "#fef2f2",
+                  border: "1px solid #fecaca",
+                  borderRadius: "6px",
+                  color: "#dc2626",
+                  fontSize: "0.875rem",
+                }}
+              >
+                {certificateError}
+              </div>
+            )}
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setCertificateError(null);
+
+                if (!certificateFormData.certificateCode.trim()) {
+                  setCertificateError("Certificate code is required");
+                  return;
+                }
+
+                try {
+                  const response = await certificatesAPI.create({
+                    certificateCode: certificateFormData.certificateCode.trim(),
+                    certificateType: certificateFormData.certificateType,
+                    certificateUrl: certificateFormData.certificateUrl.trim() || null,
+                  });
+
+                  // Add the new certificate to local state
+                  const newCert = response.data;
+                  setCertificates([...certificates, newCert]);
+
+                  // Auto-select the new certificate
+                  setFormData({
+                    ...formData,
+                    certificateCodes: [...formData.certificateCodes, newCert.certificateCode],
+                  });
+
+                  // Close modal and reset form
+                  setIsCertificateModalOpen(false);
+                  setCertificateFormData({
+                    certificateCode: "",
+                    certificateType: "IGI",
+                    certificateUrl: "",
+                  });
+                } catch (err) {
+                  const errorInfo = handleAPIError(err, "Failed to create certificate");
+                  setCertificateError(errorInfo.message);
+                }
+              }}
+            >
+              {/* Certificate Code */}
+              <div style={{ marginBottom: "1rem" }}>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    color: "#374151",
+                  }}
+                >
+                  Certificate Code <span style={{ color: "#dc2626" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  value={certificateFormData.certificateCode}
+                  onChange={(e) =>
+                    setCertificateFormData({
+                      ...certificateFormData,
+                      certificateCode: e.target.value,
+                    })
+                  }
+                  className="admin-input"
+                  placeholder="e.g., 123456789"
+                  style={{ width: "100%" }}
+                  required
+                />
+              </div>
+
+              {/* Certificate Type */}
+              <div style={{ marginBottom: "1rem" }}>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    color: "#374151",
+                  }}
+                >
+                  Certificate Type <span style={{ color: "#dc2626" }}>*</span>
+                </label>
+                <select
+                  value={certificateFormData.certificateType}
+                  onChange={(e) =>
+                    setCertificateFormData({
+                      ...certificateFormData,
+                      certificateType: e.target.value,
+                    })
+                  }
+                  className="admin-input"
+                  style={{ width: "100%" }}
+                  required
+                >
+                  {CERTIFICATE_TYPES.map((type) => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Certificate URL */}
+              <div style={{ marginBottom: "1.5rem" }}>
+                <label
+                  style={{
+                    display: "block",
+                    marginBottom: "0.5rem",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    color: "#374151",
+                  }}
+                >
+                  Certificate URL
+                </label>
+                <input
+                  type="url"
+                  value={certificateFormData.certificateUrl}
+                  onChange={(e) =>
+                    setCertificateFormData({
+                      ...certificateFormData,
+                      certificateUrl: e.target.value,
+                    })
+                  }
+                  className="admin-input"
+                  placeholder="https://..."
+                  style={{ width: "100%" }}
+                />
+                <p
+                  style={{
+                    margin: "0.25rem 0 0 0",
+                    fontSize: "0.75rem",
+                    color: "#64748b",
+                  }}
+                >
+                  Link to the certificate document or verification page
+                </p>
+              </div>
+
+              {/* Actions */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: "0.75rem",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <button
+                  type="button"
+                  className="admin-btn admin-btn-secondary"
+                  onClick={() => {
+                    setIsCertificateModalOpen(false);
+                    setCertificateError(null);
+                    setCertificateFormData({
+                      certificateCode: "",
+                      certificateType: "IGI",
+                      certificateUrl: "",
+                    });
+                  }}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="admin-btn admin-btn-primary">
+                  Create & Add
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

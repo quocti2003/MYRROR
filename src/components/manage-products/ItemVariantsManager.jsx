@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import api from "@services/api";
+import api, { r2API } from "@services/api";
 
 const ItemVariantsManager = () => {
   const [itemVariants, setItemVariants] = useState([]);
@@ -60,26 +60,10 @@ const ItemVariantsManager = () => {
     }
   };
 
-  // Upload file to server
+  // Upload file to R2
   const uploadFile = async (file) => {
-    const uploadFormData = new FormData();
-    uploadFormData.append("file", file);
-    uploadFormData.append("description", "Item variant image");
-    uploadFormData.append("bucketName", "mirror-storage");
-    uploadFormData.append("folderPath", "public");
-
-    const response = await api.post("/api/files/upload", uploadFormData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-
-    if (response.status === 200 || response.status === 201) {
-      const result = response.data;
-      return result.publicUrl;
-    } else {
-      throw new Error("Failed to upload file");
-    }
+    const response = await r2API.upload(file, "item-variants");
+    return response.data.publicUrl;
   };
 
   // API calls

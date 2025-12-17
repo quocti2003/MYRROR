@@ -37,6 +37,9 @@ export default function NavbarV4() {
     location.pathname === ROUTES.WELCOME ||
     location.pathname === ROUTES.IMMERSIVE_SHOWROOM;
 
+  // Check if current page is immersive showroom (for always white logo without blend)
+  const isImmersiveShowroomPage = location.pathname === ROUTES.IMMERSIVE_SHOWROOM;
+
   // Check if current page is Milan submission page or Submit Success page
   const isMilanPage = location.pathname.startsWith(ROUTES.MILAN_SUBMIT);
 
@@ -511,7 +514,9 @@ export default function NavbarV4() {
           isHomePage && isInScrollContainer && !isMenuOpen ? "scrolled" : ""
         } ${shouldDisableLogoClick ? "no-click" : ""} ${
           isSubmitPage ? "submit-page-logo" : ""
-        } ${isInIntroSubmitSection ? "intro-submit-logo" : ""}`}
+        } ${isInIntroSubmitSection ? "intro-submit-logo" : ""} ${
+          isImmersiveShowroomPage ? "immersive-showroom-logo" : ""
+        }`}
         onClick={handleLogoClick}
       >
         <img
@@ -854,15 +859,50 @@ export default function NavbarV4() {
                 className="menu-v4-bottom-buttons"
                 style={{ mixBlendMode: "normal", isolation: "isolate" }}
               >
-                <GlassThemeButton
-                  theme="light"
-                  onClick={() => {
-                    // TODO: Add Mirror Partners Gate navigation
-                    console.log("Enter Mirror Partners Gate clicked");
-                  }}
-                >
-                  <span className="bodytext-6--no-margin">Enter Mirror Partners Gate</span>
-                </GlassThemeButton>
+                {/* Mirror Partners Gate - shows Staff Portal for staff, Vendor/Designer Portal for partners, or default text */}
+                {isAuthenticated && user?.roles?.some(role =>
+                  ["ADMIN", "SUPER_ADMIN", "IT_ADMIN", "PRODUCTION_OPS", "SALES_CUSTOMER_OPS", "FINANCE", "MARKETING", "CREATIVE_DESIGN", "LEGAL"].includes(role)
+                ) ? (
+                  <GlassThemeButton
+                    theme="light"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      navigate(ROUTES.DASHBOARD_ADMIN);
+                    }}
+                  >
+                    <span className="bodytext-6--no-margin">Staff Portal</span>
+                  </GlassThemeButton>
+                ) : isAuthenticated && user?.roles?.includes("VENDOR") ? (
+                  <GlassThemeButton
+                    theme="light"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      navigate(ROUTES.DASHBOARD_VENDOR);
+                    }}
+                  >
+                    <span className="bodytext-6--no-margin">Vendor Portal</span>
+                  </GlassThemeButton>
+                ) : isAuthenticated && user?.roles?.includes("DESIGNER") ? (
+                  <GlassThemeButton
+                    theme="light"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      navigate(ROUTES.DASHBOARD_DESIGNER);
+                    }}
+                  >
+                    <span className="bodytext-6--no-margin">Designer Portal</span>
+                  </GlassThemeButton>
+                ) : (
+                  <GlassThemeButton
+                    theme="light"
+                    onClick={() => {
+                      // TODO: Add Mirror Partners Gate navigation
+                      console.log("Enter Mirror Partners Gate clicked");
+                    }}
+                  >
+                    <span className="bodytext-6--no-margin">Enter Mirror Partners Gate</span>
+                  </GlassThemeButton>
+                )}
                 <GlassThemeButton
                   theme="spec_light"
                   onClick={() => {

@@ -17,13 +17,13 @@
   --border-width: 2px;
 }
 
-/* Navbar Liquid Glass Background - Always 80px bar */
+/* Navbar Liquid Glass Background - Always 69px bar */
 .navbar-v4-glass-background {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 80px;
+  height: 69px;
   z-index: 200;
   pointer-events: none;
   overflow: visible;
@@ -167,7 +167,7 @@
 
 .logo-v4-fixed-container .navbar-v4-logo-svg {
   width: auto;
-  height: 32px;
+  height: 24px;
   display: block;
 }
 
@@ -211,6 +211,31 @@
   .logo-v4-fixed-container.intro-submit-logo .navbar-v4-logo-svg {
     filter: brightness(0) invert(1) !important;
   }
+}
+
+/* Immersive Showroom page logo - always white, no mix-blend-mode */
+/* Override all themes with high specificity */
+.logo-v4-fixed-container.immersive-showroom-logo,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-white,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-black,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-blend {
+  mix-blend-mode: normal !important;
+}
+
+.logo-v4-fixed-container.immersive-showroom-logo .navbar-v4-logo-svg,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-white .navbar-v4-logo-svg,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-black .navbar-v4-logo-svg,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-blend .navbar-v4-logo-svg {
+  filter: none !important;
+}
+
+.logo-v4-fixed-container.immersive-showroom-logo .navbar-v4-logo-svg path,
+.logo-v4-fixed-container.immersive-showroom-logo .navbar-v4-logo-svg g path,
+.logo-v4-fixed-container.immersive-showroom-logo .navbar-v4-logo-svg *,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-white .navbar-v4-logo-svg path,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-black .navbar-v4-logo-svg path,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-blend .navbar-v4-logo-svg path {
+  fill: rgba(255, 255, 255, 1) !important;
 }
 
 /* Menu container với blend mode */
@@ -381,12 +406,12 @@
 /* Immersive button container KHÔNG có blend mode cho background */
 .immersive-v4-fixed-container {
   position: fixed;
-  top: 12.5px;
+  top: 12px;
   right: 2.5%;
   z-index: 201;
   pointer-events: auto;
-  /* Match immersive-v4-button height (bodytext-6 + padding 18px 36px) */
-  height: 49px;
+  /* Button centered in 69px navbar: 12px top + 45px button + 12px bottom */
+  height: 45px;
   display: flex;
   align-items: center;
   /* opacity: 0.75; */
@@ -690,9 +715,9 @@
   cursor: pointer;
   transition: all 0.5s ease;
   text-transform: capitalize;
-  /* Calculated from bodytext-6 (13px) + ShineGlassButton padding (18px 36px) */
+  /* Button centered in 69px navbar: 12px top + 45px button + 12px bottom */
   width: 212px;
-  height: 49px;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -707,11 +732,11 @@
 /* Container riêng cho text với blend mode */
 .immersive-v4-text-container {
   position: fixed;
-  top: 12.5px;
+  top: 12px;
   right: 2.5%;
-  /* Match immersive-v4-button size (bodytext-6 + padding 18px 36px) */
+  /* Button centered in 69px navbar: 12px top + 45px button + 12px bottom */
   width: 212px;
-  height: 49px;
+  height: 45px;
   z-index: 203; /* Cao nhất để ở trên cùng */
   mix-blend-mode: difference;
   pointer-events: none;
@@ -767,11 +792,11 @@
 /* Container riêng cho border với blend mode */
 .immersive-v4-border-container {
   position: fixed;
-  top: 12.5px;
+  top: 12px;
   right: 2.5%;
-  /* Match immersive-v4-button size (bodytext-6 + padding 18px 36px) */
+  /* Button centered in 69px navbar: 12px top + 45px button + 12px bottom */
   width: 212px;
-  height: 49px;
+  height: 45px;
   z-index: 202; /* Cao hơn button nhưng thấp hơn text */
   mix-blend-mode: difference;
   pointer-events: none;

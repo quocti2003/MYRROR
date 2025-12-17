@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import AppRoutes from "@/routes/AppRoutes";
 import ErrorBoundary from "@components/errorBoundary/ErrorBoundary";
 import { AuthProvider } from "@/context/AuthContext";
+import { ImmersiveModalProvider } from "@/contexts/ImmersiveModalContext";
 import "@styles/fonts.css";
 import "@styles/typography.css";
 
@@ -19,9 +20,11 @@ function App() {
     <BrowserRouter>
       <ErrorBoundary>
         <AuthProvider>
-          <AppRoutes />
-          <Analytics />
-          <SpeedInsights />
+          <ImmersiveModalProvider>
+            <AppRoutes />
+            <Analytics />
+            <SpeedInsights />
+          </ImmersiveModalProvider>
         </AuthProvider>
       </ErrorBoundary>
     </BrowserRouter>

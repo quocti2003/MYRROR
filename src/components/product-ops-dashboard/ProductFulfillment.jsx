@@ -19,7 +19,8 @@ const ProductFulfillment = ({ productId, onComplete, onCancel, initialData = {} 
     specifications: initialData.specifications || {},
     tags: initialData.tags || [],
     category: initialData.category || '',
-    collection: initialData.collection || ''
+    collection: initialData.collection || '',
+    model3dId: initialData.model3dId || ''
   });
 
   const [saving, setSaving] = useState(false);
@@ -407,6 +408,27 @@ const ProductFulfillment = ({ productId, onComplete, onCancel, initialData = {} 
               ))}
             </select>
           </div>
+        </div>
+
+        {/* 3D Model ID */}
+        <div>
+          <label className="admin-label">
+            3D Model ID (iJewel Drive)
+          </label>
+          <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.75rem', color: '#64748b' }}>
+            Enter the iJewel Drive model ID for 3D viewer display
+          </p>
+          <input
+            type="text"
+            value={formData.model3dId}
+            onChange={(e) => handleChange('model3dId', e.target.value)}
+            placeholder="e.g., RUsrBi-vQey2vExitZOYig"
+            maxLength="100"
+            className="admin-input"
+          />
+          <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.75rem', color: '#64748b' }}>
+            Find model ID from iJewel Drive URL or dashboard
+          </p>
         </div>
 
         {/* Short Description */}

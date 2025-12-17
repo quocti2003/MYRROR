@@ -11,25 +11,51 @@
   overflow: hidden;
 }
 
-/* Image variant (Return & Exchange) */
+/* Image variant base styles */
 .support-hero-section--image {
-  background-image: url("__CDN_URL__/support/section_1.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: grayscale(100%);
 }
 
-.support-hero-section--image::before {
+/* Tab-specific hero images */
+.support-hero-section--return-exchange {
+  background-image: url("__CDN_URL__/support/return-exchange_1920x600.webp");
+}
+
+.support-hero-section--sizing-guide {
+  background-image: url("__CDN_URL__/support/sizing-guide_1920x600.webp");
+}
+
+.support-hero-section--warranty-info {
+  background-image: url("__CDN_URL__/support/warranty-legacy_1920x600.webp");
+}
+
+/* FAQs uses gradient like services-section1 */
+.support-hero-section--faqs {
+  background-image: none;
+}
+
+.support-hero-section--faqs::before {
   content: "";
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #00000094;
-  z-index: 1;
+  top: -50px;
+  left: -50px;
+  right: -50px;
+  bottom: -50px;
+  background: radial-gradient(
+    114.53% 100% at 50% 0%,
+    #0b0b0b 0%,
+    #1b0008 10%,
+    #780a28 30%,
+    #bc224c 50%,
+    #f69ab3 70%,
+    #f6f6f6 85%
+  );
+  filter: blur(50px);
+  z-index: 0;
 }
+
 
 /* Gradient variant (Sizing Guide, Warranty, FAQs) */
 .support-hero-section--gradient::before {

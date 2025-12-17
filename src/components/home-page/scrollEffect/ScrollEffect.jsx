@@ -42,12 +42,6 @@ export default function ScrollEffect({ isAnyOverlayOpen = false }) {
   const scrollEffectHeight = 250; // vh for scroll effect - reduced to make mirror introduce start earlier
   const mirrorIntroduceHeight = 600; // vh for mirror introduce
 
-  // Handle immersive button click
-  const handleImmersiveClick = () => {
-    // TODO: Navigate to immersive showroom or open immersive experience
-    console.log("Immersive button clicked");
-  };
-
   // Detect scroll to collapse immersive button
   useEffect(() => {
     const handleScroll = () => {
@@ -972,7 +966,6 @@ export default function ScrollEffect({ isAnyOverlayOpen = false }) {
             theme={arrowTheme === "white" ? "dark" : "light"}
             icon="globe"
             isCollapsed={isImmersiveCollapsed}
-            onClick={handleImmersiveClick}
           >
             Immersive Showroom
           </GlassThemeButton>

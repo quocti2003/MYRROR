@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You Card Editor</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background-color: #e8e8e8;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Left Panel - Controls */
+    .controls-panel {
+      width: 300px;
+      background: #fff;
+      padding: 25px;
+      box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+      overflow-y: auto;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+    }
+
+    .controls-panel h2 {
+      font-size: 20px;
+      margin-bottom: 25px;
+      color: #333;
+      text-align: center;
+      border-bottom: 2px solid #d4af37;
+      padding-bottom: 15px;
+    }
+
+    .control-group {
+      margin-bottom: 20px;
+    }
+
+    .control-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .control-group input[type="text"],
+    .control-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .control-group input:focus,
+    .control-group textarea:focus {
+      outline: none;
+      border-color: #d4af37;
+    }
+
+    .control-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .qr-upload {
+      width: 100%;
+      padding: 15px;
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #fafafa;
+    }
+
+    .qr-upload:hover {
+      border-color: #d4af37;
+      background: #fff9e6;
+    }
+
+    .qr-upload input {
+      display: none;
+    }
+
+    .qr-preview {
+      max-width: 120px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #d4af37 0%, #b8962e 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+    }
+
+    /* Right Panel - Preview */
+    .preview-panel {
+      flex: 1;
+      margin-left: 300px;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: repeating-conic-gradient(#e0e0e0 0% 25%, #f5f5f5 0% 50%) 50% / 20px 20px;
+    }
+
+    /* The Card */
+    .thank-you-card {
+      position: relative;
+      display: inline-block;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+
+    /* Background Image - defines the card size */
+    .card-bg-image {
+      display: block;
+      width: 800px;
+      height: auto;
+    }
+
+    /* Content Area - centered inside the frame */
+    .card-content {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      text-align: center;
+      width: 65%;
+      padding: 30px 25px;
+    }
+
+    .greeting-text {
+      font-size: 18px;
+      color: #444;
+      line-height: 1.8;
+      margin-bottom: 15px;
+    }
+
+    .recipient-name {
+      font-size: 28px;
+      font-weight: 700;
+      color: #d4af37;
+      font-style: italic;
+      min-height: 40px;
+      border-bottom: 2px solid #d4af37;
+      display: inline-block;
+      padding: 0 20px 5px;
+      margin: 10px 0 20px;
+    }
+
+    .closing-text {
+      font-size: 16px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: #d4af37;
+      margin: 25px auto;
+    }
+
+    .care-instruction {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
+    }
+
+    .qr-code {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto;
+    }
+
+    .qr-code img {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Controls Panel -->
+  <div class="controls-panel">
+    <h2>Thank You Card</h2>
+
+    <div class="control-group">
+      <label>Recipient Name</label>
+      <input type="text" id="recipientName" value="Valued Customer" oninput="updateCard()">
+    </div>
+
+    <div class="control-group">
+      <label>Greeting Message</label>
+      <textarea id="greetingText" oninput="updateCard()">Thank you for choosing Mirror Diamond. Your trust means everything to us.</textarea>
+    </div>
+
+    <div class="control-group">
+      <label>Closing Message</label>
+      <textarea id="closingText" oninput="updateCard()">We hope this piece brings you joy for years to come.</textarea>
+    </div>
+
+    <div class="control-group">
+      <label>QR Code URL</label>
+      <input type="text" id="qrUrl" value="https://www.mirrorfuturediamond.com/f6a7b8c9-d0e1-2f3a-4b5c-6d7e8f9a0b1c" oninput="updateQR()">
+      <small style="color: #888; font-size: 11px; margin-top: 5px; display: block;">QR code tự động generate từ URL</small>
+    </div>
+
+    <button class="btn" onclick="printCard()">Print Card</button>
+    <button class="btn" style="background: #555;" onclick="downloadCard()">Download as Image</button>
+  </div>
+
+  <!-- Preview Panel -->
+  <div class="preview-panel">
+    <div class="thank-you-card" id="cardPreview">
+      <!-- Background Image -->
+      <img src="thank_you_card_design -01.png" alt="" class="card-bg-image">
+
+      <!-- Content -->
+      <div class="card-content">
+        <div class="greeting-text" id="displayGreeting">
+          Thank you for choosing Mirror Diamond. Your trust means everything to us.
+        </div>
+
+        <div class="recipient-name" id="displayName">Valued Customer</div>
+
+        <div class="closing-text" id="displayClosing">
+          We hope this piece brings you joy for years to come.
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="care-instruction">Care Instruction Guide</div>
+
+        <div class="qr-code">
+          <img id="displayQR" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.mirrorfuturediamond.com/f6a7b8c9-d0e1-2f3a-4b5c-6d7e8f9a0b1c" alt="QR Code">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- html2canvas for export -->
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+  <script>
+    function updateCard() {
+      document.getElementById('displayName').textContent = document.getElementById('recipientName').value || '___________';
+      document.getElementById('displayGreeting').textContent = document.getElementById('greetingText').value;
+      document.getElementById('displayClosing').textContent = document.getElementById('closingText').value;
+    }
+
+    function updateQR() {
+      const url = document.getElementById('qrUrl').value;
+      const qrImg = document.getElementById('displayQR');
+      qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(url);
+    }
+
+    function printCard() {
+      const qrUrl = document.getElementById('qrUrl').value;
+      const qrImageSrc = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(qrUrl);
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+        <head>
+          <title>Print Thank You Card</title>
+          <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              min-height: 100vh;
+              font-family: 'Georgia', 'Times New Roman', serif;
+            }
+            .thank-you-card {
+              position: relative;
+              display: inline-block;
+            }
+            .card-bg-image {
+              display: block;
+              width: 800px;
+              height: auto;
+            }
+            .card-content {
+              position: absolute;
+              top: 45%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              z-index: 2;
+              text-align: center;
+              width: 65%;
+              padding: 30px 25px;
+            }
+            .greeting-text {
+              font-size: 18px;
+              color: #444;
+              line-height: 1.8;
+              margin-bottom: 15px;
+            }
+            .recipient-name {
+              font-size: 28px;
+              font-weight: 700;
+              color: #d4af37;
+              font-style: italic;
+              min-height: 40px;
+              border-bottom: 2px solid #d4af37;
+              display: inline-block;
+              padding: 0 20px 5px;
+              margin: 10px 0 20px;
+            }
+            .closing-text {
+              font-size: 16px;
+              color: #555;
+              line-height: 1.6;
+            }
+            .divider {
+              width: 60px;
+              height: 2px;
+              background: #d4af37;
+              margin: 25px auto;
+            }
+            .care-instruction {
+              font-size: 14px;
+              font-weight: 600;
+              color: #333;
+              text-transform: uppercase;
+              letter-spacing: 2px;
+              margin-bottom: 15px;
+            }
+            .qr-code {
+              width: 120px;
+              height: 120px;
+              margin: 0 auto;
+            }
+            .qr-code img {
+              width: 100%;
+              height: 100%;
+            }
+            @media print {
+              body { margin: 0; }
+              .thank-you-card { box-shadow: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="thank-you-card">
+            <img src="thank_you_card_design -01.png" alt="" class="card-bg-image">
+            <div class="card-content">
+              <div class="greeting-text">${document.getElementById('displayGreeting').textContent}</div>
+              <div class="recipient-name">${document.getElementById('displayName').textContent}</div>
+              <div class="closing-text">${document.getElementById('displayClosing').textContent}</div>
+              <div class="divider"></div>
+              <div class="care-instruction">Care Instruction Guide</div>
+              <div class="qr-code">
+                <img src="${qrImageSrc}">
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+      setTimeout(() => {
+        printWindow.print();
+      }, 500);
+    }
+
+    function downloadCard() {
+      const card = document.getElementById('cardPreview');
+
+      html2canvas(card, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'thank-you-card.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }).catch(err => {
+        alert('Error generating image. Please try again.');
+        console.error(err);
+      });
+    }
+
+    // Initialize
+    updateCard();
+  </script>
+</body>
+</html>
