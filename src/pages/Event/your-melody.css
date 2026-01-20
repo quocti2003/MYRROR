@@ -1,0 +1,656 @@
+/* ============================================
+   YOUR MELODY PAGE - Step 2
+   ============================================ */
+
+.your-melody {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Background - same as place-note-new */
+.your-melody__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(121.12% 87.58% at 50% 50%, #FF87A8 0%, rgba(255, 255, 255, 0.50) 56.25%, rgba(246, 246, 246, 0.00) 100%),
+    linear-gradient(180deg, #FFF6F6 0%, #FFDCE5 12.53%, #FFEFF6 25.06%, #FFF8F8 37.53%, rgba(255, 241, 241, 0.91) 50%, #FFE6EC 63.82%, #FFEDFE 77.64%, #F6F6F6 100%);
+  z-index: 0;
+}
+
+/* Side glow overlay - same as place-note-new */
+.your-melody::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(270deg, #FFF 0%, rgba(255, 255, 255, 0.00) 15%, rgba(255, 255, 255, 0.00) 85%, #FFF 100%);
+  z-index: 5;
+  pointer-events: none;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  mask: linear-gradient(90deg, black 0%, transparent 15%, transparent 85%, black 100%);
+  -webkit-mask: linear-gradient(90deg, black 0%, transparent 15%, transparent 85%, black 100%);
+}
+
+/* Header - top left */
+.your-melody__header {
+  position: absolute;
+  top: calc(100 / 982 * 100vh);
+  left: 8vw;
+  max-width: 475px;
+  z-index: 10;
+}
+
+.your-melody__title {
+  color: var(--Pink, #BC224C);
+  font-size: 48px;
+  line-height: 105%;
+  margin: 0 0 16px 0;
+}
+
+.your-melody__description {
+  color: var(--Black, #0B0B0B);
+  width: 345px;
+  height: 48px;
+}
+
+/* Main content - same position as your-note */
+.your-melody__main {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.your-melody__staff-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Music staff - height matches 5 lines (8px) + 4 gaps (80px) = 360px */
+.your-melody__staff {
+  position: relative;
+  width: 100%;
+  height: 360px;
+}
+
+/* Staff lines container */
+.your-melody__lines {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  width: 100vw;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Staff 2 - hidden by default (desktop/tablet) */
+.your-melody__lines--staff2 {
+  display: none;
+}
+
+/* Individual staff line */
+.your-melody__line {
+  width: 100%;
+  height: 8px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #FF92B0 0%, #FFE1E9 24.04%, rgba(255, 232, 238, 0.50) 50.48%, #FFAFC5 71.15%, #FF8FAE 78.85%, #C4637E 100%);
+  box-shadow: 0 1px 1px 0 #BC224C;
+  pointer-events: none;
+  /* Line draw animation */
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: lineDrawIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Staggered line animation delays - staff 1 */
+.your-melody__lines--staff1 .your-melody__line:nth-child(1) { animation-delay: 0.1s; }
+.your-melody__lines--staff1 .your-melody__line:nth-child(2) { animation-delay: 0.15s; }
+.your-melody__lines--staff1 .your-melody__line:nth-child(3) { animation-delay: 0.2s; }
+.your-melody__lines--staff1 .your-melody__line:nth-child(4) { animation-delay: 0.25s; }
+.your-melody__lines--staff1 .your-melody__line:nth-child(5) { animation-delay: 0.3s; }
+
+/* Staggered line animation delays - staff 2 */
+.your-melody__lines--staff2 .your-melody__line:nth-child(1) { animation-delay: 0.35s; }
+.your-melody__lines--staff2 .your-melody__line:nth-child(2) { animation-delay: 0.4s; }
+.your-melody__lines--staff2 .your-melody__line:nth-child(3) { animation-delay: 0.45s; }
+.your-melody__lines--staff2 .your-melody__line:nth-child(4) { animation-delay: 0.5s; }
+.your-melody__lines--staff2 .your-melody__line:nth-child(5) { animation-delay: 0.55s; }
+
+@keyframes lineDrawIn {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* Solock decoration - left side, show 20% */
+/* Staff should be vertically centered within solock */
+.your-melody__solock {
+  position: fixed;
+  left: 0;
+  top: 49%;
+  transform: translate(-40%, -50%); /* Show 20%, hide 80% on left */
+  height: 600px; /* staff height (360px) × 1.67 */
+  width: auto;
+  z-index: 4;
+  pointer-events: none;
+  animation: solockSlideInYourMelody 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Solock slide-in animation for your-melody desktop - show 20% */
+@keyframes solockSlideInYourMelody {
+  0% {
+    opacity: 0;
+    transform: translate(-100%, -50%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-40%, -50%); /* Show 20% on desktop */
+  }
+}
+
+/* Diamond notes */
+.your-melody__note {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
+.your-melody__note-img {
+  position: relative;
+  z-index: 2;
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+}
+
+/* Note name label below the diamond */
+.your-melody__note-name {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #BC224C;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+}
+
+/* Ripple effect behind note image */
+.your-melody__note .ripple-effect-area {
+  z-index: 1;
+}
+
+/* Ledger line bar behind Đồ note (position 0) */
+.your-melody__note--position-do::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 99px;
+  height: calc(8 / 982 * 100vh);
+  border-radius: calc(8 / 982 * 100vh);
+  background: linear-gradient(180deg, #FF92B0 0%, #FFE1E9 24.04%, rgba(255, 232, 238, 0.50) 50.48%, #FFAFC5 71.15%, #FF8FAE 78.85%, #C4637E 100%);
+  box-shadow: 0 1px 1px 0 #BC224C;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* User's note - slightly larger with glow */
+.your-melody__note--user {
+  z-index: 10;
+}
+
+/* Ensure ripple can expand beyond container - same as your-note page */
+/* Using !important to override RippleEffect's injected overflow: hidden */
+.your-melody__note--user .ripple-effect-area {
+  overflow: visible !important;
+}
+
+.your-melody__note-img--user {
+  width: 90px;
+  height: 90px;
+  filter: drop-shadow(0 4px 16px rgba(200, 50, 100, 0.3));
+}
+
+/* Playing highlight effect */
+.your-melody__note--playing {
+  z-index: 15;
+}
+
+.your-melody__note--playing .your-melody__note-img {
+  filter: drop-shadow(0 0 20px rgba(255, 146, 176, 0.8))
+          drop-shadow(0 0 40px rgba(255, 146, 176, 0.6));
+}
+
+/* Playing ripple - single ring, matches idle ripple style */
+/* Using ::after to avoid conflict with ::before ledger line on position-do notes */
+.your-melody__note--playing::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 35%,
+    rgba(255, 255, 255, 0.03) 42%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.1) 58%,
+    rgba(255, 255, 255, 0.16) 65%,
+    rgba(255, 255, 255, 0.25) 72%,
+    rgba(255, 255, 255, 0.38) 78%,
+    rgba(255, 255, 255, 0.55) 84%,
+    rgba(255, 255, 255, 0.75) 89%,
+    rgba(255, 255, 255, 0.9) 93%,
+    rgba(255, 255, 255, 0.6) 96%,
+    rgba(255, 255, 255, 0.25) 98%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+  z-index: -1;
+  animation: playingRipplePulse 0.4s ease-out forwards;
+}
+
+@keyframes playingRipplePulse {
+  0% {
+    width: 40px;
+    height: 40px;
+    opacity: 0.8;
+  }
+  100% {
+    width: 160px;
+    height: 160px;
+    opacity: 0;
+  }
+}
+
+/* ===== ENTRANCE ANIMATIONS ===== */
+/* Hidden state - for notes waiting to animate in */
+.your-melody__note--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Header hidden state */
+.your-melody__header--hidden {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+/* Header slide-in animation */
+.your-melody__header--animate {
+  animation: headerSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes headerSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* User's note fly-in animation (from center to right) */
+.your-melody__note--animate-fly {
+  animation: userNoteFlyIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes userNoteFlyIn {
+  0% {
+    opacity: 0;
+    transform: translate(-200%, -50%) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Random notes slide-up animation */
+.your-melody__note--animate-slide {
+  animation: noteSlideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes noteSlideUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 80px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Footer with navigation */
+.your-melody__footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 24px 24px 48px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* Arrow buttons */
+.your-melody__arrow {
+  position: fixed;
+  bottom: 24px;
+  z-index: 1000;
+}
+
+.your-melody__arrow--left {
+  left: 2.5%;
+}
+
+.your-melody__arrow--right {
+  right: 2.5%;
+}
+
+.your-melody__arrow .glass-theme-btn-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Hint text - shown on all breakpoints */
+.your-melody__hint {
+  display: block;
+  width: 100%;
+  color: var(--Pink, #BC224C);
+  text-align: center;
+}
+
+/* Action buttons container - hint on top row, buttons on bottom row */
+.your-melody__actions {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 24px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  pointer-events: auto;
+  z-index: 1000;
+}
+
+/* Disabled state for buttons */
+.your-melody__actions .glass-theme-button.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* Dark theme button text color - black text */
+.your-melody__actions .glass-theme-button--dark {
+  color: #0B0B0B;
+}
+
+/* Entrance animation - fade in (lines animate separately) */
+.your-melody--entering {
+  animation: yourMelodyFadeIn 0.3s ease-out forwards;
+}
+
+@keyframes yourMelodyFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   YOUR MELODY - TABLET RESPONSIVE (≤1024px)
+   Same layout as mobile: 2 staffs, hide header
+   ============================================ */
+
+@media (max-width: 1024px) {
+  /* Reset main container for tablet/mobile - no centering */
+  .your-melody__main {
+    top: 0;
+    transform: none;
+  }
+
+  /* Hide header on tablet */
+  .your-melody__header {
+    display: none;
+  }
+
+  /* Staff 1 - tablet specs - centered */
+  /* Total height = 200 + 150 + 200 = 550, offset = (1194 - 550) / 2 = 322 */
+  .your-melody__lines--staff1 {
+    top: calc(322 / 1194 * 100vh);
+    height: calc(200 / 1194 * 100vh);
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+    gap: 0;
+  }
+
+  /* Staff height auto */
+  .your-melody__staff {
+    height: auto;
+  }
+
+  /* Staff 2 - positioned below staff 1 with 150/1194 gap */
+  /* Staff 2 top = 322 + 200 + 150 = 672 (centered) */
+  .your-melody__lines--staff2 {
+    display: flex;
+    top: calc(672 / 1194 * 100vh);
+    height: calc(200 / 1194 * 100vh);
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+    gap: 0;
+  }
+
+  .your-melody__note-img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .your-melody__note-img--user {
+    width: 70px;
+    height: 70px;
+  }
+
+  .your-melody__note-name {
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  /* Ledger line bar - tablet */
+  .your-melody__note--position-do::before {
+    width: 77px;
+    height: calc(7 / 768 * 100vh);
+    border-radius: calc(7 / 768 * 100vh);
+  }
+
+  .your-melody__footer {
+    padding: 16px 12px 24px;
+  }
+
+/* Solock - equal to TOP staff height, fully visible */
+  .your-melody__solock {
+    top: calc(422 / 1194 * 100vh); /* Staff1 center = (322 + 100) / 1194 (centered) */
+    transform: translate(-20%, -50%); /* Show 100%, only center vertically */
+    height: calc(320 / 1194 * 100vh); /* = staff1 height */
+    animation: solockSlideInTabletYourMelody 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes solockSlideInTabletYourMelody {
+    0% {
+      opacity: 0;
+      transform: translate(-100%, -50%);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-20%, -50%); /* Show 100% on tablet */
+    }
+  }
+
+  /* Action buttons - align with back/next buttons */
+  .your-melody__actions {
+    bottom: 24px;
+  }
+}
+
+/* ============================================
+   YOUR MELODY - MOBILE RESPONSIVE (≤480px)
+   ============================================ */
+
+@media (max-width: 480px) {
+  /* Hide header on mobile */
+  .your-melody__header {
+    display: none;
+  }
+
+  /* Staff 1 - mobile specs - centered */
+  /* Total height = 200 + 100 + 200 = 500, offset = (844 - 500) / 2 = 172 */
+  .your-melody__lines--staff1 {
+    top: calc(172 / 844 * 100vh);
+    height: calc(200 / 844 * 100vh);
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+    gap: 0; /* Remove fixed gap, use space-between */
+  }
+
+  /* Staff height for 2 staffs */
+  .your-melody__staff {
+    height: auto;
+  }
+
+  /* Staff 2 - positioned below staff 1 with 100/844 gap */
+  /* Staff 2 top = 172 + 200 + 100 = 472 (centered) */
+  .your-melody__lines--staff2 {
+    display: flex;
+    top: calc(472 / 844 * 100vh);
+    height: calc(200 / 844 * 100vh);
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+    gap: 0;
+  }
+
+  /* Note positions handled by JS - no scaling needed */
+
+  .your-melody__note-img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .your-melody__note-img--user {
+    width: 60px;
+    height: 60px;
+  }
+
+  .your-melody__note-name {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  /* Ledger line bar - mobile */
+  .your-melody__note--position-do::before {
+    width: 66px;
+    height: calc(6 / 844 * 100vh);
+    border-radius: calc(6 / 844 * 100vh);
+  }
+
+  .your-melody__footer {
+    padding: 16px 12px 24px;
+  }
+
+  /* Actions: column layout to stack hint text + button */
+  .your-melody__actions {
+    bottom: 24px;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Hide "Nghe nốt của tôi" button on mobile */
+  .your-melody__actions .glass-theme-button--event_dark {
+    display: none;
+  }
+
+  /* Show hint text on mobile */
+  .your-melody__hint {
+    display: block;
+    width: 100%;
+    color: var(--Pink, #BC224C);
+    text-align: center;
+  }
+
+  /* Staff line height for mobile */
+  .your-melody__line {
+    height: 6px;
+    border-radius: 6px;
+  }
+
+  /* Solock - equal to TOP staff height, show 40% */
+  .your-melody__solock {
+    top: calc(265 / 844 * 100vh); /* Staff1 center = (172 + 100) / 844 (centered) */
+    transform: translate(-40%, -50%); /* Show 40%, hide 60% on left */
+    height: calc(360 / 844 * 100vh); /* = staff1 height */
+    animation: solockSlideInMobileYourMelody 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes solockSlideInMobileYourMelody {
+    0% {
+      opacity: 0;
+      transform: translate(-100%, -50%);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-40%, -50%); /* Show 40% on mobile */
+    }
+  }
+}

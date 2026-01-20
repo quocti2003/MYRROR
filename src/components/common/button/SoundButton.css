@@ -1,15 +1,17 @@
-/* Sound Button */
+/* Sound Button - Same position as ImmersiveButton */
 .sound-button {
-  position: absolute;
-  bottom: 48px;
-  right: 50px;
-  z-index: 10;
+  position: fixed;
+  bottom: 24px;
+  right: 2.5%;
+  z-index: 1000;
+  pointer-events: auto;
+  display: flex;
 }
 
 .sound-button button {
   display: inline-flex;
-  width: 57px;
-  height: 57px;
+  width: 54px;
+  height: 54px;
   padding: 0;
   justify-content: center;
   align-items: center;
@@ -20,13 +22,14 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ffffff;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
   position: relative;
   mix-blend-mode: difference;
 }
 
 .sound-button button:hover {
   background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 /* Wave Container - overflow hidden to crop the wave */
@@ -86,94 +89,10 @@
 
 /* ============= RESPONSIVE DESIGN ============= */
 
-/* Full HD Desktop */
-@media (min-width: 1920px) and (min-height: 1080px) {
-  .sound-button button {
-    width: 57px;
-    height: 57px;
-  }
-
-  .wave-container {
-    width: 26px;
-    height: 26px;
-  }
-
-  .sound-wave-svg {
-    width: 130px;
-    height: 26px;
-  }
-}
-
-/* Small Laptop (1023px and below) */
-@media (max-width: 1023px) {
-  .sound-button {
-    bottom: 24px;
-  }
-
-  .sound-button button {
-    width: 57px;
-    height: 57px;
-  }
-
-  .wave-container {
-    width: 26px;
-    height: 26px;
-  }
-
-  .sound-wave-svg {
-    width: 130px;
-    height: 26px;
-  }
-}
-
 /* Tablet and Mobile (768px and below) */
 @media (max-width: 768px) {
   .sound-button {
-    right: 25px;
-  }
-
-  .sound-button button {
-    width: 48px;
-    height: 48px;
-  }
-
-  .wave-container {
-    width: 22px;
-    height: 22px;
-  }
-
-  .sound-wave-svg {
-    width: 110px;
-    height: 22px;
-  }
-}
-
-/* Large Mobile (480px and below) */
-@media (max-width: 480px) {
-  .sound-button {
-    right: 20px;
-  }
-
-  .sound-button button {
-    width: 48px;
-    height: 48px;
-  }
-
-  .wave-container {
-    width: 22px;
-    height: 22px;
-  }
-
-  .sound-wave-svg {
-    width: 110px;
-    height: 22px;
-  }
-}
-
-/* Small Mobile (360px and below) */
-@media (max-width: 360px) {
-  .sound-button {
-    right: 15px;
+    bottom: 24px;
   }
 
   .sound-button button {

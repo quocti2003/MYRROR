@@ -1,0 +1,540 @@
+/**
+ * EventChooseShapePage Styles
+ * Choose diamond shape page with 3D elliptical orbits
+ */
+
+.event-choose-shape {
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height */
+  background: #f6f6f6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* iOS Safari: prevent rubber band scrolling on mobile */
+@media (max-width: 480px) {
+  .event-choose-shape {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
+    touch-action: pan-x pan-y;
+  }
+}
+
+/* .event-choose-shape::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 3468px;
+  background: radial-gradient(56.91% 41.15% at 50% 41.15%, #FADEE6 0%, rgba(255, 255, 255, 0.50) 56.25%, rgba(246, 246, 246, 0.00) 100%);
+  pointer-events: none;
+  z-index: 0;
+} */
+
+
+/* Back Button - Fixed bottom left */
+.event-choose-shape__back {
+  position: fixed;
+  left: 2.5%;
+  bottom: 24px;
+  z-index: 1000;
+}
+
+.event-choose-shape__back .glass-theme-btn-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Title */
+.event-choose-shape__title {
+  color: #000;
+  text-align: center;
+  z-index: 10;
+  margin-top: 160px;
+}
+
+/* Main Content Area */
+.event-choose-shape__main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 80px;
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  pointer-events: none;
+}
+
+/* Center Diamond Display */
+.event-choose-shape__center {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35vw;
+}
+
+.event-choose-shape__diamond {
+  position: relative;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Exit animation - shrink down and fade out */
+.event-choose-shape__diamond--exit {
+  position: absolute;
+  animation: diamondExit 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Enter animation - grow up and fade in */
+.event-choose-shape__diamond--enter {
+  animation: diamondEnter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes diamondExit {
+  0% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.3) translateY(250px);
+    opacity: 0;
+  }
+}
+
+@keyframes diamondEnter {
+  0% {
+    transform: scale(0.3) translateY(200px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.event-choose-shape__diamond-img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Entrance Animation - Zoom from center */
+.event-choose-shape__main--entering {
+  animation: zoomFromCenterMain 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.event-choose-shape__orbits-container--entering {
+  animation: zoomFromCenter 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes zoomFromCenterMain {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes zoomFromCenter {
+  0% {
+    transform: translateX(-50%) scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Orbits Container */
+.event-choose-shape__orbits-container {
+  position: absolute;
+  top : 60%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 115vw;
+  height: 18.9vw; /* Proportional to width: 280/1700 * 115vw */
+  z-index: 5;
+}
+
+.event-choose-shape__orbits-container::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150%;
+  height: 150%;
+  opacity: 0.55;
+  background: radial-gradient(50% 50% at 50% 50%, #BC224C 0%, #BC224C 15%, rgba(188, 34, 76, 0.35) 45%, rgba(246, 246, 246, 0.00) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* SVG Orbits */
+.event-choose-shape__orbits-svg {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 115vw;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 20px rgba(188, 34, 76, 0.3));
+}
+
+/* Shapes on Orbits */
+.event-choose-shape__orbit-shapes {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 115vw;
+  height: 100%;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.event-choose-shape__orbit-shape {
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: filter 0.3s ease,
+              opacity 0.3s ease,
+              transform 0.3s ease;
+  /* Prevent text/image selection */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+/* Only apply hover effects on devices with hover capability (desktop) */
+@media (hover: hover) {
+  .event-choose-shape__orbit-shape:hover {
+    transform: translate(-50%, -100%) scale(1.1);
+  }
+}
+
+.event-choose-shape__orbit-shape-img {
+  width: auto;
+  max-height: 55px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+  /* Prevent image drag/selection */
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Selected shape - no blur, highlighted */
+.event-choose-shape__orbit-shape--selected .event-choose-shape__orbit-shape-img {
+  opacity: 1;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+  transform: scale(1.2);
+}
+
+/* Blurred shapes */
+.event-choose-shape__orbit-shape--blurred .event-choose-shape__orbit-shape-img {
+  opacity: 0.5;
+}
+
+/* Only apply hover effects on devices with hover capability (desktop) */
+@media (hover: hover) {
+  .event-choose-shape__orbit-shape--blurred:hover .event-choose-shape__orbit-shape-img {
+    opacity: 0.8;
+    filter: blur(0px) drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+  }
+}
+
+/* Idle Ripple Effect - centered on the next shape */
+.event-choose-shape__idle-ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.event-choose-shape__idle-ripple-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    #F4A5B8 0%,
+    rgba(244, 165, 184, 0.00) 54.33%,
+    rgba(255, 255, 255, 0.6) 93.27%,
+    rgba(255, 255, 255, 0.00) 100%
+  );
+  opacity: 0.7;
+  animation: idleRipplePulse 3s ease-out infinite;
+}
+
+.event-choose-shape__idle-ripple-ring:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.event-choose-shape__idle-ripple-ring:nth-child(2) {
+  animation-delay: 0.6s;
+}
+
+.event-choose-shape__idle-ripple-ring:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
+@keyframes idleRipplePulse {
+  0% {
+    width: 40px;
+    height: 40px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  80% {
+    opacity: 0.25;
+  }
+  100% {
+    width: 250px;
+    height: 250px;
+    opacity: 0;
+  }
+}
+
+/* Bottom Section */
+.event-choose-shape__bottom {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 48px;
+  z-index: 10;
+}
+
+/* Place your note - Desktop: Top left corner */
+.event-choose-shape__note--desktop {
+  position: fixed;
+  top: 120px;
+  left: 48px;
+  max-width: 380px;
+  z-index: 10;
+}
+
+.event-choose-shape__note-title {
+  color: var(--Pink, #BC224C);
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 105%;
+  margin-bottom: 12px;
+  white-space: nowrap;
+}
+
+.event-choose-shape__note-text {
+  color: var(--Black, #0B0B0B);
+  max-width: 345px;
+}
+
+/* Choose the shape text - fixed bottom center, aligned with back/next buttons */
+.event-choose-shape__select-text {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #BC224C;
+  text-align: center;
+  z-index: 1000;
+  /* Match button height to vertically center text */
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1024px) {
+  .event-choose-shape__select-text {
+    bottom: 24px;
+    height: 46px;
+  }
+}
+
+/* Spacer - no longer needed */
+.event-choose-shape__spacer {
+  display: none;
+}
+
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .event-choose-shape__main {
+    padding: 0 20px;
+  }
+
+  .event-choose-shape__center {
+    width: 80vw;
+  }
+
+  .event-choose-shape__diamond-img {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+  }
+
+  .event-choose-shape__orbits-container {
+    bottom: 120px;
+    max-width: 600px;
+    height: 180px;
+  }
+
+  .event-choose-shape__orbits-svg {
+    top: 30%; /* Xịch xuống từ 0 → 30% */
+    width: 140vw; /* To ra từ 115vw → 140vw */
+    transform: translateX(-50%) scale(1.3); /* Scale thêm 1.3x */
+  }
+
+  .event-choose-shape__orbit-shapes {
+    top: 30%; /* Match với SVG top position */
+    width: 140vw; /* Match với SVG width */
+    transform: translateX(-50%) scale(1.3); /* Match với SVG scale */
+  }
+
+  /* Adjust gradient overlay to match orbits position */
+  .event-choose-shape__orbits-container::before {
+    top: 65%; /* Di chuyển xuống để match với orbits (30% + offset) */
+    width: 200%; /* Rộng hơn để spread gradient */
+    height: 200%; /* Cao hơn để spread gradient */
+    opacity: 0.35; /* Giảm opacity từ 0.55 → 0.35 để nhẹ hơn */
+    transform: translate(-50%, -50%) scale(1.3); /* Scale match với orbits */
+  }
+
+  .event-choose-shape__bottom {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 0 24px;
+    bottom: 24px;
+  }
+
+  /* Hide desktop elements on mobile/tablet */
+  .event-choose-shape__note--desktop,
+  .event-choose-shape__spacer {
+    display: none;
+  }
+
+  .event-choose-shape__orbit-shape-img {
+    max-height: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* .event-choose-shape {
+    padding-top: 80px;
+  } */
+
+  .event-choose-shape__title {
+    margin-bottom: 0px;
+    margin-top: 160px;
+  }
+
+  .event-choose-shape__center {
+    width: 120vw; /* Larger on small mobile */
+  }
+
+  .event-choose-shape__orbits-container {
+    bottom: 140px;
+    max-width: 100%;
+    height: 150px;
+  }
+
+  .event-choose-shape__orbit-shape-img {
+    max-height: 46px;
+  }
+}
+
+/* Toast notification for locked state */
+.event-choose-shape__toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(11, 11, 11, 0.9);
+  color: #fff;
+  padding: 16px 32px;
+  border-radius: 12px;
+  text-align: center;
+  z-index: 9999;
+  animation: toastFadeInOut 2s ease-in-out;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes toastFadeInOut {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  85% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+/* Toast responsive - Mobile */
+@media (max-width: 480px) {
+  .event-choose-shape__toast {
+    white-space: nowrap;
+  }
+}

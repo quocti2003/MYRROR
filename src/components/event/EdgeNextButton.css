@@ -1,0 +1,227 @@
+/* Container for click-outside detection - doesn't affect layout */
+.edge-next-button-container {
+  display: contents;
+}
+
+/* Edge next button - hidden by default (desktop) */
+.edge-next-button {
+  display: none;
+}
+
+/* Edge panel - hidden by default (desktop) */
+.edge-panel {
+  display: none;
+}
+
+/* ============================================
+   TABLET ONLY (481px - 1024px)
+   ============================================ */
+@media (min-width: 481px) and (max-width: 1024px) {
+  .edge-next-button {
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 80px;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: none;
+    border-radius: 0 10px 10px 0;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow:
+      inset 1px 1px 2px 0 rgba(255, 255, 255, 0.3),
+      inset -1px -1px 2px 0 rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease-out;
+  }
+
+  .edge-next-button__arrow {
+    display: block;
+    transform: rotate(0deg);
+    transition: transform 0.3s ease-out;
+  }
+
+  .edge-next-button__arrow path {
+    stroke: #0B0B0B;
+  }
+
+  /* When panel is open, move button to panel's right edge (outside) */
+  .edge-next-button--open {
+    left: calc(420 / 834 * 100vw);
+    z-index: 101;
+  }
+
+  /* Rotate only the arrow SVG when open */
+  .edge-next-button--open .edge-next-button__arrow {
+    transform: rotate(180deg);
+  }
+
+  /* Edge panel */
+  .edge-panel {
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateX(-100%) translateY(-50%);
+    box-sizing: border-box;
+    width: calc(420 / 834 * 100vw);
+    height: calc(398 / 1194 * 100vh);
+    padding: 16px 48px;
+    align-items: center;
+    border-radius: 0 0 0 0;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    box-shadow:
+      inset 1px 1px 2px 0 rgba(255, 255, 255, 0.3),
+      inset -1px -1px 2px 0 rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    cursor: pointer;
+    z-index: 100;
+    transition: transform 0.3s ease-out;
+  }
+
+  .edge-panel--open {
+    transform: translateX(0) translateY(-50%);
+    border-radius: 0 10px 10px 0;
+  }
+
+  .edge-panel__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .edge-panel__title {
+    color: #BC224C;
+    font-family: var(--font-brikey-moura);
+    font-size: 40px;
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.05;
+    margin: 0;
+    margin-bottom: 12px;
+  }
+
+  .edge-panel__description {
+    color: #0B0B0B;
+    font-family: var(--font-bt-beau-sans);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin: 0;
+  }
+}
+
+/* ============================================
+   MOBILE ONLY (≤480px)
+   ============================================ */
+@media (max-width: 480px) {
+  .edge-next-button {
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 50px;
+    padding: 0;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: none;
+    border-radius: 0 10px 10px 0;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow:
+      inset 1px 1px 2px 0 rgba(255, 255, 255, 0.3),
+      inset -1px -1px 2px 0 rgba(0, 0, 0, 0.1);
+    transition: left 0.3s ease-out;
+  }
+
+  .edge-next-button__arrow {
+    display: block;
+    transform: rotate(0deg);
+    transition: transform 0.3s ease-out;
+  }
+
+  .edge-next-button__arrow path {
+    stroke: #0B0B0B;
+  }
+
+  /* When panel is open, move button to panel's right edge (outside) */
+  .edge-next-button--open {
+    left: 60vw;
+    z-index: 101;
+  }
+
+  /* Rotate only the arrow SVG when open */
+  .edge-next-button--open .edge-next-button__arrow {
+    transform: rotate(180deg);
+  }
+
+  /* Edge panel */
+  .edge-panel {
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateX(-100%) translateY(-50%);
+    box-sizing: border-box;
+    width: 60vw;
+    height: calc(340 / 844 * 100vh);
+    padding: 12px 24px;
+    align-items: center;
+    border-radius: 0 0 0 0;
+    border: none;
+    background: rgba(0, 0, 0, 0.05);
+    box-shadow:
+      inset 1px 1px 2px 0 rgba(255, 255, 255, 0.3),
+      inset -1px -1px 2px 0 rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    cursor: pointer;
+    z-index: 100;
+    transition: transform 0.3s ease-out;
+  }
+
+  .edge-panel--open {
+    transform: translateX(0) translateY(-50%);
+    border-radius: 0 10px 10px 0;
+  }
+
+  .edge-panel__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .edge-panel__title {
+    color: #BC224C;
+    font-family: var(--font-brikey-moura);
+    font-size: 32px;
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.05;
+    margin: 0;
+  }
+
+  .edge-panel__description {
+    color: #0B0B0B;
+    font-family: var(--font-bt-beau-sans);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.2;
+    margin: 0;
+  }
+}

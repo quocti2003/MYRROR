@@ -1,14 +1,16 @@
 import axios from "axios";
 
 // Base URLs are driven by Vite environment variables to support local/dev/prod
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  "https://xpxr4xbvim.ap-southeast-1.awsapprunner.com";
+// In development on localhost, use empty string to leverage Vite's proxy (avoids CORS)
+const isLocalDev = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+const API_BASE_URL = isLocalDev
+  ? '' // Use relative URLs through Vite proxy
+  : (import.meta.env.VITE_API_BASE_URL || "https://nsa4fef6um.ap-southeast-1.awsapprunner.com");
 
-const AUTH_BASE_URL =
-  import.meta.env.VITE_AUTH_BASE_URL ||
-  API_BASE_URL ||
-  "https://nwkg3ymv2p.ap-southeast-1.awsapprunner.com";
+// In monolith architecture, AUTH uses same base URL as API
+const AUTH_BASE_URL = isLocalDev
+  ? '' // Use relative URLs through Vite proxy
+  : (import.meta.env.VITE_API_BASE_URL || "https://nsa4fef6um.ap-southeast-1.awsapprunner.com");
 
 const REFRESH_TOKEN_ENDPOINT = `${AUTH_BASE_URL}/api/v1/auth/refresh-token`;
 
@@ -112,38 +114,39 @@ api.interceptors.response.use(
 );
 
 // ===== AUTHENTICATION API =====
+// Note: Auth endpoints use /api/v1/auth/* path (merged from user-service)
 export const authAPI = {
   // Login / Authenticate
   authenticate: (username, password) =>
-    api.post("/api/auth/authenticate", { username, password }),
+    api.post("/api/v1/auth/authenticate", { username, password }),
 
   // Register new user
-  register: (userData) => api.post("/api/auth/register", userData),
+  register: (userData) => api.post("/api/v1/auth/register", userData),
 
   // Verify email with token (GET with query param)
-  verifyEmail: (token) => api.get(`/api/auth/verify-email?token=${token}`),
+  verifyEmail: (token) => api.get(`/api/v1/auth/verify-email?token=${token}`),
 
   // Resend verification email
   resendVerificationEmail: (email) =>
-    api.post("/api/auth/resend-verification-email", { email }),
+    api.post("/api/v1/auth/resend-verification-email", { email }),
 
   // Refresh token
   refreshToken: (refreshToken) =>
-    api.post("/api/auth/refresh-token", { refreshToken }),
+    api.post("/api/v1/auth/refresh-token", { refreshToken }),
 
   // Forgot password - Step 1: Request OTP
-  forgotPassword: (email) => api.post("/api/auth/forgot-password", { email }),
+  forgotPassword: (email) => api.post("/api/v1/auth/forgot-password", { email }),
 
   // Verify OTP - Step 2: Verify OTP and get reset token
-  verifyOtp: (email, otp) => api.post("/api/auth/verify-otp", { email, otp }),
+  verifyOtp: (email, otp) => api.post("/api/v1/auth/verify-otp", { email, otp }),
 
   // Reset password - Step 3: Reset with token
   resetPassword: (resetToken, newPassword) =>
-    api.post("/api/auth/reset-password", { resetToken, newPassword }),
+    api.post("/api/v1/auth/reset-password", { resetToken, newPassword }),
 
   // Resend password reset OTP
   resendPasswordResetOtp: (email) =>
-    api.post("/api/auth/resend-password-reset-otp", { email }),
+    api.post("/api/v1/auth/resend-password-reset-otp", { email }),
 };
 
 // ===== LOCATIONS API =====
@@ -263,8 +266,13 @@ export const productsAPI = {
   fulfill: (id, fulfillmentData) =>
     api.post(`/api/products/${id}/fulfill`, fulfillmentData),
   markReadyForRelease: (id) =>
-    api.post(`/api/products/${id}/mark-ready-for-release`),
+    api.put(`/api/products/${id}/ready-for-release`),
+
+  // Product Publisher operations
+  getReadyForRelease: () => api.get("/api/products/ready-for-release"),
+  getPublished: () => api.get("/api/products/published"),
   publish: (id) => api.post(`/api/products/${id}/publish`),
+  unpublish: (id) => api.post(`/api/products/${id}/unpublish`),
   archive: (id) => api.post(`/api/products/${id}/archive`),
 };
 
@@ -323,6 +331,13 @@ export const appointmentsAPI = {
     return api.get("/api/appointments/slots", { params });
   },
 
+  // Get unavailable dates for a venue within a date range (where ALL slots are blocked/booked)
+  getUnavailableDates: (startDate, endDate, venueId = null) => {
+    const params = { startDate, endDate };
+    if (venueId) params.venueId = venueId;
+    return api.get("/api/appointments/unavailable-dates", { params });
+  },
+
   // Get appointments by date
   getByDate: (date) => api.get("/api/appointments/by-date", { params: { date } }),
 
@@ -364,6 +379,55 @@ export const appointmentsAPI = {
 
   // Delete appointment
   delete: (id) => api.delete(`/api/appointments/${id}`),
+};
+
+// ===== BLOCKED SLOTS API (Admin) =====
+export const blockedSlotsAPI = {
+  // Create a new blocked slot
+  create: (blockedSlotData) =>
+    api.post("/api/appointments/blocked-slots", blockedSlotData),
+
+  // Get all blocked slots
+  getAll: () => api.get("/api/appointments/blocked-slots"),
+
+  // Get blocked slot by ID
+  getById: (id) => api.get(`/api/appointments/blocked-slots/${id}`),
+
+  // Get blocked slots by date
+  getByDate: (date) =>
+    api.get("/api/appointments/blocked-slots/by-date", { params: { date } }),
+
+  // Get blocked slots by venue and date
+  getByVenueAndDate: (venueId, date) =>
+    api.get("/api/appointments/blocked-slots/by-venue-date", {
+      params: { venueId, date },
+    }),
+
+  // Get blocked slots by date range
+  getByDateRange: (startDate, endDate, venueId = null) => {
+    const params = { startDate, endDate };
+    if (venueId) params.venueId = venueId;
+    return api.get("/api/appointments/blocked-slots/by-date-range", { params });
+  },
+
+  // Check if a slot is blocked
+  checkBlocked: (venueId, date, time) =>
+    api.get("/api/appointments/blocked-slots/check", {
+      params: { venueId, date, time },
+    }),
+
+  // Get blocked times for a venue and date
+  getBlockedTimes: (venueId, date) =>
+    api.get("/api/appointments/blocked-slots/blocked-times", {
+      params: { venueId, date },
+    }),
+
+  // Update blocked slot
+  update: (id, blockedSlotData) =>
+    api.put(`/api/appointments/blocked-slots/${id}`, blockedSlotData),
+
+  // Delete blocked slot
+  delete: (id) => api.delete(`/api/appointments/blocked-slots/${id}`),
 };
 
 // ===== COLLECTIONS API =====
@@ -664,44 +728,45 @@ export const componentOptionalsAPI = {
 };
 
 // ===== USERS API =====
+// Note: User endpoints use /api/v1/users/* path (merged from user-service)
 export const usersAPI = {
   // Get all users
-  getAll: () => api.get("/api/users"),
+  getAll: () => api.get("/api/v1/users"),
 
   // Get user by ID
-  getById: (id) => api.get(`/api/users/${id}`),
+  getById: (id) => api.get(`/api/v1/users/${id}`),
 
   // Get user by username
-  getByUsername: (username) => api.get(`/api/users/username/${username}`),
+  getByUsername: (username) => api.get(`/api/v1/users/username/${username}`),
 
   // Get user by email
   getByEmail: (email) =>
-    api.get(`/api/users/email/${encodeURIComponent(email)}`),
+    api.get(`/api/v1/users/email/${encodeURIComponent(email)}`),
 
   // Get users by role
-  getByRole: (role) => api.get(`/api/users/role/${role}`),
+  getByRole: (role) => api.get(`/api/v1/users/role/${role}`),
 
   // Get users by status
-  getByStatus: (status) => api.get(`/api/users/status/${status}`),
+  getByStatus: (status) => api.get(`/api/v1/users/status/${status}`),
 
   // Search users
   search: (searchTerm) =>
-    api.get(`/api/users/search?q=${encodeURIComponent(searchTerm)}`),
+    api.get(`/api/v1/users/search?q=${encodeURIComponent(searchTerm)}`),
 
   // Get user statistics
-  getStatistics: () => api.get("/api/users/statistics"),
+  getStatistics: () => api.get("/api/v1/users/statistics"),
 
   // Health check
-  health: () => api.get("/api/users/health"),
+  health: () => api.get("/api/v1/users/health"),
 
   // CRUD operations
-  create: (userData) => api.post("/api/users", userData),
-  createByAdmin: (userData) => api.post("/api/users/admin/create", userData),
-  update: (id, userData) => api.put(`/api/users/${id}`, userData),
-  delete: (id) => api.delete(`/api/users/${id}`),
+  create: (userData) => api.post("/api/v1/users", userData),
+  createByAdmin: (userData) => api.post("/api/v1/users/admin/create", userData),
+  update: (id, userData) => api.put(`/api/v1/users/${id}`, userData),
+  delete: (id) => api.delete(`/api/v1/users/${id}`),
   updateStatus: (id, status) =>
-    api.patch(`/api/users/${id}/status`, { status }),
-  updateRole: (id, role) => api.patch(`/api/users/${id}/role`, { role }),
+    api.patch(`/api/v1/users/${id}/status`, { status }),
+  updateRole: (id, role) => api.patch(`/api/v1/users/${id}/role`, { role }),
 };
 
 // ===== RBAC MATRIX =====
@@ -914,24 +979,26 @@ export const vendorsAPI = {
 };
 
 // ===== SKU CODES API =====
+// NOTE: These endpoints have been consolidated into /api/skus/ on the backend
+// The API paths below use the new merged endpoints
 export const skuCodesAPI = {
   // Generate jewelry SKU
   generateJewelrySku: (codeData) =>
-    api.post("/api/sku-codes/jewelry", codeData),
+    api.post("/api/skus/generate/jewelry", codeData),
 
   // Generate packaging SKU
   generatePackagingSku: (codeData) =>
-    api.post("/api/sku-codes/packaging", codeData),
+    api.post("/api/skus/generate/packaging", codeData),
 
   // Fetch generated SKUs saved in the catalog
   getGeneratedSkus: (params = {}) =>
-    api.get("/api/sku-codes/generated", { params }),
+    api.get("/api/skus/generated", { params }),
 
   // Bulk import jewelry SKUs from CSV
   importJewelrySkus: (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    return api.post("/api/sku-codes/jewelry/import", formData, {
+    return api.post("/api/skus/import/jewelry", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },
@@ -940,36 +1007,36 @@ export const skuCodesAPI = {
   importPackagingSkus: (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    return api.post("/api/sku-codes/packaging/import", formData, {
+    return api.post("/api/skus/import/packaging", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },
 
   // Search SKUs with fuzzy matching
   searchSkus: (query, limit = 50, threshold = 0.3) =>
-    api.get("/api/sku-codes/search", {
+    api.get("/api/skus/search", {
       params: { q: query, threshold, limit },
     }),
 
   // Search SKUs using POST
   searchSkusPost: (searchData) =>
-    api.post("/api/sku-codes/search", searchData),
+    api.post("/api/skus/search", searchData),
 
   // Export all generated SKUs to MISA template
   exportAllToMisa: () =>
-    api.get("/api/sku-codes/export-misa", {
+    api.get("/api/skus/export-misa", {
       responseType: "blob",
     }),
 
   // Export selected products by IDs to MISA template
   exportByIdsToMisa: (productIds) =>
-    api.post("/api/sku-codes/export-misa-by-ids", productIds, {
+    api.post("/api/skus/export-misa-by-ids", productIds, {
       responseType: "blob",
     }),
 
   // Export products by category to MISA template
   exportByCategoryToMisa: (category) =>
-    api.get("/api/sku-codes/export-misa-by-category", {
+    api.get("/api/skus/export-misa-by-category", {
       params: { category },
       responseType: "blob",
     }),
@@ -1027,6 +1094,51 @@ export const fileUploadAPI = {
   },
 };
 
+// ===== CLOUDFLARE R2 API =====
+// Requires authentication
+// Staff roles: no rate limit | USER role: 20 uploads/hour
+export const r2API = {
+  // Upload file directly to R2 (requires auth)
+  upload: (file, folder = "uploads") => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", folder);
+
+    const token = localStorage.getItem("accessToken");
+    const headers = {
+      "Content-Type": "multipart/form-data",
+    };
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    return axios.post(`${API_BASE_URL}/api/r2/upload`, formData, {
+      headers,
+      timeout: 60000,
+    });
+  },
+
+  // Get presigned URL for direct upload (optional - for large files)
+  getPresignedUploadUrl: (filename, folder = "uploads", contentType = "application/octet-stream") => {
+    return api.post("/api/r2/presigned-upload", null, {
+      params: { filename, folder, contentType }
+    });
+  },
+
+  // Get public URL for a file
+  getPublicUrl: (key) => {
+    return api.get("/api/r2/public-url", { params: { key } });
+  },
+
+  // Delete file from R2
+  deleteFile: (key) => {
+    return api.delete("/api/r2/files", { params: { key } });
+  },
+
+  // Health check
+  health: () => api.get("/api/r2/health"),
+};
+
 // ===== NOTIFICATIONS API =====
 export const notificationsAPI = {
   // Send email notification (public endpoint - no auth required)
@@ -1048,6 +1160,27 @@ export const notificationsAPI = {
       }
     );
   },
+};
+
+// ===== MISA AMIS API =====
+export const misaAmisAPI = {
+  // Get AMIS authentication status
+  getStatus: () => api.get("/api/misa/amis/status"),
+
+  // Authenticate with MISA AMIS
+  authenticate: () => api.post("/api/misa/amis/authenticate"),
+
+  // Get inventory balance from MISA AMIS
+  getInventoryBalance: (params = {}) =>
+    api.get("/api/misa/amis/inventory-balance", { params }),
+
+  // Get warehouses from MISA AMIS
+  getWarehouses: (params = {}) =>
+    api.get("/api/misa/amis/warehouses", { params }),
+
+  // Get inventory items from MISA AMIS
+  getInventoryItems: (params = {}) =>
+    api.get("/api/misa/amis/inventory-items", { params }),
 };
 
 // ===== CURRENCY API ===== (FREE exchangerate-api.com)
@@ -1139,5 +1272,61 @@ export const diamondsAPI = {
   deleteDiamond: (id) => api.delete(`/api/diamonds/${id}`),
 };
 
+// Stock Reconciliation API
+export const stockReconciliationAPI = {
+  // Create a new stock reconciliation record with report file
+  createRecord: (data, file) => {
+    const formData = new FormData();
+    formData.append("data", new Blob([JSON.stringify(data)], { type: "application/json" }));
+    if (file) {
+      formData.append("file", file);
+    }
+    return api.post("/api/stock-reconciliation", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
+
+  // Get a single record by ID
+  getRecord: (id) => api.get(`/api/stock-reconciliation/${id}`),
+
+  // List records with filters
+  listRecords: (params = {}) => api.get("/api/stock-reconciliation", { params }),
+
+  // Get download URL for report file
+  getDownloadUrl: (id) => api.get(`/api/stock-reconciliation/${id}/download`),
+
+  // Delete a record (soft delete)
+  deleteRecord: (id) => api.delete(`/api/stock-reconciliation/${id}`),
+};
+
+// ===== WAREHOUSE MANAGEMENT API =====
+export const warehouseAPI = {
+  // Warehouses
+  getAll: () => api.get("/api/warehouses"),
+  getById: (id) => api.get(`/api/warehouses/${id}`),
+  create: (data) => api.post("/api/warehouses", data),
+  update: (id, data) => api.put(`/api/warehouses/${id}`, data),
+  delete: (id) => api.delete(`/api/warehouses/${id}`),
+
+  // Racks
+  getRacks: (warehouseId) => api.get(`/api/warehouses/${warehouseId}/racks`),
+  createRack: (warehouseId, data) => api.post(`/api/warehouses/${warehouseId}/racks`, data),
+  updateRack: (id, data) => api.put(`/api/warehouses/racks/${id}`, data),
+  deleteRack: (id) => api.delete(`/api/warehouses/racks/${id}`),
+
+  // Slots
+  getSlots: (rackId) => api.get(`/api/warehouses/racks/${rackId}/slots`),
+  createSlot: (rackId, data) => api.post(`/api/warehouses/racks/${rackId}/slots`, data),
+  createSlotsBatch: (rackId, data) => api.post(`/api/warehouses/racks/${rackId}/slots/batch`, data),
+
+  // Positions
+  getPending: (params) => api.get("/api/warehouses/positions/pending", { params }),
+  assignPosition: (data) => api.post("/api/warehouses/positions/assign", data),
+  bulkAssign: (data) => api.post("/api/warehouses/positions/bulk-assign", data),
+
+  // Stock & Stats
+  stockInward: (data) => api.post("/api/warehouses/stock/inward", data),
+  getStats: () => api.get("/api/warehouses/stats"),
+};
 // Export the axios instance for custom calls
 export default api;

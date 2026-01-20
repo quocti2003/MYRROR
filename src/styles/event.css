@@ -215,6 +215,78 @@
   color: var(--event-text);
 }
 
+.event-btn--google {
+  background: white;
+  color: #333;
+  border: 1px solid #ddd;
+  font-weight: 500;
+  gap: 12px;
+}
+
+.event-btn--google:hover:not(:disabled) {
+  background: #f8f8f8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.event-btn--google:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.event-btn--google .google-icon {
+  flex-shrink: 0;
+}
+
+/* Login Screen */
+.login-screen .event-form__subtitle {
+  font-size: 0.9rem;
+  color: var(--event-text-muted);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.event-loading {
+  font-size: 1rem;
+  color: var(--event-text-muted);
+  text-align: center;
+}
+
+/* ============================================
+   In-App Browser Guide
+   ============================================ */
+.inapp-browser-guide {
+  margin-top: 24px;
+  padding: 16px;
+  background: rgba(188, 34, 76, 0.08);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.inapp-browser-guide__title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--event-primary, #BC224C);
+  margin: 0 0 8px 0;
+}
+
+.inapp-browser-guide__text {
+  font-size: 0.8rem;
+  color: var(--event-text-muted, #666);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.inapp-browser-guide__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
 /* ============================================
    Diamond Selection Grid
    ============================================ */
@@ -737,6 +809,139 @@
   text-decoration: none;
 }
 
+/* Admin Table */
+.admin-table-container {
+  overflow-x: auto;
+  max-height: 500px;
+  overflow-y: auto;
+  border-radius: 12px;
+  border: 1px solid var(--event-glass-border);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+.admin-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.admin-table th {
+  padding: 1rem 0.75rem;
+  text-align: left;
+  background: linear-gradient(135deg, #4472c4 0%, #2f5496 100%);
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.admin-table th:first-child {
+  text-align: center;
+  width: 60px;
+}
+
+.admin-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--event-glass-border);
+  font-size: 0.875rem;
+}
+
+.admin-table td:first-child {
+  text-align: center;
+  font-weight: 600;
+  color: var(--event-text-muted);
+}
+
+.admin-table tbody tr:hover {
+  background: rgba(68, 114, 196, 0.1);
+}
+
+.admin-table tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.admin-table tbody tr:nth-child(even):hover {
+  background: rgba(68, 114, 196, 0.15);
+}
+
+/* Provider Badge */
+.provider-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.provider-google {
+  background: linear-gradient(135deg, #ea4335 0%, #fbbc05 50%, #34a853 100%);
+  color: white;
+}
+
+.provider-facebook {
+  background: #1877f2;
+  color: white;
+}
+
+.provider-apple {
+  background: linear-gradient(135deg, #555555 0%, #000000 100%);
+  color: white;
+}
+
+.provider-badge:not(.provider-google):not(.provider-facebook):not(.provider-apple) {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--event-text-muted);
+}
+
+/* Shape Cell */
+.shape-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.no-shape {
+  color: var(--event-text-muted);
+  font-style: italic;
+}
+
+/* Admin Shape Images */
+.admin-shape-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+}
+
+.admin-shape-img-small {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.2));
+}
+
+.shape-stat-card {
+  min-width: 100px;
+}
+
+.shape-stat-card .admin-shape-img {
+  margin-bottom: 0.5rem;
+}
+
+/* Admin Actions */
+.admin-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 /* ============================================
    Note Preview Screen
    ============================================ */
@@ -1039,3 +1244,1599 @@
     gap: 1rem;
   }
 }
+
+/* ============================================
+   Christmas Music Sheet - 3D Animated Display
+   ============================================ */
+
+.christmas-music-sheet {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  background: linear-gradient(180deg, #0a0a1a 0%, #1a1a2e 50%, #0a0a1a 100%);
+  overflow: hidden;
+  cursor: pointer;
+  perspective: 1200px;
+}
+
+.sheet-title {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 10;
+}
+
+.sheet-title h2 {
+  font-family: 'Playfair Display', 'Times New Roman', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow:
+    0 0 20px rgba(255, 255, 255, 0.5),
+    0 0 40px rgba(255, 200, 100, 0.3);
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.sheet-3d-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 80%;
+  transform: translate(-50%, -40%);
+}
+
+.sheet-perspective {
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform:
+    rotateX(55deg)
+    rotateZ(-2deg)
+    translateY(10%);
+  animation: sheetFloat 8s ease-in-out infinite;
+}
+
+@keyframes sheetFloat {
+  0%, 100% {
+    transform:
+      rotateX(55deg)
+      rotateZ(-2deg)
+      translateY(10%);
+  }
+  50% {
+    transform:
+      rotateX(55deg)
+      rotateZ(-2deg)
+      translateY(8%);
+  }
+}
+
+.sheet-svg {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 20px 60px rgba(0, 0, 0, 0.8));
+}
+
+/* Clef symbols */
+.clef-symbol {
+  opacity: 0.8;
+}
+
+/* Note styling */
+.note {
+  transition: transform 0.1s ease;
+}
+
+.note--active {
+  transform: scale(1.1);
+}
+
+.note-head {
+  transition: all 0.15s ease;
+}
+
+.note-glow-outer {
+  animation: glowPulse 0.5s ease-out;
+}
+
+.note-glow-inner {
+  animation: glowPulse 0.3s ease-out;
+}
+
+@keyframes glowPulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Playhead */
+.playhead {
+  opacity: 0.8;
+}
+
+.playhead-dot {
+  animation: playheadPulse 0.5s ease-in-out infinite;
+}
+
+@keyframes playheadPulse {
+  0%, 100% {
+    r: 8;
+    opacity: 1;
+  }
+  50% {
+    r: 10;
+    opacity: 0.8;
+  }
+}
+
+/* Play button overlay */
+.sheet-play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 20;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.christmas-music-sheet:hover .sheet-play-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.sheet-play-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 48px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.sheet-play-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+.sheet-play-btn svg {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
+
+/* Controls */
+.sheet-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+
+.sheet-stop-btn {
+  padding: 12px 32px;
+  background: rgba(255, 100, 100, 0.2);
+  border: 1px solid rgba(255, 100, 100, 0.5);
+  border-radius: 8px;
+  color: #ff6b6b;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sheet-stop-btn:hover {
+  background: rgba(255, 100, 100, 0.3);
+}
+
+/* Christmas decorations */
+.christmas-music-sheet::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(2px 2px at 50px 160px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(2px 2px at 90px 40px, rgba(255, 255, 255, 0.2), transparent),
+    radial-gradient(2px 2px at 130px 80px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(3px 3px at 160px 120px, rgba(255, 215, 0, 0.4), transparent);
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  pointer-events: none;
+  animation: starsTwinkle 4s ease-in-out infinite;
+}
+
+@keyframes starsTwinkle {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Event Display Page with Christmas Sheet */
+.event-display--christmas {
+  background: #0a0a1a;
+}
+
+.event-display--christmas .event-display__header {
+  background: transparent;
+}
+
+.event-display--christmas .event-display__footer {
+  background: transparent;
+}
+
+/* Christmas mode toggle */
+.christmas-mode-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #c41e3a 0%, #8b0000 100%);
+  border: none;
+  border-radius: 25px;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(196, 30, 58, 0.4);
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.christmas-mode-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(196, 30, 58, 0.5);
+}
+
+.christmas-mode-toggle::before {
+  content: '🎄';
+  font-size: 1.2rem;
+}
+
+/* Christmas Music Page - Full screen */
+.christmas-music-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0a0a1a;
+  z-index: 9999;
+}
+
+.christmas-music-page .christmas-music-sheet {
+  width: 100%;
+  height: 100%;
+}
+
+.christmas-loop-counter {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  z-index: 100;
+}
+
+/* ============================================
+   Christmas Music 3D - Three.js Version
+   ============================================ */
+
+.christmas-music-3d {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(180deg, #0a0a1a 0%, #1a1a2e 100%);
+  overflow: hidden;
+}
+
+.christmas-3d-title {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.christmas-3d-title h2 {
+  font-family: 'Playfair Display', 'Times New Roman', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow:
+    0 0 20px rgba(255, 255, 255, 0.5),
+    0 0 40px rgba(255, 200, 100, 0.3);
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+.christmas-3d-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 20;
+}
+
+.christmas-3d-play-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 64px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  color: white;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.christmas-3d-play-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.05);
+}
+
+.christmas-3d-play-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.christmas-3d-play-btn svg {
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
+}
+
+.christmas-3d-controls {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+
+.christmas-3d-stop-btn {
+  padding: 14px 40px;
+  background: rgba(255, 100, 100, 0.2);
+  border: 1px solid rgba(255, 100, 100, 0.5);
+  border-radius: 10px;
+  color: #ff6b6b;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.christmas-3d-stop-btn:hover {
+  background: rgba(255, 100, 100, 0.35);
+  transform: translateY(-2px);
+}
+
+/* Stars background effect */
+.christmas-music-3d::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(2px 2px at 50px 160px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(2px 2px at 90px 40px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(2px 2px at 130px 80px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(3px 3px at 160px 120px, rgba(255, 215, 0, 0.5), transparent),
+    radial-gradient(2px 2px at 200px 50px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(2px 2px at 250px 100px, rgba(255, 255, 255, 0.4), transparent);
+  background-repeat: repeat;
+  background-size: 300px 200px;
+  pointer-events: none;
+  z-index: 1;
+  animation: starsTwinkle3D 5s ease-in-out infinite;
+}
+
+@keyframes starsTwinkle3D {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+/* Canvas container styling */
+.christmas-music-3d canvas {
+  position: relative;
+  z-index: 5;
+}
+
+/* Instructions hint */
+.christmas-3d-hint {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  text-align: center;
+  z-index: 10;
+}
+
+/* Version toggle */
+.christmas-version-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  z-index: 30;
+  transition: all 0.3s ease;
+}
+
+.christmas-version-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Loading state */
+.christmas-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #0a0a1a 0%, #1a1a2e 100%);
+  color: white;
+  font-size: 1.2rem;
+}
+
+.christmas-loading span {
+  animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* =====================================================
+   WRITE MESSAGE SCREEN (Step 2) - Two Music Staffs
+   ===================================================== */
+
+.write-message {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height */
+  overflow: hidden;
+}
+
+/* iOS Safari: prevent rubber band scrolling on mobile */
+@media (max-width: 480px) {
+  .write-message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
+    touch-action: pan-x pan-y;
+  }
+}
+
+/* Background */
+.write-message__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #FFF6F6 0%, #FFDCE5 12.53%, #FFEFF6 25.06%, #FFF8F8 37.53%, rgba(255, 241, 241, 0.91) 50%, #FFE6EC 63.82%, #FFEDFE 77.64%, #F6F6F6 100%);
+  z-index: 0;
+}
+
+/* Header */
+.write-message__header {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.write-message__title {
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  color: var(--Black, #0B0B0B);
+  margin: 0;
+}
+
+/* Main - Two staffs container */
+.write-message__main {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.write-message__staffs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 80px; /* Space between two staffs */
+  width: 100%;
+  margin-top: -80px; /* Move staffs up */
+}
+
+/* Single staff */
+.write-message__staff {
+  position: relative;
+  width: 100%;
+  height: 171.48px; /* 5 lines × 6.296px + 4 gaps × 35px = 31.48 + 140 */
+}
+
+/* Staff lines - absolute positioning for exact placement */
+.write-message__lines {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  height: 100%;
+  pointer-events: none;
+}
+
+.write-message__line {
+  position: absolute;
+  left: 0;
+  width: 100vw;
+  height: 6.296px;
+  pointer-events: none;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #878787 0%, #F3F2F2 24.04%, rgba(255, 255, 255, 0.50) 50.48%, #565656 71.15%, #5A5A5A 78.85%, #C2C2C2 100%);
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.50);
+}
+
+/* Position each line exactly: line spacing = 6.296px + 35px = 41.296px */
+.write-message__line:nth-child(1) { top: 0px; }
+.write-message__line:nth-child(2) { top: 41.296px; }
+.write-message__line:nth-child(3) { top: 82.592px; }
+.write-message__line:nth-child(4) { top: 123.888px; }
+.write-message__line:nth-child(5) { top: 165.184px; }
+
+/* Notes */
+.write-message__note {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.write-message__note-img {
+  width: 35px;
+  height: auto;
+}
+
+.write-message__note--user {
+  z-index: 10;
+}
+
+.write-message__note-img--user {
+  width: 35px;
+}
+
+/* Ripple container - allow ripple to overflow */
+/* Using !important to override RippleEffect's injected overflow: hidden */
+.write-message__note .ripple-effect-area {
+  overflow: visible !important;
+}
+
+/* Ensure staffs can show ripple overflow */
+.write-message__staffs {
+  overflow: visible;
+}
+
+.write-message__staff {
+  overflow: visible;
+}
+
+/* Footer - same as place-note */
+.write-message__footer {
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  z-index: 10;
+  max-width: 320px;
+}
+
+.write-message__progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.write-message__progress-step {
+  width: 60px;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 13px;
+}
+
+.write-message__progress-step--active {
+  background: var(--gray-3, #797979);
+}
+
+.write-message__subtitle {
+  font-style: italic;
+  color: var(--Black, #0B0B0B);
+  margin-bottom: 0.5rem;
+}
+
+.write-message__description {
+  color: var(--gray-3, #797979);
+  line-height: 1.4;
+}
+
+.write-message__error {
+  color: #e53935;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* Arrow buttons - fixed position, vertically centered (same as layout 1) */
+.write-message__arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  isolation: isolate;
+}
+
+.write-message__arrow--left {
+  left: 24px;
+}
+
+.write-message__arrow--right {
+  right: 24px;
+}
+
+/* Action buttons - bottom center */
+.write-message__actions {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  z-index: 10;
+}
+
+/* =====================================================
+   GLASS BUTTON - Liquid Glass Effect (from ijewel)
+   ===================================================== */
+
+.glass-button {
+  position: relative;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Liquid Glass Effect */
+  background-color: rgba(187, 187, 188, 0.18);
+  backdrop-filter: blur(12px) saturate(150%);
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+
+  /* Complex shadow for glass depth */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 1.8px 3px 0px -2px rgba(255, 255, 255, 0.9),
+    inset -2px -2px 0px -2px rgba(255, 255, 255, 0.8),
+    inset -3px -8px 1px -6px rgba(255, 255, 255, 0.6),
+    inset -0.3px -1px 4px 0px rgba(0, 0, 0, 0.1),
+    inset -1.5px 2.5px 0px -2px rgba(0, 0, 0, 0.2),
+    inset 0px 3px 4px -2px rgba(0, 0, 0, 0.2),
+    inset 2px -6.5px 1px -4px rgba(0, 0, 0, 0.08),
+    0px 1px 4px 0px rgba(0, 0, 0, 0.08),
+    0px 4px 16px 0px rgba(0, 0, 0, 0.06);
+
+  transition: all 0.2s ease;
+}
+
+.glass-button--circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+}
+
+.glass-button--pill {
+  height: 56px;
+  padding: 0 32px;
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: #BC224C;
+}
+
+.glass-button:hover {
+  background-color: rgba(187, 187, 188, 0.25);
+  transform: scale(1.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15),
+    inset 1.8px 3px 0px -2px rgba(255, 255, 255, 1),
+    inset -2px -2px 0px -2px rgba(255, 255, 255, 0.9),
+    inset -3px -8px 1px -6px rgba(255, 255, 255, 0.7),
+    inset -0.3px -1px 4px 0px rgba(0, 0, 0, 0.15),
+    inset -1.5px 2.5px 0px -2px rgba(0, 0, 0, 0.25),
+    inset 0px 3px 4px -2px rgba(0, 0, 0, 0.25),
+    inset 2px -6.5px 1px -4px rgba(0, 0, 0, 0.12),
+    0px 2px 8px 0px rgba(0, 0, 0, 0.12),
+    0px 8px 24px 0px rgba(0, 0, 0, 0.1);
+}
+
+.glass-button:active {
+  transform: scale(0.95);
+  background-color: rgba(187, 187, 188, 0.3);
+}
+
+.glass-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.glass-button svg {
+  width: 24px;
+  height: 24px;
+  color: #BC224C;
+  opacity: 0.85;
+}
+
+/* Responsive - Tablet */
+@media (max-width: 1024px) {
+  /* 3 staffs on tablet/mobile */
+  .write-message__staffs--mobile {
+    gap: 72px;
+    margin-top: -40px; /* Adjust vertical position */
+  }
+
+  .write-message__staff {
+    height: 140px;
+  }
+
+  /* Line positions for mobile - gap 27px (140px total height) */
+  .write-message__line:nth-child(1) { top: 0px; }
+  .write-message__line:nth-child(2) { top: 33.296px; }  /* 6.296 + 27 */
+  .write-message__line:nth-child(3) { top: 66.592px; }  /* 2 × 33.296 */
+  .write-message__line:nth-child(4) { top: 99.888px; }  /* 3 × 33.296 */
+  .write-message__line:nth-child(5) { top: 133.184px; } /* 4 × 33.296 */
+
+  /* Note size - 30px */
+  .write-message__note-img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .write-message__note-img--user {
+    width: 30px;
+    height: 30px;
+  }
+
+  .write-message__footer {
+    bottom: 32px;
+    left: 32px;
+    max-width: 300px;
+  }
+
+  .write-message__arrow--left {
+    left: 16px;
+  }
+
+  .write-message__arrow--right {
+    right: 16px;
+  }
+
+  .write-message__actions {
+    gap: 12px;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .write-message__staffs--mobile {
+    gap: 72px; /* Gap between 3 staffs */
+    margin-top: 0;
+  }
+
+  /* Hide footer on mobile */
+  .write-message__footer {
+    display: none;
+  }
+
+  /* Hide left arrow on mobile */
+  .write-message__arrow--left {
+    display: none;
+  }
+
+  /* Right arrow - bottom right */
+  .write-message__arrow--right {
+    top: auto;
+    bottom: 24px;
+    right: 20px;
+    transform: none;
+  }
+
+  /* Action buttons - bottom left, only show first button */
+  .write-message__actions {
+    bottom: 24px;
+    left: 20px;
+    right: auto;
+    transform: none;
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  /* Hide second button on mobile */
+  .write-message__actions .glass-button--pill:last-child {
+    display: none;
+  }
+
+  .write-message__actions .glass-button--pill {
+    height: 48px;
+    padding: 0 24px;
+    font-size: 14px;
+  }
+
+  .glass-button--circle {
+    width: 48px;
+    height: 48px;
+  }
+
+  .glass-button svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* =====================================================
+   CHOOSE NOTE SHAPE SCREEN (Step 3) - Card Preview
+   ===================================================== */
+
+.choose-note-shape {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height */
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* iOS Safari: prevent rubber band scrolling on mobile */
+@media (max-width: 480px) {
+  .choose-note-shape {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
+    touch-action: pan-x pan-y;
+  }
+}
+
+/* Background - same radial gradient as layouts 1 & 2 */
+.choose-note-shape__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(121.12% 87.58% at 50% 50%, rgba(255, 182, 203, 0.6) 0%, rgba(255, 255, 255, 0.50) 56.25%, rgba(246, 246, 246, 0.00) 100%),
+    linear-gradient(180deg, #FFF5F8 0%, #FFF3F6 12.53%, #F6F6F6 25.06%, #FFF5F8 37.53%, #FFF0F4 50%, #FFF5F8 63.82%, #FFF 77.64%, #FFF4F7 100%);
+  z-index: 0;
+}
+
+/* Header */
+.choose-note-shape__header {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.choose-note-shape__title {
+  font-family: 'Playfair Display', 'Times New Roman', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: #333;
+  margin: 0;
+}
+
+/* Main content */
+.choose-note-shape__main {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+/* Arrow button - left side */
+.choose-note-shape__arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.choose-note-shape__arrow--left {
+  left: 24px;
+}
+
+/* Card container - centered */
+.choose-note-shape__card-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* Card - phone mockup style */
+.choose-note-shape__card {
+  position: relative;
+  width: 280px;
+  height: 500px;
+  border-radius: 24px;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  z-index: 1;
+}
+
+/* Allow ripple to overflow */
+/* Using !important to override RippleEffect's injected overflow: hidden */
+.choose-note-shape__card .ripple-effect-area {
+  overflow: visible !important;
+}
+
+/* Card background - landscape gradient */
+.choose-note-shape__card-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(
+    180deg,
+    #E8C4D4 0%,
+    #D4A5B9 20%,
+    #C08BA3 40%,
+    #9B6B7D 60%,
+    #8C5F72 70%,
+    #B89AAD 85%,
+    #E8D5DE 100%
+  );
+  z-index: 1;
+}
+
+/* Add mountain silhouettes with CSS pseudo-elements */
+.choose-note-shape__card-bg::before {
+  content: '';
+  position: absolute;
+  bottom: 30%;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background:
+    linear-gradient(135deg, transparent 40%, #8B6B7B 40%, #8B6B7B 60%, transparent 60%),
+    linear-gradient(225deg, transparent 50%, #7A5A6A 50%, #7A5A6A 70%, transparent 70%);
+  opacity: 0.6;
+}
+
+/* Water reflection at bottom */
+.choose-note-shape__card-bg::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 25%;
+  background: linear-gradient(
+    180deg,
+    rgba(184, 154, 173, 0.5) 0%,
+    rgba(200, 180, 190, 0.7) 50%,
+    rgba(220, 200, 210, 0.8) 100%
+  );
+}
+
+/* Diamond wrapper - centered in card */
+.choose-note-shape__diamond-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.choose-note-shape__diamond {
+  width: 160px;
+  height: auto;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+}
+
+/* Action buttons below card */
+.choose-note-shape__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 2;
+  position: relative;
+}
+
+.choose-note-shape__actions .glass-button--pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 24px;
+}
+
+.choose-note-shape__actions .glass-button--pill span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #BC2242;
+}
+
+.choose-note-shape__actions .glass-button--pill svg {
+  color: #BC2242;
+  stroke: #BC2242;
+}
+
+/* Small circle button variant */
+.glass-button--small {
+  width: 44px;
+  height: 44px;
+}
+
+.glass-button--small svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Social icons - right side, vertical stack */
+.choose-note-shape__social {
+  position: fixed;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 10;
+}
+
+/* Footer - same as layouts 1 & 2 */
+.choose-note-shape__footer {
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  z-index: 10;
+  max-width: 320px;
+}
+
+.choose-note-shape__progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.choose-note-shape__progress-step {
+  width: 60px;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 13px;
+}
+
+.choose-note-shape__progress-step--active {
+  background: var(--gray-3, #797979);
+}
+
+.choose-note-shape__subtitle {
+  font-style: italic;
+  color: var(--Black, #0B0B0B);
+  margin-bottom: 0.5rem;
+}
+
+.choose-note-shape__description {
+  color: var(--gray-3, #797979);
+  line-height: 1.4;
+}
+
+/* Responsive - Tablet */
+@media (max-width: 1024px) {
+  .choose-note-shape__arrow--left {
+    left: 16px;
+  }
+
+  .choose-note-shape__social {
+    right: 16px;
+  }
+
+  .choose-note-shape__footer {
+    bottom: 32px;
+    left: 32px;
+    max-width: 300px;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .choose-note-shape__card {
+    width: 240px;
+    height: 420px;
+  }
+
+  .choose-note-shape__diamond {
+    width: 120px;
+  }
+
+  /* Hide footer on mobile */
+  .choose-note-shape__footer {
+    display: none;
+  }
+
+  /* Hide left arrow on mobile */
+  .choose-note-shape__arrow--left {
+    display: none;
+  }
+
+  /* Hide social icons on mobile */
+  .choose-note-shape__social {
+    display: none;
+  }
+
+  /* Action buttons - bottom center */
+  .choose-note-shape__actions {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .choose-note-shape__actions .glass-button--pill {
+    height: 48px;
+    padding: 0 24px;
+  }
+
+  .choose-note-shape__actions .glass-button--pill span {
+    font-size: 14px;
+    color: #BC224C;
+  }
+
+  .choose-note-shape__actions .glass-button--pill svg {
+    color: #BC224C;
+    stroke: #BC224C;
+  }
+
+  /* Show share button on mobile */
+  .choose-note-shape__actions .glass-button--circle {
+    display: flex;
+  }
+
+  .glass-button--small {
+    width: 44px;
+    height: 44px;
+  }
+
+  .glass-button--small svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Instructions - hide on mobile */
+  .flip-card-instructions {
+    display: none;
+  }
+
+  /* Status - hide on mobile */
+  .flip-card-status {
+    display: none;
+  }
+}
+
+/* =====================================================
+   3D FLIP CARD - Choose Note Shape Screen
+   ===================================================== */
+
+/* Ambient light effect */
+.flip-card-ambient-light {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 70% 20%, rgba(255, 220, 150, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 30% 80%, rgba(100, 150, 255, 0.05) 0%, transparent 40%);
+  z-index: 0;
+}
+
+/* Status indicator */
+.flip-card-status {
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  backdrop-filter: blur(10px);
+  transition: all 0.4s;
+  margin-top: 12px;
+}
+
+.flip-card-status--front {
+  background: rgba(255, 215, 0, 0.15);
+  color: #b8860b;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+}
+
+.flip-card-status--back {
+  background: rgba(188, 34, 76, 0.15);
+  color: #BC224C;
+  border: 1px solid rgba(188, 34, 76, 0.3);
+  box-shadow: 0 0 30px rgba(188, 34, 76, 0.2);
+}
+
+.flip-card-status--dragging {
+  background: rgba(155, 89, 182, 0.15);
+  color: #9b59b6;
+  border: 1px solid rgba(155, 89, 182, 0.3);
+  box-shadow: 0 0 30px rgba(155, 89, 182, 0.2);
+}
+
+/* Scene container with perspective - matches V2 */
+.flip-card-scene {
+  perspective: 1000px;
+  perspective-origin: 65% 35%;
+  z-index: 2;
+}
+
+/* Card container - draggable area - matches V2 */
+.flip-card-container {
+  width: 250px;
+  height: 446px;
+  transform-style: preserve-3d;
+  transform: rotateX(12deg) rotateY(-8deg);
+  cursor: grab;
+  animation: flipCardEntry 2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes flipCardEntry {
+  0% {
+    transform: translateZ(2000px) scale(4) rotateX(12deg) rotateY(-8deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: rotateX(12deg) rotateY(-8deg);
+    opacity: 1;
+  }
+}
+
+.flip-card-container.dragging {
+  cursor: grabbing;
+}
+
+/* Ripple effect - behind the card */
+/* Using !important to override RippleEffect's injected overflow: hidden */
+.flip-card-container .ripple-effect-area {
+  overflow: visible !important;
+  z-index: -1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* The card itself - matches V2 */
+.flip-card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+/* Entry flip animation - card flips while container flies in */
+.flip-card.entry-animating {
+  animation: flipCardEntryFlip 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes flipCardEntryFlip {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(180deg); }
+}
+
+/* Card faces - front and back - matches V2 */
+.flip-card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Front face */
+.flip-card-front {
+  background: #fff;
+}
+
+/* Back face */
+.flip-card-back {
+  background: #fff;
+  transform: rotateY(180deg);
+}
+
+/* Card inner content */
+.flip-card-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Card image */
+.flip-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+/* Shine effect - disabled due to Safari glitches */
+.flip-card-shine {
+  display: none; /* Causes Safari card flip glitches */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.flip-card-shine::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    transparent 35%,
+    rgba(255, 255, 255, 0.05) 40%,
+    rgba(255, 255, 255, 0.15) 45%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.15) 55%,
+    rgba(255, 255, 255, 0.05) 60%,
+    transparent 65%,
+    transparent 100%
+  );
+  transform: rotate(-25deg) translateX(var(--shine-pos, -100%));
+}
+
+/* Texture overlay - disabled due to Safari glitches */
+.flip-card-texture {
+  display: none; /* Causes Safari card flip glitches */
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 3px,
+      rgba(255, 255, 255, 0.01) 3px,
+      rgba(255, 255, 255, 0.01) 6px
+    );
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* Card shadow - disabled due to Safari glitches */
+.flip-card-shadow {
+  display: none; /* Causes Safari card flip glitches */
+  position: absolute;
+  bottom: -80px;
+  left: 50%;
+  width: 220px;
+  height: 40px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.6) 0%, transparent 70%);
+  transform: translateX(-50%) rotateX(90deg);
+  filter: blur(15px);
+  pointer-events: none;
+}
+
+/* Instructions */
+.flip-card-instructions {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 13px;
+  text-align: center;
+  margin-top: 16px;
+}
+
+/* Responsive - Tablet */
+@media (max-width: 1024px) {
+  .flip-card-container {
+    width: 340px;
+    height: 590px;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .flip-card-container {
+    width: 240px;
+    height: 420px;
+  }
+
+  .flip-card-status {
+    padding: 8px 16px;
+    font-size: 10px;
+  }
+
+  .flip-card-instructions {
+    font-size: 11px;
+  }
+}
+
+/* Responsive - Mobile Small */
+@media (max-width: 480px) {
+  .flip-card-container {
+    width: 200px;
+    height: 350px;
+  }
+}
+
+/* =====================================================
+   ZOOM TRANSITION - Layout 1 → Layout 2 (Google Maps style)
+   ===================================================== */
+
+/*
+ * Layout 1 = Zoomed IN view (close-up on one note)
+ * Layout 2 = Zoomed OUT view (see all notes)
+ *
+ * Transition flow:
+ * 1. Layout 1 fades out
+ * 2. Layout 2 starts zoomed IN (scale 3) on user's note position
+ * 3. Layout 2 zooms OUT (scale 3 → 1) to reveal all notes
+ */
+
+/* Layout 1 Exit - Slide out to right */
+.place-note-new--zoom-out {
+  animation: layout1Exit 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  pointer-events: none;
+}
+
+@keyframes layout1Exit {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Layout 2 Entrance - Map-style zoom out from user's note */
+.write-message {
+  /* Default transform-origin, will be overridden by JS */
+  --zoom-origin-x: 50%;
+  --zoom-origin-y: 50%;
+}
+
+.write-message--zoom-in {
+  transform-origin: var(--zoom-origin-x) var(--zoom-origin-y);
+  animation: mapZoomOut 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes mapZoomOut {
+  0% {
+    transform: scale(2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+

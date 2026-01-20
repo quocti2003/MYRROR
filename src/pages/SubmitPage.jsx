@@ -24,10 +24,6 @@ const SubmitPage = () => {
   const [isImmersiveCollapsed, setIsImmersiveCollapsed] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const handleImmersiveClick = () => {
-    console.log("Immersive button clicked");
-  };
-
   useEffect(() => {
     const handleScrollButtons = () => {
       const scrollY = window.scrollY;
@@ -110,7 +106,6 @@ const SubmitPage = () => {
         <ImmersiveButton
           theme={arrowTheme}
           isCollapsed={isImmersiveCollapsed}
-          onClick={handleImmersiveClick}
         />
       </div>
 

@@ -3,13 +3,19 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <!-- Force light mode - prevent browser dark mode from affecting site -->
+  <meta name="color-scheme" content="light only" />
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="MIRROR FUTURE DIAMOND - Awakening Luxury through Your Senses. Premium diamond jewelry with innovative AR try-on experience. Discover unique collections and bespoke designs." />
+  <link rel="canonical" href="https://www.mirrorfuturediamond.com" />
 
   <!-- Open Graph / Social Media -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="MIRROR FUTURE DIAMOND" />
   <meta property="og:description" content="Awakening Luxury through Your Senses, in Every Time, Space, and Presence." />
-  <meta property="og:image" content="https://www.mirrorfuturediamond.com/mirror-logo-square.svg" />
+  <meta property="og:image" content="https://www.mirrorfuturediamond.com/favicon-512.png" />
   <meta property="og:image:alt" content="Mirror Future Diamond Logo" />
   <meta property="og:url" content="https://www.mirrorfuturediamond.com" />
 
@@ -18,7 +24,7 @@
   <meta name="twitter:title" content="MIRROR FUTURE DIAMOND" />
   <meta name="twitter:description"
     content="Awakening Luxury through Your Senses, in Every Time, Space, and Presence." />
-  <meta name="twitter:image" content="https://www.mirrorfuturediamond.com/mirror-logo-square.svg" />
+  <meta name="twitter:image" content="https://www.mirrorfuturediamond.com/favicon-512.png" />
   <meta name="twitter:image:alt" content="Mirror Future Diamond Logo" />
 
   <!-- Content Security Policy - Development Mode (More Permissive) -->
@@ -43,13 +49,13 @@
         "@type": "Organization",
         "name": "MIRROR FUTURE DIAMOND",
         "url": "https://mirrorfuturediamond.com",
-        "logo": "https://mirrorfuturediamond.com/mirror-logo-square.svg"
+        "logo": "https://mirrorfuturediamond.com/favicon-512.png"
       }
     </script>
 
   <!-- For iJewel3d SDK - UPDATED TO LATEST -->
   <script src="https://releases.ijewel3d.com/libs/webgi-v0/bundle-0.18.0.js"></script>
-  <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.5.0/bundle.nowebgi.iife.js"></script>
+  <script src="https://releases.ijewel3d.com/libs/mini-viewer/0.5.4/bundle.nowebgi.iife.js"></script>
   <script>
     window.webgi = window;
   </script>
@@ -65,8 +71,16 @@
   <script src="https://unpkg.com/omggif@1.0.10/omggif.js"></script>
 
   <title>MIRROR FUTURE DIAMOND</title>
-  <!-- Favicon -->
+  <!-- Favicons - PNG for Google Search compatibility -->
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <!-- Keep SVG for modern browsers that support it -->
   <link rel="icon" type="image/svg+xml" href="/mirror-logo-square.svg" />
+  <!-- Traditional favicon.ico for maximum compatibility -->
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="icon" href="/favicon.ico" />
   <!-- External libraries -->
   <link rel="stylesheet" href="https://unpkg.com/animate.css@4.1.1/animate.css" />
   <link rel="stylesheet" href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css" />

@@ -9,7 +9,7 @@ const ShineGlassButton = ({
   width, // Optional - only use if explicitly needed
   height, // Optional - only use if explicitly needed
   fontSize, // Optional - only use if explicitly needed
-  theme = "shine", // 'shine' | 'light' | 'footer'
+  theme = "shine", // 'shine' | 'light' | 'footer' | 'pink'
   variant = "default", // 'default' | 'custom'
   type = "button", // 'button' | 'submit' | 'reset'
 }) => {

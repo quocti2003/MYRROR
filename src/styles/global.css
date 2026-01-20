@@ -1,4 +1,7 @@
 :root {
+  /* Force light mode - prevent browser dark mode from affecting site */
+  color-scheme: light only;
+
   font-family: var(--font-primary);
   line-height: 1.5;
   font-weight: 400;
@@ -63,4 +66,23 @@ html {
     rgba(255, 255, 255, 0) 100%
   );
   pointer-events: none;
+}
+
+/* ========================================
+   MOBILE TAP HIGHLIGHT RESET
+======================================== */
+/* Disable default blue tap highlight on all interactive elements */
+button,
+a,
+input,
+textarea,
+select,
+label,
+img,
+[role="button"],
+[tabindex]:not([tabindex="-1"]),
+[onclick],
+.clickable {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }

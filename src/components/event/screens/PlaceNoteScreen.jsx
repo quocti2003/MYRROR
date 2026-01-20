@@ -2,11 +2,11 @@
  * PlaceNoteScreen - Step 4: Place note on music staff
  */
 import React, { useState, useEffect } from 'react';
-import { TEXT, getDiamondConfig } from '../../../constants/eventConstants';
-import { placeNote, fetchAllNotes } from '../../../services/event/eventApi';
-import { initAudio, playNote, isAudioInitialized } from '../../../services/event/audio';
-import { broadcastNoteAdded } from '../../../services/event/ably';
-import useEventStore from '../../../store/useEventStore';
+import { TEXT, getDiamondConfig } from '@/constants/eventConstants';
+import { placeNote, fetchAllNotes } from '@services/event/eventApi';
+import { initAudio, playNote, isAudioInitialized } from '@services/event/audio';
+import { broadcastNoteAdded } from '@services/event/ably';
+import useEventStore from '@/store/useEventStore';
 import MusicStaff from '../ui/MusicStaff';
 import Diamond from '../ui/Diamond';
 import Logo from '../ui/Logo';

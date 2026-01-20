@@ -113,7 +113,6 @@
 .showroom-content {
   position: relative;
   z-index: 2;
-  max-width: 600px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -139,6 +138,7 @@
   text-align: center;
   margin: 0 0 36px 0;
   color: #e0e0e0;
+  max-width: 462px;
 }
 
 /* Gradient boxes - removed, now using ::before pseudo-element on .immersive-showroom */

@@ -1,10 +1,34 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import Logo from "@assets/images/Logo.svg";
 import { ROUTES } from "@/constants/routes";
 import GlassThemeButton from "@/components/common/button/GlassThemeButton";
 import { useBottomTheme } from "@/hooks/useBottomTheme";
 import "./ScrollEffect.css";
+
+// Throttle utility for scroll performance
+const useThrottle = (callback, delay) => {
+  const lastCall = useRef(0);
+  const lastArgs = useRef(null);
+  const timeoutRef = useRef(null);
+
+  return useCallback((...args) => {
+    const now = Date.now();
+    lastArgs.current = args;
+
+    if (now - lastCall.current >= delay) {
+      lastCall.current = now;
+      callback(...args);
+    } else if (!timeoutRef.current) {
+      // Schedule trailing call
+      timeoutRef.current = setTimeout(() => {
+        lastCall.current = Date.now();
+        timeoutRef.current = null;
+        callback(...lastArgs.current);
+      }, delay - (now - lastCall.current));
+    }
+  }, [callback, delay]);
+};
 
 export default function ScrollEffect({ isAnyOverlayOpen = false }) {
   const location = useLocation();
@@ -38,29 +62,59 @@ export default function ScrollEffect({ isAnyOverlayOpen = false }) {
   const isAutoScrollingRef = useRef(false);
   const lastScrollYRef = useRef(0);
 
-  const numFrames = 249; // Actual frames from Landscape_3D.mp4 (8.3s * 30fps)
+  // Smooth frame interpolation refs
+  const targetFrameRef = useRef(0);
+  const displayedFrameRef = useRef(0);
+  const animationFrameRef = useRef(null);
+  const framesPerTick = 8; // Max frames to advance per animation tick (controls smoothness vs speed)
+
+  const numFrames = 480; // Actual frames from 251222_60FPS_1080x1920.mp4 (10s * 60fps)
   const scrollEffectHeight = 250; // vh for scroll effect - reduced to make mirror introduce start earlier
   const mirrorIntroduceHeight = 600; // vh for mirror introduce
 
-  // Handle immersive button click
-  const handleImmersiveClick = () => {
-    // TODO: Navigate to immersive showroom or open immersive experience
-    console.log("Immersive button clicked");
-  };
+  // Throttled handler for immersive collapse (16ms = ~60fps)
+  const handleImmersiveCollapse = useCallback(() => {
+    const scrollY = window.scrollY;
+    setIsImmersiveCollapsed(scrollY > 100);
+  }, []);
+
+  const throttledImmersiveCollapse = useThrottle(handleImmersiveCollapse, 16);
 
   // Detect scroll to collapse immersive button
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      // Collapse button after scrolling 100px
-      setIsImmersiveCollapsed(scrollY > 100);
+    window.addEventListener("scroll", throttledImmersiveCollapse, { passive: true });
+    // Initial check
+    handleImmersiveCollapse();
+
+    return () => window.removeEventListener("scroll", throttledImmersiveCollapse);
+  }, [throttledImmersiveCollapse, handleImmersiveCollapse]);
+
+  // Smooth frame interpolation animation loop
+  useEffect(() => {
+    const animateFrames = () => {
+      const target = targetFrameRef.current;
+      const current = displayedFrameRef.current;
+
+      if (current !== target) {
+        // Calculate direction and step
+        const diff = target - current;
+        const step = Math.sign(diff) * Math.min(Math.abs(diff), framesPerTick);
+        const newFrame = current + step;
+
+        displayedFrameRef.current = newFrame;
+        setFrameIndex(newFrame);
+      }
+
+      animationFrameRef.current = requestAnimationFrame(animateFrames);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    // Initial check
-    handleScroll();
+    animationFrameRef.current = requestAnimationFrame(animateFrames);
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
   }, []);
 
   // Handle arrow click - scroll to next section
@@ -165,12 +219,14 @@ export default function ScrollEffect({ isAnyOverlayOpen = false }) {
 
   // Function to get frame path
   function getFramePath(index) {
-    return `/home-page/frames-webp/frame_${index.toString().padStart(4, "0")}.webp`;
+    return `/home-page/frames-new/frame_${index
+      .toString()
+      .padStart(4, "0")}.webp`;
   }
 
   // Progressive preload images - load in batches
   function preloadImages() {
-    const batchSize = 20;
+    const batchSize = 50; // Increased from 20 to 50 for better performance
     const loadedImagesArray = new Array(numFrames);
     let loadedCount = 0;
 
@@ -212,7 +268,7 @@ export default function ScrollEffect({ isAnyOverlayOpen = false }) {
           } else {
             clearInterval(intervalId);
           }
-        }, 300);
+        }, 200); // Reduced interval from 300ms to 200ms for faster loading
       })
       .catch(() => {
         // Initial image load failed silently
@@ -241,7 +297,6 @@ export default function ScrollEffect({ isAnyOverlayOpen = false }) {
 
       // Check if scrolling down or up
       const isScrollingDown = scrollY > lastScrollYRef.current;
-      const previousScrollY = lastScrollYRef.current;
       lastScrollYRef.current = scrollY;
 
       // If auto-scroll is running, check if user is manually scrolling against auto-scroll direction
@@ -488,8 +543,8 @@ export default function ScrollEffect({ isAnyOverlayOpen = false }) {
           }
         }
 
-        // Reset mirror introduce elements
-        setFrameIndex(0);
+        // Reset mirror introduce elements - set target to 0, animation loop will smoothly transition
+        targetFrameRef.current = 0;
       }
       // Phase 2: MirrorIntroduce (after scrollEffectHeight vh)
       else {
@@ -501,12 +556,12 @@ export default function ScrollEffect({ isAnyOverlayOpen = false }) {
           1
         );
 
-        // Calculate frame index for video
+        // Calculate target frame index for video - animation loop will smoothly interpolate
         const index = Math.min(
           numFrames - 1,
           Math.floor(mirrorProgress * numFrames)
         );
-        setFrameIndex(index);
+        targetFrameRef.current = index;
 
         // Ensure Phase 2 canvas is fully visible
         if (phase2CanvasLayerRef.current) {
@@ -589,32 +644,35 @@ export default function ScrollEffect({ isAnyOverlayOpen = false }) {
     return () => window.removeEventListener("scroll", handleScrollStart);
   }, [hasStartedScrolling, scrollEffectHeight]);
 
+  // Throttled handler for arrow visibility (32ms = ~30fps, less critical)
+  const handleArrowVisibilityCheck = useCallback(() => {
+    const footerSection = document.querySelector(
+      '[data-section="contact-us"]'
+    );
+
+    if (footerSection) {
+      const rect = footerSection.getBoundingClientRect();
+      const scrollY = window.scrollY;
+      const footerTop = scrollY + rect.top;
+
+      // Hide arrow when we're within 100px of footer top
+      if (scrollY >= footerTop - 100) {
+        setIsArrowVisible(false);
+      } else {
+        setIsArrowVisible(true);
+      }
+    }
+  }, []);
+
+  const throttledArrowVisibility = useThrottle(handleArrowVisibilityCheck, 32);
+
   // Hide arrow button when scrolled to footer (ContactUs section)
   useEffect(() => {
-    const handleArrowVisibility = () => {
-      const footerSection = document.querySelector(
-        '[data-section="contact-us"]'
-      );
+    window.addEventListener("scroll", throttledArrowVisibility, { passive: true });
+    handleArrowVisibilityCheck(); // Initial check
 
-      if (footerSection) {
-        const rect = footerSection.getBoundingClientRect();
-        const scrollY = window.scrollY;
-        const footerTop = scrollY + rect.top;
-
-        // Hide arrow when we're within 100px of footer top
-        if (scrollY >= footerTop - 100) {
-          setIsArrowVisible(false);
-        } else {
-          setIsArrowVisible(true);
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleArrowVisibility, { passive: true });
-    handleArrowVisibility(); // Initial check
-
-    return () => window.removeEventListener("scroll", handleArrowVisibility);
-  }, []);
+    return () => window.removeEventListener("scroll", throttledArrowVisibility);
+  }, [throttledArrowVisibility, handleArrowVisibilityCheck]);
 
   // Update canvas when frame changes - only render if frame is different
   useEffect(() => {
@@ -972,7 +1030,6 @@ export default function ScrollEffect({ isAnyOverlayOpen = false }) {
             theme={arrowTheme === "white" ? "dark" : "light"}
             icon="globe"
             isCollapsed={isImmersiveCollapsed}
-            onClick={handleImmersiveClick}
           >
             Immersive Showroom
           </GlassThemeButton>

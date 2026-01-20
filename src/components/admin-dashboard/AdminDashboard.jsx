@@ -26,6 +26,8 @@ import VendorSelectionWizard from "./VendorSelectionWizard";
 import RBACMatrix from "./RBACMatrix";
 import AppointmentsManager from "./AppointmentsManager";
 import PackagePrintingKit from "./PackagePrintingKit";
+import StockReconciliation from "./StockReconciliation";
+import WarehouseManagement from "./WarehouseManagement";
 // Product Ops Dashboard
 import {
   ProductOpsDashboard,
@@ -42,6 +44,17 @@ const AdminDashboard = () => {
   const { user } = useAuth();
   const roles = user?.roles || [];
   const isAdminLike = roles.includes("SUPER_ADMIN") || roles.includes("ADMIN") || roles.includes("IT_ADMIN");
+
+  // Sidebar state for mobile
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Close sidebar when clicking a menu item on mobile
+  const handleMenuClick = (tabId) => {
+    setActiveTab(tabId);
+    if (window.innerWidth <= 1024) {
+      setSidebarOpen(false);
+    }
+  };
 
   // Get portal branding based on user's primary role
   const getPortalInfo = () => {
@@ -102,6 +115,7 @@ const AdminDashboard = () => {
     { id: "product-ops", label: "Product Ops Dashboard" },
     { id: "misa-integration", label: "MISA Integration" },
     { id: "product-publisher", label: "Product Publisher" },
+    { id: "stock-reconciliation", label: "Stock Reconciliation" },
     // Existing tabs
     { id: "products", label: "Products" },
     { id: "product-fulfillment", label: "Product Fulfillment (Old)" },
@@ -113,18 +127,19 @@ const AdminDashboard = () => {
     { id: "categories", label: "Categories" },
     { id: "collections", label: "Collections" },
     { id: "locations", label: "Locations" },
+    { id: "warehouses", label: "Warehouses" },
     { id: "vendors", label: "Vendors" },
-    { id: "vendor-matching", label: "Vendor Matching" },
-    { id: "vendor-optimization", label: "Vendor Optimization" },
-    { id: "vendor-selection-wizard", label: "Vendor Selection Wizard" },
-    { id: "currency-calculator", label: "Currency Calculator" },
-    { id: "metal-prices", label: "Metal Prices" },
-    { id: "unit-converter", label: "Unit Converter" },
-    { id: "collection-plan-wizard", label: "Collection Plan Wizard" },
-    { id: "jewelry-specifications", label: "Jewelry Specifications" },
-    { id: "purchase-orders", label: "Purchase Orders" },
-    { id: "market-trends", label: "Market Trends" },
-    { id: "customs-compliance", label: "Customs & Compliance" },
+    // { id: "vendor-matching", label: "Vendor Matching" },
+    // { id: "vendor-optimization", label: "Vendor Optimization" },
+    // { id: "vendor-selection-wizard", label: "Vendor Selection Wizard" },
+    // { id: "currency-calculator", label: "Currency Calculator" },
+    // { id: "metal-prices", label: "Metal Prices" },
+    // { id: "unit-converter", label: "Unit Converter" },
+    // { id: "collection-plan-wizard", label: "Collection Plan Wizard" },
+    // { id: "jewelry-specifications", label: "Jewelry Specifications" },
+    // { id: "purchase-orders", label: "Purchase Orders" },
+    // { id: "market-trends", label: "Market Trends" },
+    // { id: "customs-compliance", label: "Customs & Compliance" },
     // { id: "components", label: "Components" },
     { id: "users", label: "Users" },
     { id: "rbac-matrix", label: "RBAC Matrix" },
@@ -137,6 +152,7 @@ const AdminDashboard = () => {
       "product-ops": ["PRODUCTION_OPS", "ADMIN", "IT_ADMIN"],
       "misa-integration": ["PRODUCTION_OPS", "ADMIN", "IT_ADMIN"],
       "product-publisher": ["PRODUCTION_OPS", "MARKETING", "ADMIN", "IT_ADMIN"],
+      "stock-reconciliation": ["PRODUCTION_OPS", "ADMIN", "IT_ADMIN"],
       // Existing tabs
       products: ["CREATIVE_DESIGN", "ADMIN", "IT_ADMIN"],
       "product-fulfillment": ["CREATIVE_DESIGN", "MARKETING", "PRODUCTION_OPS", "ADMIN", "IT_ADMIN"],
@@ -148,6 +164,7 @@ const AdminDashboard = () => {
       categories: ["MARKETING", "CREATIVE_DESIGN", "ADMIN", "IT_ADMIN"],
       collections: ["PRODUCTION_OPS", "MARKETING", "CREATIVE_DESIGN", "ADMIN", "IT_ADMIN"],
       locations: ["ADMIN", "IT_ADMIN"],
+      warehouses: ["PRODUCTION_OPS", "ADMIN", "IT_ADMIN", "SUPER_ADMIN"],
       vendors: ["PRODUCTION_OPS", "ADMIN", "IT_ADMIN"],
       "vendor-matching": ["PRODUCTION_OPS", "ADMIN", "IT_ADMIN"],
       "vendor-optimization": ["PRODUCTION_OPS", "ADMIN", "IT_ADMIN"],
@@ -210,6 +227,8 @@ const AdminDashboard = () => {
         return <MISAIntegration />;
       case "product-publisher":
         return <ProductPublisher />;
+      case "stock-reconciliation":
+        return <StockReconciliation />;
       // Existing tabs
       case "products":
         return <ProductsManager />;
@@ -231,6 +250,8 @@ const AdminDashboard = () => {
         return <CollectionsManager />;
       case "locations":
         return <LocationsManager />;
+      case "warehouses":
+        return <WarehouseManagement />;
       case "vendors":
         return <VendorsManager />;
       case "vendor-matching":
@@ -285,6 +306,10 @@ const AdminDashboard = () => {
         title: "Product Publisher",
         description: "Review, approve, and publish products to website",
       },
+      "stock-reconciliation": {
+        title: "Stock Reconciliation",
+        description: "Scan barcodes to reconcile physical inventory against system records",
+      },
       // Existing tabs
       products: {
         title: "Products Management",
@@ -334,6 +359,10 @@ const AdminDashboard = () => {
         title: "Store Locations",
         description:
           "Manage store locations, addresses, and contact information",
+      },
+      warehouses: {
+        title: "Warehouse Management",
+        description: "Manage warehouses, racks, slots, and inventory positions",
       },
       vendors: {
         title: "Vendors Management",
@@ -401,11 +430,28 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard-container">
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div
+          className="admin-sidebar-overlay"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar Navigation */}
-      <div className="admin-sidebar">
+      <div className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="admin-sidebar-header">
-          <h1 className="admin-sidebar-title">{portalInfo.title}</h1>
-          <p className="admin-sidebar-subtitle">{portalInfo.subtitle}</p>
+          <div className="admin-sidebar-header-content">
+            <h1 className="admin-sidebar-title">{portalInfo.title}</h1>
+            <p className="admin-sidebar-subtitle">{portalInfo.subtitle}</p>
+          </div>
+          <button
+            className="admin-sidebar-close"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Close menu"
+          >
+            ×
+          </button>
         </div>
 
         <nav className="admin-sidebar-nav">
@@ -415,7 +461,7 @@ const AdminDashboard = () => {
               className={`admin-nav-button ${
                 activeTab === item.id ? "active" : ""
               }`}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => handleMenuClick(item.id)}
             >
               <span className="admin-nav-label">{item.label}</span>
             </button>
@@ -438,6 +484,20 @@ const AdminDashboard = () => {
 
       {/* Main Content */}
       <div className="admin-main-content">
+        {/* Mobile Header with Menu Toggle */}
+        <div className="admin-mobile-header">
+          <button
+            className="admin-menu-toggle"
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Open menu"
+          >
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+          </button>
+          <span className="admin-mobile-title">{portalInfo.title}</span>
+        </div>
+
         <div className="admin-content-header">
           <div className="admin-breadcrumb">
             <span>{portalInfo.breadcrumb}</span>

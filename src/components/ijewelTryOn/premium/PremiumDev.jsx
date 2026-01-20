@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useDeviceCamera } from '../ijewel_useDeviceCamera';
 import styles from './premium_dev.module.css';
+import MirrorLogo from '@/assets/images/Mirror_Logo_Text_Pink.svg';
 
 const MODELS = [
   { id: 'dY4BIhDDQNmCVTRrEpV2QQ', name: 'Twin', basename: 'drive' }, // chuan
@@ -10,6 +11,8 @@ const MODELS = [
   { id: 'DfRULQ-OSk6TjbYAcB9zkA', name: 'Fistion', basename: 'drive' }, // chuan
   { id: 'FWV7-qA6QEG_Ju8pjSItuA', name: 'Triology', basename: 'drive' }, // chuan
   { id: 'QAauSV24QiuM5CxA_1797w', name: 'Myfav', basename: 'drive' }, // chuan
+  { id: 'VdiuGY0xSDOOBoxoHU2y-A', name: 'Lumex91Cadillac', basename: 'drive'}, // chuan
+  { id: 'P936xDENR7-yCCiZSMeLTQ', name: 'Lumex91Leaves', basename: 'drive'}, // chuan
   // ==============================================================================================================
   // đang sửa
 
@@ -82,6 +85,7 @@ const Premium = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [displayCamera, setDisplayCamera] = useState('Trước');
   const [displayHand, setDisplayHand] = useState('Chưa detect');
+  const [capturedImage, setCapturedImage] = useState(null);
 
   // Read hand detection directly from SDK (no state, no re-renders)
   const getDetectedHand = useCallback(() => {
@@ -196,9 +200,27 @@ const Premium = () => {
 
       window.addEventListener('ijewel-file-data', handleFileData);
 
+      // Calculate footer height matching CSS: max(13vh, 9vw)
+      const calculateFooterHeight = () => {
+        const vh = window.innerHeight / 100;
+        const vw = window.innerWidth / 100;
+        return Math.max(13 * vh, 9 * vw);
+      };
+
+      // Configurator sits right above footer
+      const calculateConfiguratorOffset = () => {
+        const footerHeight = calculateFooterHeight();
+        console.log('🔍 Footer height:', footerHeight, 'px');
+        console.log('🔍 Configurator offset:', footerHeight, 'px');
+        return footerHeight;
+      };
+
       await window.ijewelViewer.loadModelById(currentModel.id, currentModel.basename, containerRef.current, {
         showUiButtons: false,
-        hideTryOn: false
+        hideTryOn: false,
+        showConfigurator: true,
+        configuratorBottomOffsetPx: calculateConfiguratorOffset(),
+        hideNameNumbers: true  // Hide numerical suffixes like "materials 2"
       });
 
       const handleViewerReady = (event) => {
@@ -336,6 +358,121 @@ const Premium = () => {
     setFingerWithRotation(newFinger);
   };
 
+  // Capture photo - composite video (camera) + canvas (3D model)
+  const handleCapture = () => {
+    const viewerApp = viewerAppRef.current;
+    const arPlugin = arPluginRef.current;
+
+    // Debug: log viewerApp and arPlugin structure
+    console.log('viewerApp:', viewerApp);
+    console.log('viewerApp.canvas:', viewerApp?.canvas);
+    console.log('viewerApp.renderer:', viewerApp?.renderer);
+    console.log('viewerApp.renderer.domElement:', viewerApp?.renderer?.domElement);
+    console.log('arPlugin:', arPlugin);
+    console.log('arPlugin keys:', arPlugin ? Object.keys(arPlugin) : null);
+
+    // Try to get canvas from viewerApp
+    let canvas = viewerApp?.canvas || viewerApp?.renderer?.domElement;
+
+    // If still not found, check arPlugin
+    if (!canvas && arPlugin) {
+      // Log all properties to find video/canvas
+      for (const key in arPlugin) {
+        const val = arPlugin[key];
+        if (val instanceof HTMLCanvasElement) {
+          console.log('Found canvas in arPlugin.' + key);
+          canvas = val;
+        }
+        if (val instanceof HTMLVideoElement) {
+          console.log('Found video in arPlugin.' + key);
+        }
+      }
+    }
+
+    if (!canvas) {
+      console.error('Canvas not found in viewerApp or arPlugin');
+      return;
+    }
+
+    try {
+      // Create composite canvas with logo
+      const compositeCanvas = document.createElement('canvas');
+      const ctx = compositeCanvas.getContext('2d');
+
+      compositeCanvas.width = canvas.width;
+      compositeCanvas.height = canvas.height;
+
+      // Flip horizontally for back camera (to fix flipped image)
+      const shouldFlip = isBackCameraRef.current;
+      if (shouldFlip) {
+        ctx.scale(-1, 1);
+        ctx.translate(-canvas.width, 0);
+      }
+
+      // Draw the main canvas (AR view)
+      ctx.drawImage(canvas, 0, 0);
+
+      // Reset transform for logo drawing
+      if (shouldFlip) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+      }
+
+      // Load and draw logo
+      const logo = new Image();
+      logo.onload = () => {
+        // Logo size: 2% of canvas AREA
+        const canvasArea = compositeCanvas.width * compositeCanvas.height;
+        const logoArea = canvasArea * 0.02;
+        const aspectRatio = logo.naturalWidth / logo.naturalHeight;
+        // logoWidth * logoHeight = logoArea
+        // logoWidth / logoHeight = aspectRatio
+        // => logoWidth = sqrt(logoArea * aspectRatio)
+        const logoWidth = Math.sqrt(logoArea * aspectRatio);
+        const logoHeight = logoWidth / aspectRatio;
+
+        // Position: bottom right with padding (3% from edges)
+        const padding = compositeCanvas.width * 0.03;
+        const x = compositeCanvas.width - logoWidth - padding;
+        const y = compositeCanvas.height - logoHeight - padding;
+
+        ctx.drawImage(logo, x, y, logoWidth, logoHeight);
+
+        const imageData = compositeCanvas.toDataURL('image/png');
+        setCapturedImage(imageData);
+        console.log('Capture successful with logo!');
+      };
+
+      logo.onerror = () => {
+        // If logo fails to load, save without logo
+        console.warn('Logo failed to load, saving without logo');
+        const imageData = compositeCanvas.toDataURL('image/png');
+        setCapturedImage(imageData);
+      };
+
+      logo.src = MirrorLogo;
+    } catch (error) {
+      console.error('Capture error:', error);
+    }
+  };
+
+  // Close captured image preview
+  const handleCloseCapture = () => {
+    setCapturedImage(null);
+  };
+
+  // Download captured image then close preview
+  const handleDownload = () => {
+    if (!capturedImage) return;
+
+    const link = document.createElement('a');
+    link.download = `mirror-tryon-${Date.now()}.png`;
+    link.href = capturedImage;
+    link.click();
+
+    // Auto close preview after download
+    setCapturedImage(null);
+  };
+
   // FPS color: green >= 50, yellow >= 30, red < 30
   const getFpsColor = (fps) => {
     if (fps >= 50) return '#00ff00';  // Xanh lá - Tốt
@@ -393,8 +530,13 @@ const Premium = () => {
             </button>
 
             {/* Switch Finger */}
-            <button className={styles.pillButton} onClick={handleSwitchFinger}>
-              Switch Finger
+            <button className={styles.circleButton} onClick={handleSwitchFinger} aria-label="Switch Finger">
+              <svg className={styles.buttonIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 11V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v1" />
+                <path d="M14 10V4a2 2 0 0 0-2-2a2 2 0 0 0-2 2v6" />
+                <path d="M10 10.5V6a2 2 0 0 0-2-2a2 2 0 0 0-2 2v8" />
+                <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" />
+              </svg>
             </button>
 
             {/* Camera flip */}
@@ -407,6 +549,14 @@ const Premium = () => {
                 <path d="m6 2 3 3-3 3" />
               </svg>
             </button>
+
+            {/* Capture button */}
+            <button className={styles.circleButton} onClick={handleCapture} aria-label="Capture Photo">
+              <svg className={styles.buttonIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+                <circle cx="12" cy="13" r="3" />
+              </svg>
+            </button>
           </div>
         ) : (
           <div className={styles.footerControlsCenter}>
@@ -416,6 +566,31 @@ const Premium = () => {
           </div>
         )}
       </div>
+
+      {/* Captured Image Preview Overlay */}
+      {capturedImage && (
+        <div className={styles.captureOverlay}>
+          <img src={capturedImage} alt="Captured" className={styles.capturedImage} />
+          <div className={styles.captureControls}>
+            {/* Close button */}
+            <button className={styles.circleButton} onClick={handleCloseCapture} aria-label="Close">
+              <svg className={styles.buttonIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            {/* Download button */}
+            <button className={styles.circleButton} onClick={handleDownload} aria-label="Download">
+              <svg className={styles.buttonIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

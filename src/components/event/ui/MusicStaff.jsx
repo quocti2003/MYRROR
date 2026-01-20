@@ -3,7 +3,7 @@
  */
 import React, { useRef, useCallback } from 'react';
 import Diamond from './Diamond';
-import { STAFF_LINE_TO_PITCH, getDiamondConfig } from '../../../constants/eventConstants';
+import { STAFF_LINE_TO_PITCH, getDiamondConfig } from '@/constants/eventConstants';
 
 const STAFF_LINES = 5;
 const STAFF_PADDING = 40; // Padding top/bottom for notes outside staff lines

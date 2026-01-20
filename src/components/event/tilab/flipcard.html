@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Flip Card</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a15 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .ambient-light {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: 
+                radial-gradient(circle at 70% 20%, rgba(255, 220, 150, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 30% 80%, rgba(100, 150, 255, 0.05) 0%, transparent 40%);
+        }
+
+        .scene {
+            perspective: 1000px;
+            perspective-origin: 65% 35%;
+        }
+
+        .card-container {
+            width: 280px;
+            height: 400px;
+            cursor: grab;
+            transform-style: preserve-3d;
+            transform: rotateX(12deg) rotateY(-8deg);
+            animation: entryAnimation 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .card-container.dragging {
+            cursor: grabbing;
+        }
+
+        @keyframes entryAnimation {
+            0% {
+                transform: translateZ(2000px) scale(4) rotateX(12deg) rotateY(720deg);
+                opacity: 0;
+                filter: blur(20px);
+            }
+            30% {
+                opacity: 1;
+                filter: blur(5px);
+            }
+            100% {
+                transform: translateZ(0) scale(1) rotateX(12deg) rotateY(-8deg);
+                opacity: 1;
+                filter: blur(0px);
+            }
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .card.flipping-to-back {
+            animation: cardFlip 0.4s forwards ease-in-out;
+        }
+
+        .card.flipping-to-front {
+            animation: cardUnFlip 0.4s forwards ease-in-out;
+        }
+
+        @keyframes cardFlip {
+            0% { transform: rotateZ(0deg) rotateY(0deg); } 
+            50% { transform: rotateZ(-10deg) rotateY(90deg); }
+            100% { transform: rotateZ(0deg) rotateY(180deg); }
+        }
+
+        @keyframes cardUnFlip {
+            0% { transform: rotateZ(0deg) rotateY(180deg); } 
+            50% { transform: rotateZ(-10deg) rotateY(90deg); }
+            100% { transform: rotateZ(0deg) rotateY(0deg); }
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-front {
+            background: linear-gradient(165deg, #2a3a4a 0%, #1a252f 40%, #0f1419 100%);
+            border: 2px solid #b8860b;
+        }
+
+        .card-front .card-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-front::before {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border-radius: 13px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            pointer-events: none;
+        }
+
+        .shine {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .shine::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                transparent 0%,
+                transparent 35%,
+                rgba(255, 255, 255, 0.05) 40%,
+                rgba(255, 255, 255, 0.15) 45%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0.15) 55%,
+                rgba(255, 255, 255, 0.05) 60%,
+                transparent 65%,
+                transparent 100%
+            );
+            transform: rotate(-25deg) translateX(var(--shine-pos, -100%));
+        }
+
+        .card-front .icon {
+            font-size: 70px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 5px 15px rgba(255, 215, 0, 0.4));
+        }
+
+        .card-front h2 {
+            color: #ffd700;
+            font-size: 26px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 
+                0 0 10px rgba(255, 215, 0, 0.5),
+                0 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 8px;
+        }
+
+        .card-front p {
+            color: #888;
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .stars {
+            position: absolute;
+            top: 20px;
+            display: flex;
+            gap: 4px;
+        }
+
+        .stars span {
+            color: #ffd700;
+            font-size: 16px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+        }
+
+        .texture {
+            position: absolute;
+            inset: 0;
+            background: 
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 3px,
+                    rgba(255, 255, 255, 0.01) 3px,
+                    rgba(255, 255, 255, 0.01) 6px
+                );
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .card-back {
+            background: linear-gradient(165deg, #1a1a2e 0%, #12121f 40%, #0a0a12 100%);
+            border: 2px solid #c0392b;
+            transform: rotateY(180deg);
+        }
+
+        .card-back .card-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-back::before {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border-radius: 13px;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            pointer-events: none;
+        }
+
+        .card-back .image-placeholder {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #e74c3c, #962d22);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(231, 76, 60, 0.3),
+                inset 0 -5px 20px rgba(0, 0, 0, 0.4),
+                inset 0 5px 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .card-back .image-placeholder span {
+            font-size: 50px;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5));
+        }
+
+        .card-back h2 {
+            color: #e74c3c;
+            font-size: 22px;
+            letter-spacing: 3px;
+            text-shadow: 
+                0 0 15px rgba(231, 76, 60, 0.5),
+                0 2px 4px rgba(0, 0, 0, 0.8);
+            margin-bottom: 15px;
+        }
+
+        .card-back .stats {
+            display: flex;
+            gap: 25px;
+        }
+
+        .card-back .stat {
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-back .stat-value {
+            color: #fff;
+            font-size: 22px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-back .stat-label {
+            color: #666;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .card-shadow {
+            position: absolute;
+            bottom: -80px;
+            left: 50%;
+            width: 220px;
+            height: 40px;
+            background: radial-gradient(ellipse, rgba(0, 0, 0, 0.6) 0%, transparent 70%);
+            transform: translateX(-50%) rotateX(90deg);
+            filter: blur(15px);
+            pointer-events: none;
+        }
+
+        .status {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s;
+        }
+
+        .status.front {
+            background: rgba(255, 215, 0, 0.15);
+            color: #ffd700;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .status.back {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            box-shadow: 0 0 30px rgba(231, 76, 60, 0.2);
+        }
+
+        .status.dragging {
+            background: rgba(155, 89, 182, 0.15);
+            color: #9b59b6;
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            box-shadow: 0 0 30px rgba(155, 89, 182, 0.2);
+        }
+
+        .instructions {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            text-align: center;
+            line-height: 1.8;
+            transition: opacity 0.5s;
+        }
+
+        .instructions.hidden {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-light"></div>
+    
+    <div class="status front">💎 MẶT TRƯỚC</div>
+
+    <div class="scene">
+        <div class="card-container" id="cardContainer">
+            <div class="card" id="card">
+                <div class="card-face card-front">
+                    <div class="shine" id="shineFront"></div>
+                    <div class="texture"></div>
+                    <div class="card-inner">
+                        <div class="stars">
+                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                        </div>
+                        <div class="icon">💎</div>
+                        <h2>Diamond</h2>
+                        <p>Mirror Future</p>
+                    </div>
+                </div>
+                
+                <div class="card-face card-back">
+                    <div class="shine" id="shineBack"></div>
+                    <div class="texture"></div>
+                    <div class="card-inner">
+                        <div class="image-placeholder">
+                            <span>🔥</span>
+                        </div>
+                        <h2>LEGENDARY</h2>
+                        <div class="stats">
+                            <div class="stat">
+                                <div class="stat-value">99</div>
+                                <div class="stat-label">Power</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">S+</div>
+                                <div class="stat-label">Rank</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">∞</div>
+                                <div class="stat-label">Value</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-shadow" id="cardShadow"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions">
+        👆 Click để lật thẻ<br>
+        ✋ Giữ + kéo để xoay xem thẻ
+    </div>
+
+    <script>
+        const card = document.getElementById('card');
+        const cardContainer = document.getElementById('cardContainer');
+        const cardShadow = document.getElementById('cardShadow');
+        const status = document.querySelector('.status');
+        const instructions = document.querySelector('.instructions');
+        const shineFront = document.getElementById('shineFront');
+        const shineBack = document.getElementById('shineBack');
+
+        // State
+        let isDragging = false;
+        let isFlipping = false;
+        let isShowingFront = true;
+        let currentRotation = 0;
+        let velocity = 0;
+        let targetRotation = 0;
+        let animationId = null;
+        let entryComplete = false;
+
+        // Drag tracking
+        let dragHistory = [];
+        let dragLastX = 0;
+        let mouseDownTime = 0;
+        let mouseDownX = 0;
+
+        // Physics
+        const friction = 0.95;
+        const snapStrength = 0.08;
+
+        // Entry animation
+        cardContainer.addEventListener('animationend', () => {
+            entryComplete = true;
+            animate();
+        });
+
+        function calculateReleaseVelocity() {
+            if (dragHistory.length < 2) return 0;
+            const recentHistory = dragHistory.slice(-5);
+            let totalDelta = 0;
+            let totalTime = 0;
+            for (let i = 1; i < recentHistory.length; i++) {
+                totalDelta += recentHistory[i].x - recentHistory[i-1].x;
+                totalTime += recentHistory[i].time - recentHistory[i-1].time;
+            }
+            if (totalTime === 0) return 0;
+            return (totalDelta / totalTime) * 16;
+        }
+
+        function findNearestFrontAngle(angle) {
+            return Math.round(angle / 360) * 360;
+        }
+
+        function animate() {
+            if (!isDragging && !isFlipping) {
+                if (Math.abs(velocity) > 0.1) {
+                    velocity *= friction;
+                    currentRotation += velocity;
+                    const remainingDistance = velocity / (1 - friction);
+                    const predictedEnd = currentRotation + remainingDistance;
+                    targetRotation = findNearestFrontAngle(predictedEnd);
+                } else {
+                    velocity = 0;
+                    const diff = targetRotation - currentRotation;
+                    if (Math.abs(diff) > 0.5) {
+                        currentRotation += diff * snapStrength;
+                    } else {
+                        currentRotation = targetRotation;
+                    }
+                }
+
+                card.style.transform = `rotateY(${currentRotation}deg)`;
+                updateShine(currentRotation);
+                updateShadow(currentRotation);
+            }
+
+            animationId = requestAnimationFrame(animate);
+        }
+
+        function updateShine(rotation) {
+            const normalized = ((rotation % 360) + 360) % 360;
+            let frontShinePos = normalized <= 90 ? (normalized / 90) * 100 :
+                               normalized >= 270 ? ((normalized - 270) / 90) * 100 - 100 : 200;
+            let backShinePos = (normalized >= 90 && normalized <= 270) ?
+                              ((normalized - 90) / 180) * 200 - 100 : 200;
+            shineFront.style.setProperty('--shine-pos', `${frontShinePos}%`);
+            shineBack.style.setProperty('--shine-pos', `${backShinePos}%`);
+        }
+
+        function updateShadow(rotation) {
+            const normalized = ((rotation % 360) + 360) % 360;
+            const shadowOffset = Math.sin(normalized * Math.PI / 180) * 40;
+            const shadowScale = 0.8 + Math.abs(Math.cos(normalized * Math.PI / 180)) * 0.2;
+            const shadowOpacity = 0.3 + Math.abs(Math.cos(normalized * Math.PI / 180)) * 0.3;
+            cardShadow.style.transform = `translateX(calc(-50% + ${shadowOffset}px)) rotateX(90deg) scaleX(${shadowScale})`;
+            cardShadow.style.opacity = shadowOpacity;
+        }
+
+        function flipCard() {
+            if (isFlipping || isDragging) return;
+            if (Math.abs(currentRotation - targetRotation) > 1) return;
+
+            isFlipping = true;
+            velocity = 0;
+            card.classList.remove('flipping-to-back', 'flipping-to-front');
+            card.style.transform = '';
+
+            if (isShowingFront) {
+                card.classList.add('flipping-to-back');
+                isShowingFront = false;
+                updateStatus('back');
+            } else {
+                card.classList.add('flipping-to-front');
+                isShowingFront = true;
+                updateStatus('front');
+            }
+
+            setTimeout(() => {
+                isFlipping = false;
+                card.classList.remove('flipping-to-back', 'flipping-to-front');
+                currentRotation = isShowingFront ? 0 : 180;
+                targetRotation = currentRotation;
+                card.style.transform = `rotateY(${currentRotation}deg)`;
+            }, 400);
+        }
+
+        function updateStatus(state) {
+            status.className = 'status ' + state;
+            if (state === 'dragging') {
+                status.textContent = '✋ ĐANG KÉO';
+            } else if (state === 'front') {
+                status.textContent = '💎 MẶT TRƯỚC';
+            } else {
+                status.textContent = '🔥 MẶT SAU';
+            }
+        }
+
+        // ========== DRAG HANDLERS ==========
+        function startDrag(clientX) {
+            if (!entryComplete || isFlipping) return;
+            
+            isDragging = true;
+            cardContainer.classList.add('dragging');
+            dragHistory = [{ x: clientX, time: performance.now() }];
+            dragLastX = clientX;
+            mouseDownX = clientX;
+            mouseDownTime = Date.now();
+            velocity = 0;
+
+            card.classList.remove('flipping-to-back', 'flipping-to-front');
+            updateStatus('dragging');
+        }
+
+        function moveDrag(clientX) {
+            if (!isDragging) return;
+            
+            const deltaX = clientX - dragLastX;
+            currentRotation += deltaX * 0.5;
+            dragLastX = clientX;
+
+            dragHistory.push({ x: clientX, time: performance.now() });
+            if (dragHistory.length > 10) dragHistory.shift();
+
+            card.style.transform = `rotateY(${currentRotation}deg)`;
+            updateShine(currentRotation);
+            updateShadow(currentRotation);
+        }
+
+        function endDrag() {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            cardContainer.classList.remove('dragging');
+
+            velocity = calculateReleaseVelocity() * 0.5;
+            const remainingDistance = velocity / (1 - friction);
+            const predictedEnd = currentRotation + remainingDistance;
+            targetRotation = findNearestFrontAngle(predictedEnd);
+
+            // Update status based on current showing face
+            updateStatus(isShowingFront ? 'front' : 'back');
+        }
+
+        // Check if it was a click (not drag)
+        function checkForClick(clientX) {
+            const clickDistance = Math.abs(clientX - mouseDownX);
+            const clickDuration = Date.now() - mouseDownTime;
+            return clickDistance < 5 && clickDuration < 200;
+        }
+
+        // ========== MOUSE EVENTS ==========
+        cardContainer.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            startDrag(e.clientX);
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            moveDrag(e.clientX);
+        });
+
+        document.addEventListener('mouseup', (e) => {
+            const wasClick = isDragging && checkForClick(e.clientX);
+            endDrag();
+            if (wasClick && entryComplete) {
+                flipCard();
+            }
+        });
+
+        // Safety: end drag when mouse leaves window
+        document.addEventListener('mouseleave', () => {
+            endDrag();
+        });
+
+        // Safety: end drag when window loses focus
+        window.addEventListener('blur', () => {
+            endDrag();
+        });
+
+        // ========== TOUCH EVENTS ==========
+        cardContainer.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            startDrag(e.touches[0].clientX);
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging && e.touches.length > 0) {
+                moveDrag(e.touches[0].clientX);
+            }
+        });
+
+        document.addEventListener('touchend', (e) => {
+            const touch = e.changedTouches[0];
+            const wasClick = isDragging && checkForClick(touch ? touch.clientX : dragLastX);
+            endDrag();
+            if (wasClick && entryComplete) {
+                flipCard();
+            }
+        });
+
+        document.addEventListener('touchcancel', () => {
+            endDrag();
+        });
+
+        // ========== KEYBOARD ==========
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && entryComplete && !isDragging) {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+
+        // Hide instructions
+        let firstInteraction = true;
+        cardContainer.addEventListener('mousedown', () => {
+            if (firstInteraction) {
+                setTimeout(() => instructions.classList.add('hidden'), 2000);
+                firstInteraction = false;
+            }
+        });
+    </script>
+</body>
+</html>

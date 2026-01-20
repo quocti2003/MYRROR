@@ -3,7 +3,7 @@ import axios from "axios";
 // Base URL for Product Ops API
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
-  "https://xpxr4xbvim.ap-southeast-1.awsapprunner.com";
+  "https://nsa4fef6um.ap-southeast-1.awsapprunner.com";
 
 // Create axios instance with default config
 const api = axios.create({

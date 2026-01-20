@@ -12,16 +12,18 @@ const Section4ProductMedia = ({ product }) => {
       : [];
   };
 
-  const allImageUrls = [
+  // Combine imageUrls and imageUrl, removing duplicates
+  const allImageUrls = [...new Set([
     ...(product?.imageUrls || []),
     ...(product?.imageUrl ? [product.imageUrl] : [])
-  ];
+  ].map(url => url?.trim()).filter(Boolean))];
   const photos = filterValidUrls(allImageUrls);
 
-  const allVideoUrls = [
+  // Combine videoUrls and videoUrl, removing duplicates
+  const allVideoUrls = [...new Set([
     ...(product?.videoUrls || []),
     ...(product?.videoUrl ? [product.videoUrl] : [])
-  ];
+  ].map(url => url?.trim()).filter(Boolean))];
   const videos = filterValidUrls(allVideoUrls);
 
   const model3D = product?.model3dUrl && !product.model3dUrl.includes('example.com') ? product.model3dUrl : null;

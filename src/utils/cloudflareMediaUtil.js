@@ -19,6 +19,14 @@ const getCloudflareBaseUrl = () => {
  * @returns {string} Full media URL
  */
 export const getMediaUrl = (path, options = {}) => {
+  // If path is empty or undefined, return empty string
+  if (!path) return "";
+
+  // If path is already an absolute URL (from API), return as-is
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+
   const { forceCloudflare = false } = options;
   const cloudflareBaseUrl = getCloudflareBaseUrl();
 

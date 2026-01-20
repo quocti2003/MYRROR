@@ -9,8 +9,8 @@
 /* GSAP Horizontal Scroll Layout */
 .collection-section-4-gsap {
   width: 100%;
-  min-height: 100vh;
-  padding: 240px 0 24px !important;
+  /* min-height: 80vh; */
+  padding: 160px 0 0px !important;
   background: rgba(246, 246, 246, 1);
   box-sizing: border-box;
   position: relative;
@@ -76,7 +76,8 @@
   text-align: center;
   color: #797979;
   /* Ghi đè margin mặc định của body-text-4 */
-  margin: 0 !important;
+  margin: auto !important;
+  max-width: 464px;
 }
 
 .same-collection-grid {
@@ -142,7 +143,7 @@
   display: flex;
   justify-content: center;
   background: rgba(246, 246, 246, 1);
-  padding-top: 36px;
+  padding-top: 60px;
   padding-bottom: 120px;
 }
 
@@ -204,9 +205,6 @@
     margin-bottom: 6px !important;
   }
 
-  .same-collection-description {
-    line-height: 1.5;
-  }
 
   .product-card {
     /* Mobile: 1 image + peek of 2nd (divide by 1.15 for ~15% peek) */

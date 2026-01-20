@@ -157,6 +157,41 @@
   cursor: not-allowed;
 }
 
+/* Import PDF Button */
+.import-pdf-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background: #f3f4f6;
+  color: #374151;
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.import-pdf-btn:hover {
+  background: #e5e7eb;
+  border-color: #bc224c;
+  color: #bc224c;
+}
+
+/* Loading spinner animation */
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 /* Order Items Section */
 .order-items-section {
   background: #fff;
@@ -446,6 +481,16 @@
   background: #059669;
 }
 
+.action-btn.invoice-btn {
+  background: linear-gradient(135deg, #b8860b 0%, #d4a84b 100%);
+  color: #fff;
+}
+
+.action-btn.invoice-btn:hover {
+  background: linear-gradient(135deg, #d4a84b 0%, #b8860b 100%);
+  box-shadow: 0 4px 15px rgba(184, 134, 11, 0.4);
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;
@@ -623,8 +668,9 @@
     flex-direction: column;
   }
 
-  .add-btn {
-    width: 100%;
+  .add-btn,
+  .import-pdf-btn {
+    flex: 1;
     justify-content: center;
   }
 

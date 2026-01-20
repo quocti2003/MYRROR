@@ -1,19 +1,46 @@
 /* FutureDiamondV2 Component Styles */
 .future-diamond-v2 {
   width: 100%;
-  background: linear-gradient(
-    180deg,
-    #000 0%,
-    #5e1226 15%,
-    #c9385f 30%,
-    #bb234c 37%,
-    #000 60%,
-    #000 100%
-  );
   position: relative;
   z-index: 10;
   /* Responsive padding: min 150px, preferred 20vw (based on video-box width), max 300px */
   padding-bottom: clamp(150px, 20vw, 300px);
+  /* Light gradient as base background - fixed to viewport */
+  background: linear-gradient(
+    180deg,
+    #f2f2f2 0%,
+    #fff 25%,
+    #b8b8b8 50%,
+    #fff 75%,
+    #b8b8b8 100%
+  );
+  background-attachment: fixed;
+  background-size: 100% 100vh;
+}
+
+/* Dark overlay for fade effect */
+.future-diamond-v2::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Light phase - overlay hidden */
+.future-diamond-v2--light::before {
+  opacity: 0;
+}
+
+/* Dark phase - overlay visible */
+.future-diamond-v2--dark::before {
+  opacity: 1;
 }
 
 /* Intro Overlay - centered, visible by default, only fades out */
@@ -94,15 +121,15 @@
 /* Lumex Container - centered in sticky viewport */
 .future-diamond-v2-lumex-container {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 40%;
+  left: 50.25%;
   transform: translate(-50%, -50%);
   z-index: 1;
 }
 
 /* Lumex container structure */
 .future-diamond-v2-lumex-container .lumex91 {
-  width: 50vw;
+  width: 40vw;
 }
 
 .future-diamond-v2-lumex-container .lumex91-container {
@@ -162,12 +189,24 @@
   color: white;
 }
 
+.future-diamond-v2-lumex-subtitle {
+  color: #797979;
+  margin-bottom: 12px !important;
+}
+
 .future-diamond-v2-lumex-content-overlay > * {
   margin-bottom: 24px;
 }
 
 .future-diamond-v2-lumex-content-overlay > *:last-child {
   margin-bottom: 0;
+}
+
+/* Center the explore button */
+.future-diamond-v2-lumex-content-overlay .shine-glass-button {
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Description Overlay - bottom left */
@@ -214,20 +253,16 @@
   overflow-wrap: break-word;
   hyphens: none;
 
-  /* Gradient effect */
+  /* Gradient effect - gray base with white sweep */
   background: linear-gradient(
     90deg,
-    #000000 0%,
-    #000000 15%,
-    rgba(50, 6, 6, 1) 25%,
-    rgba(154, 14, 52, 1) 40%,
-    rgba(154, 14, 52, 1) 50%,
-    rgba(154, 14, 52, 1) 60%,
-    rgba(50, 6, 6, 1) 75%,
-    #000000 85%,
-    #000000 100%
+    #8b8b8b 0%,
+    #8b8b8b 40%,
+    #ffffff 50%,
+    #8b8b8b 60%,
+    #8b8b8b 100%
   );
-  background-size: 800% 100%;
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -303,12 +338,9 @@
 
 @keyframes futureDiamondV2GradientMove {
   0% {
-    background-position: 50% 50%;
-  }
-  50% {
-    background-position: 20% 0%;
+    background-position: 100% 50%;
   }
   100% {
-    background-position: 55% 50%;
+    background-position: 0% 50%;
   }
 }

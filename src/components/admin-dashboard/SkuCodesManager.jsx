@@ -49,6 +49,7 @@ const SkuCodesManager = () => {
   });
   const [generatedLoading, setGeneratedLoading] = useState(false);
   const [generatedError, setGeneratedError] = useState(null);
+  const [selectedSkuIds, setSelectedSkuIds] = useState(new Set());
 
   // Lab-Grown Diamonds state
   const [diamonds, setDiamonds] = useState([]);
@@ -127,6 +128,7 @@ const SkuCodesManager = () => {
     if (Number.isNaN(newSize)) {
       return;
     }
+    setSelectedSkuIds(new Set());
     fetchGeneratedSkus({ page: 0, size: newSize });
   };
 
@@ -134,6 +136,7 @@ const SkuCodesManager = () => {
     if (generatedMeta.page === 0) {
       return;
     }
+    setSelectedSkuIds(new Set());
     fetchGeneratedSkus({ page: generatedMeta.page - 1 });
   };
 
@@ -141,6 +144,7 @@ const SkuCodesManager = () => {
     if (generatedMeta.page >= generatedMeta.totalPages - 1) {
       return;
     }
+    setSelectedSkuIds(new Set());
     fetchGeneratedSkus({ page: generatedMeta.page + 1 });
   };
 
@@ -207,6 +211,79 @@ const SkuCodesManager = () => {
     }
   };
 
+  const handleExportSelectedToMisa = async () => {
+    if (selectedSkuIds.size === 0) {
+      return;
+    }
+
+    try {
+      setGeneratedLoading(true);
+      setGeneratedError(null);
+
+      const response = await skuCodesAPI.exportByIdsToMisa(Array.from(selectedSkuIds));
+
+      // Extract filename from Content-Disposition header
+      let filename = 'MISA_Selected_Import.xls';
+      const contentDisposition = response.headers['content-disposition'];
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1];
+        }
+      }
+
+      // Create download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      // Clean up
+      window.URL.revokeObjectURL(url);
+
+      // Clear selection after successful export
+      setSelectedSkuIds(new Set());
+
+    } catch (error) {
+      setGeneratedError(
+        error.response?.data?.message ||
+          "Failed to export selected SKUs to MISA template. Please try again."
+      );
+    } finally {
+      setGeneratedLoading(false);
+    }
+  };
+
+  const handleSelectSku = (skuCode) => {
+    setSelectedSkuIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(skuCode)) {
+        next.delete(skuCode);
+      } else {
+        next.add(skuCode);
+      }
+      return next;
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedSkuIds.size === generatedSkus.length && generatedSkus.length > 0) {
+      // Deselect all
+      setSelectedSkuIds(new Set());
+    } else {
+      // Select all on current page
+      setSelectedSkuIds(new Set(generatedSkus.map((item) => item.skuCode)));
+    }
+  };
+
+  const isAllSelected = generatedSkus.length > 0 && selectedSkuIds.size === generatedSkus.length;
+  const isSomeSelected = selectedSkuIds.size > 0 && selectedSkuIds.size < generatedSkus.length;
+
   const tabs = [
     { id: "jewelry", label: "Generate Jewelry SKU" },
     { id: "packaging", label: "Generate Packaging SKU" },
@@ -266,11 +343,21 @@ const SkuCodesManager = () => {
                   <button
                     type="button"
                     className="admin-button admin-button-primary"
+                    onClick={handleExportSelectedToMisa}
+                    disabled={generatedLoading || selectedSkuIds.size === 0}
+                    title="Export selected SKUs to MISA template"
+                  >
+                    Export Selected ({selectedSkuIds.size})
+                  </button>
+
+                  <button
+                    type="button"
+                    className="admin-button admin-button-secondary"
                     onClick={handleExportToMisa}
                     disabled={generatedLoading || generatedSkus.length === 0}
-                    title="Download MISA Import Template"
+                    title="Export all SKUs to MISA template"
                   >
-                    Export to MISA
+                    Export All
                   </button>
                 </div>
               </div>
@@ -291,12 +378,25 @@ const SkuCodesManager = () => {
                     <table className="admin-table">
                       <thead>
                         <tr>
+                          <th style={{ width: "40px", textAlign: "center" }}>
+                            <input
+                              type="checkbox"
+                              checked={isAllSelected}
+                              ref={(el) => {
+                                if (el) el.indeterminate = isSomeSelected;
+                              }}
+                              onChange={handleSelectAll}
+                              disabled={generatedLoading || generatedSkus.length === 0}
+                              title={isAllSelected ? "Deselect all" : "Select all on this page"}
+                              style={{ cursor: "pointer" }}
+                            />
+                          </th>
                           <th>SKU</th>
                           <th>Barcode</th>
                           <th>Item Name</th>
                           <th>Category</th>
                           <th>MISA Item Code</th>
-                          <th>Quantity</th>
+                          <th>Qty</th>
                           <th>Price</th>
                           <th>Created</th>
                         </tr>
@@ -304,26 +404,34 @@ const SkuCodesManager = () => {
                       <tbody>
                         {generatedLoading ? (
                           <tr>
-                            <td colSpan="8" style={{ textAlign: "center", padding: "3rem 1rem", color: "#64748b" }}>
+                            <td colSpan="9" style={{ textAlign: "center", padding: "3rem 1rem", color: "#64748b" }}>
                               Loading generated SKUs...
                             </td>
                           </tr>
                         ) : generatedSkus.length === 0 ? (
                           <tr>
-                            <td colSpan="8" style={{ textAlign: "center", padding: "3rem 1rem", color: "#64748b" }}>
+                            <td colSpan="9" style={{ textAlign: "center", padding: "3rem 1rem", color: "#64748b" }}>
                               No generated SKUs found.
                             </td>
                           </tr>
                         ) : (
                           generatedSkus.map((item) => (
-                            <tr key={item.skuCode}>
+                            <tr key={item.skuCode} style={{ backgroundColor: selectedSkuIds.has(item.skuCode) ? "#f0f9ff" : undefined }}>
+                              <td style={{ textAlign: "center" }}>
+                                <input
+                                  type="checkbox"
+                                  checked={selectedSkuIds.has(item.skuCode)}
+                                  onChange={() => handleSelectSku(item.skuCode)}
+                                  style={{ cursor: "pointer" }}
+                                />
+                              </td>
                               <td>
                                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                  <code style={{ background: "#f1f5f9", padding: "2px 8px", borderRadius: "4px", fontSize: "0.8125rem", fontFamily: "monospace" }}>{item.skuCode}</code>
+                                  <code style={{ background: "#dbeafe", padding: "2px 8px", borderRadius: "4px", fontSize: "0.8125rem", fontFamily: "monospace", color: "#1e40af" }}>{item.skuCode}</code>
                                   <button
                                     type="button"
                                     onClick={() => handleCopySku(item.skuCode)}
-                                    title="Copy SKU"
+                                    title="Copy SKU Code"
                                     style={{
                                       background: "none",
                                       border: "1px solid #e2e8f0",
@@ -339,13 +447,13 @@ const SkuCodesManager = () => {
                                 </div>
                               </td>
                               <td>
-                                {item.barcode ? (
+                                {item.descriptiveCode ? (
                                   <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                    <code style={{ background: "#f1f5f9", padding: "2px 8px", borderRadius: "4px", fontSize: "0.8125rem", fontFamily: "monospace" }}>{item.barcode}</code>
+                                    <code style={{ background: "#f1f5f9", padding: "2px 8px", borderRadius: "4px", fontSize: "0.8125rem", fontFamily: "monospace" }}>{item.descriptiveCode}</code>
                                     <button
                                       type="button"
-                                      onClick={() => handleCopyBarcode(item.barcode)}
-                                      title="Copy Barcode"
+                                      onClick={() => handleCopyBarcode(item.descriptiveCode)}
+                                      title="Copy Descriptive Code"
                                       style={{
                                         background: "none",
                                         border: "1px solid #e2e8f0",
@@ -367,7 +475,7 @@ const SkuCodesManager = () => {
                               <td>{item.category || "—"}</td>
                               <td>{item.misaItemCode || "—"}</td>
                               <td>{
-                                item.currentQuantity !== null && item.currentQuantity !== undefined
+                                item.currentQuantity !== null && item.currentQuantity !== undefined && item.currentQuantity > 0
                                   ? item.currentQuantity
                                   : "—"
                               }</td>

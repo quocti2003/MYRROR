@@ -1,19 +1,16 @@
 import { useState } from "react";
 import { MediaImage } from "@components/common/media";
 import "./ImmersiveShowroom.css";
-import GlassThemeButton from "@components/common/button/GlassThemeButton";
+import ShineGlassButton from "@components/common/button/ShineGlassButton";
+import { useImmersiveModal } from "@/contexts/ImmersiveModalContext";
 
 const ImmersiveShowroom = () => {
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [iframeError, setIframeError] = useState(false);
+  const { openModal } = useImmersiveModal();
 
   const handleExploreClick = () => {
-    setIsFullscreen(true);
-  };
-
-  const handleCloseFullscreen = () => {
-    setIsFullscreen(false);
+    openModal();
   };
 
   const handleIframeLoad = () => {
@@ -70,35 +67,15 @@ const ImmersiveShowroom = () => {
             AR/VR encounters that let you feel the future of luxury before you
             wear it.
           </p>
-          <GlassThemeButton
-            theme="dark"
+          <ShineGlassButton
+            theme="footer"
             className="explore-button"
             onClick={handleExploreClick}
           >
-            <span className="bodytext-6--no-margin">Explore</span>
-          </GlassThemeButton>
+            Explore
+          </ShineGlassButton>
         </div>
       </div>
-
-      {/* Fullscreen Modal */}
-      {isFullscreen && (
-        <div className="showroom-fullscreen-modal">
-          <button
-            className="showroom-close-button"
-            onClick={handleCloseFullscreen}
-            aria-label="Close fullscreen"
-          >
-            ✕
-          </button>
-          <iframe
-            src="https://cdn.lov3d.io/spaces/1759690637958-2v6j8tn5fpq/MirrorNEW/index.htm"
-            className="showroom-fullscreen-iframe"
-            title="3D viewer for Mirror Jewelry - Fullscreen"
-            allow="fullscreen; xr-spatial-tracking"
-            sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
-          />
-        </div>
-      )}
     </>
   );
 };

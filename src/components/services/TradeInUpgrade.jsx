@@ -1,11 +1,11 @@
 import React from "react";
-import GlassThemeButton from "@components/common/button/GlassThemeButton";
+import ShineGlassButton from "@components/common/button/ShineGlassButton";
 
 const TradeInUpgrade = () => {
   return (
     <div className="trade-in-upgrade">
       <div className="intro-section">
-        <h3 className="heading-4--no-margin">Trade-In & Upgrade Programs</h3>
+        <h3 className="heading-3--no-margin">Trade-In & Upgrade Programs</h3>
         <p className="bodytext-4--no-margin">
           Mirror's "Reclaim & Renew" program allows you to trade in eligible
           pieces in the future toward upgraded designs - a promise of continuous
@@ -25,7 +25,7 @@ const TradeInUpgrade = () => {
           <ul>
             <li>
               <p className="bodytext-4--no-margin">
-                <strong className="bodytext-2--no-margin">
+                <strong className="bodytext-4--no-margin">
                   Trade-In Value:
                 </strong>
               </p>
@@ -42,7 +42,7 @@ const TradeInUpgrade = () => {
             </li>
             <li>
               <p className="bodytext-4--no-margin">
-                <strong className="bodytext-2--no-margin">
+                <strong className="bodytext-4--no-margin">
                   Eligibility Criteria
                 </strong>
               </p>
@@ -68,7 +68,7 @@ const TradeInUpgrade = () => {
             </li>
             <li>
               <p className="bodytext-4--no-margin">
-                <strong className="bodytext-2--no-margin">
+                <strong className="bodytext-4--no-margin">
                   Upgrade Opportunities
                 </strong>
               </p>
@@ -84,7 +84,7 @@ const TradeInUpgrade = () => {
             </li>
             <li>
               <p className="bodytext-4--no-margin">
-                <strong className="bodytext-2--no-margin">
+                <strong className="bodytext-4--no-margin">
                   Sustainable Luxury
                 </strong>
               </p>
@@ -113,9 +113,9 @@ const TradeInUpgrade = () => {
       </div>
 
       <div className="cta-section">
-        <GlassThemeButton className="services-cta" theme="light">
-          <span className="bodytext-6--no-margin">Book an Appointment</span>
-        </GlassThemeButton>
+        <ShineGlassButton className="services-cta" theme="light">
+          Book an Appointment
+        </ShineGlassButton>
       </div>
     </div>
   );

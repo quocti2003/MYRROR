@@ -3,10 +3,10 @@
  * Note: Diamond selection is purely visual - the note/pitch is determined by lightNumber
  */
 import React, { useState } from 'react';
-import { TEXT, DIAMOND_CONFIGS, calculateNoteFromLightNumber } from '../../../constants/eventConstants';
-import { placeNote } from '../../../services/event/eventApi';
-import { broadcastNoteAdded } from '../../../services/event/ably';
-import useEventStore from '../../../store/useEventStore';
+import { TEXT, DIAMOND_CONFIGS, calculateNoteFromLightNumber } from '@/constants/eventConstants';
+import { placeNote } from '@services/event/eventApi';
+import { broadcastNoteAdded } from '@services/event/ably';
+import useEventStore from '@/store/useEventStore';
 import Diamond from '../ui/Diamond';
 import Logo from '../ui/Logo';
 

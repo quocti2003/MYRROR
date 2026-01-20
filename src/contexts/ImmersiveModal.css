@@ -1,0 +1,76 @@
+/* Immersive Modal Overlay */
+.immersive-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: immersiveModalFadeIn 0.3s ease-out;
+}
+
+@keyframes immersiveModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Close Button */
+.immersive-modal-close {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  border: 1px solid white;
+  border-radius: 50%;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 100000;
+  mix-blend-mode: difference;
+}
+
+.immersive-modal-close:hover {
+  transform: scale(1.1);
+}
+
+.immersive-modal-close:active {
+  transform: scale(0.95);
+}
+
+/* Iframe */
+.immersive-modal-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #000;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .immersive-modal-close {
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .immersive-modal-close svg {
+    width: 20px;
+    height: 20px;
+  }
+}

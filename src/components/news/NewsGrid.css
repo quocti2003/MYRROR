@@ -19,7 +19,7 @@
 .news-row-content {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  column-gap: 24px;
+  column-gap: 12px;
 }
 
 .news-item {
@@ -29,8 +29,8 @@
   transition: opacity 0.3s ease;
 }
 
-.news-item:hover {
-  opacity: 0.8;
+.news-item:hover .news-item-image img {
+  transform: scale(1.1);
 }
 
 .news-item-image {
@@ -43,16 +43,12 @@
   overflow: hidden;
 }
 
-/* Pattern lặp lại: 1, 4/5, 5/4 */
-.news-item:nth-child(3n + 1) .news-item-image {
+/* Pattern xen kẽ: 1:1, 5:4 */
+.news-item:nth-child(odd) .news-item-image {
   aspect-ratio: 1;
 }
 
-.news-item:nth-child(3n + 2) .news-item-image {
-  aspect-ratio: 4/5;
-}
-
-.news-item:nth-child(3n + 3) .news-item-image {
+.news-item:nth-child(even) .news-item-image {
   aspect-ratio: 5/4;
 }
 
@@ -67,13 +63,14 @@
   object-fit: cover;
   display: block;
   transform-origin: center center;
+  transition: transform 0.5s ease;
 }
 
 .news-item-content {
-  padding: 24px 0 0px;
+  padding: 16px 0 0px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   align-items: center;
   text-align: center;
 }
@@ -107,23 +104,19 @@
   pointer-events: none;
 }
 
-.news-item-button .underline-button-text {
-  color: rgba(0, 0, 0, 0.5);
+.news-item-button .underline-button-opposite-text {
+  color: rgba(0, 0, 0, 1);
   transition: color 0.3s ease;
 }
 
-.news-item-button .underline-button-text::after {
+.news-item-button .underline-button-opposite-text::after {
   background: #000000 !important;
 }
 
 /* Hover effect when hovering on news-item */
-.news-item:hover .news-item-button .underline-button-text {
-  color: rgba(0, 0, 0, 1);
-}
-
-.news-item:hover .news-item-button .underline-button-text::after {
-  transform: scaleX(1);
-  transform-origin: left center;
+.news-item:hover .news-item-button .underline-button-opposite-text::after {
+  transform: scaleX(0);
+  transform-origin: right center;
 }
 
 /* Disabled state */

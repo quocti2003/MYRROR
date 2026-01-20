@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { optimizedTransitionUtils } from "@utils/transitionUtil/optimizedTransitionUtils";
 import { ROUTES } from "@/constants/routes";
 import "./Section5.css";
-import GlassThemeButton from "@components/common/button/GlassThemeButton";
+import ShineGlassButton from "@components/common/button/ShineGlassButton";
 
 const Section5 = () => {
   const navigate = useNavigate();
@@ -82,7 +82,7 @@ const Section5 = () => {
                   className="faq-question"
                   aria-expanded={openFaq === faq.id}
                 >
-                  <span className="bodytext-3--no-margin">{faq.question}</span>
+                  <span className="bodytext-4--no-margin">{faq.question}</span>
                   <span
                     className={`faq-icon ${
                       openFaq === faq.id ? "expanded" : ""
@@ -90,7 +90,7 @@ const Section5 = () => {
                   ></span>
                 </button>
                 <div className="faq-answer" data-faq-id={faq.id}>
-                  <p className="bodytext-4--no-margin">
+                  <p className="bodytext-6--no-margin">
                     This is the answer content for "{faq.question}". Lorem ipsum
                     dolor sit amet, consectetur adipiscing elit, sed do eiusmod
                     tempor incididunt ut labore et dolore magna aliqua.
@@ -101,13 +101,13 @@ const Section5 = () => {
           </div>
 
           <div className="view-all-section">
-            <GlassThemeButton
+            <ShineGlassButton
               className="view-all-btn"
               theme="light"
               onClick={handleViewAllFAQs}
             >
-              <span className="bodytext-6--no-margin">View all</span>
-            </GlassThemeButton>
+              View all
+            </ShineGlassButton>
           </div>
         </div>
       </div>

@@ -1518,6 +1518,84 @@ body {
 }
 
 /* ========================================
+   MOBILE HEADER & HAMBURGER MENU
+   ======================================== */
+.admin-mobile-header {
+  display: none;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--mirror-navy);
+  color: var(--mirror-white);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.admin-menu-toggle {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.hamburger-line {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--mirror-white);
+  border-radius: 1px;
+  transition: all var(--transition-base);
+}
+
+.admin-mobile-title {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Sidebar close button (mobile only) */
+.admin-sidebar-close {
+  display: none;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.75rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color var(--transition-fast);
+}
+
+.admin-sidebar-close:hover {
+  color: var(--mirror-white);
+}
+
+.admin-sidebar-header-content {
+  flex: 1;
+}
+
+/* Sidebar overlay for mobile */
+.admin-sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  animation: fadeIn var(--transition-base);
+}
+
+/* ========================================
    RESPONSIVE DESIGN
    ======================================== */
 @media (max-width: 1200px) {
@@ -1531,64 +1609,138 @@ body {
 }
 
 @media (max-width: 1024px) {
+  /* Show mobile header */
+  .admin-mobile-header {
+    display: flex;
+  }
+
+  /* Sidebar becomes a slide-out drawer */
   .admin-sidebar {
-    width: 240px;
+    width: 280px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    transition: transform var(--transition-slow);
+    z-index: 1000;
   }
 
-  .admin-main-content {
-    margin-left: 240px;
+  .admin-sidebar.open {
+    transform: translateX(0);
   }
 
-  .admin-content-header {
-    padding: var(--space-xl);
+  /* Show overlay when sidebar is open */
+  .admin-sidebar-overlay {
+    display: block;
   }
 
-  .admin-content-body {
-    padding: var(--space-xl);
+  /* Show close button */
+  .admin-sidebar-close {
+    display: block;
   }
 
-  .admin-page-title {
-    font-size: 1.875rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .admin-sidebar {
-    width: 100%;
-    position: relative;
-    min-height: auto;
-    max-height: none;
-  }
-
-  .admin-sidebar-nav {
-    max-height: 60vh;
-    overflow-y: auto;
+  .admin-sidebar-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
   }
 
   .admin-main-content {
     margin-left: 0;
   }
 
+  .admin-content-header {
+    padding: var(--space-lg) var(--space-lg) var(--space-md);
+  }
+
+  .admin-content-body {
+    padding: 0 var(--space-lg) var(--space-lg);
+    max-height: none;
+  }
+
   .admin-page-title {
     font-size: 1.5rem;
   }
 
+  .admin-page-description {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-sidebar {
+    width: 85%;
+    max-width: 320px;
+  }
+
+  .admin-sidebar-nav {
+    max-height: none;
+    overflow-y: auto;
+  }
+
+  .admin-page-title {
+    font-size: 1.25rem;
+  }
+
   .admin-content-header {
-    padding: var(--space-lg);
+    padding: var(--space-md);
   }
 
   .admin-content-body {
-    padding: var(--space-lg);
+    padding: 0 var(--space-md) var(--space-md);
   }
 
   .admin-nav-button {
-    padding: 0.75rem var(--space-md);
-    font-size: 0.8125rem;
+    padding: 0.875rem var(--space-lg);
+    font-size: 0.9375rem;
+  }
+
+  .admin-breadcrumb {
+    font-size: 0.6875rem;
   }
 
   .stats-grid,
   .quick-actions-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* Better touch targets */
+  .admin-button {
+    padding: 0.75rem var(--space-lg);
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-mobile-header {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .admin-mobile-title {
+    font-size: 1rem;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    max-width: none;
+  }
+
+  .admin-content-header {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .admin-content-body {
+    padding: 0 var(--space-sm) var(--space-sm);
+  }
+
+  .admin-page-title {
+    font-size: 1.125rem;
+  }
+
+  .admin-page-description {
+    font-size: 0.8125rem;
+    display: none;
   }
 }
 

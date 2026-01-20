@@ -1,0 +1,226 @@
+/**
+ * EventPreviewPage Styles
+ * Preview page before generating avatar
+ */
+
+.event-preview {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  background: #f6f6f6;
+}
+
+/* Background gradient */
+.event-preview__bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 180%;
+  height: 180%;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(255, 135, 168, 0.3) 0%, rgba(255, 255, 255, 0.50) 56.25%, rgba(246, 246, 246, 0.00) 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Main Content */
+.event-preview__main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100vw;
+  padding: 0 24px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  z-index: 1;
+  gap: 2rem;
+}
+
+/* Back Button - circular style */
+.event-preview__back.shine-glass-button,
+.event-preview__back.shine-glass-button .glass-layer,
+.event-preview__back.shine-glass-button .shine-layer,
+.event-preview__back.shine-glass-button .border-layer {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.event-preview__back .button-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Diamond Shape */
+.event-preview__diamond {
+  flex-shrink: 0;
+}
+
+.event-preview__diamond-img {
+  width: 200px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Divider Line */
+.event-preview__divider {
+  width: 1px;
+  height: 300px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.2) 50%,
+    transparent 100%
+  );
+  flex-shrink: 0;
+}
+
+/* Avatar Preview Card */
+.event-preview__card {
+  width: 180px;
+  height: 280px;
+  background: linear-gradient(180deg, #8B1538 0%, #D4A5A5 50%, #F5E6E6 100%);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.event-preview__card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  text-align: center;
+}
+
+.event-preview__card-subtitle {
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  opacity: 0.8;
+  margin-bottom: 0.25rem;
+}
+
+.event-preview__card-title {
+  font-family: "Saol Display", Georgia, serif;
+  font-size: 1.5rem;
+  font-style: italic;
+  font-weight: 300;
+}
+
+.event-preview__card-script {
+  font-family: "Saol Display", Georgia, serif;
+  font-size: 1.25rem;
+  font-style: italic;
+  font-weight: 300;
+}
+
+/* Bottom Content */
+.event-preview__bottom {
+  position: absolute;
+  bottom: 2rem;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 1;
+}
+
+.event-preview__info {
+  max-width: 300px;
+}
+
+.event-preview__info-title {
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+}
+
+.event-preview__info-text {
+  font-size: 0.75rem;
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .event-preview__main {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .event-preview__back.shine-glass-button {
+    position: absolute;
+    top: 5rem;
+    left: 1rem;
+  }
+
+  .event-preview__diamond-img {
+    width: 150px;
+  }
+
+  .event-preview__divider {
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(0, 0, 0, 0.2) 50%,
+      transparent 100%
+    );
+  }
+
+  .event-preview__card {
+    width: 140px;
+    height: 220px;
+  }
+
+  .event-preview__bottom {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .event-preview__info {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .event-preview {
+    padding: 1rem;
+  }
+
+  .event-preview__diamond-img {
+    width: 120px;
+  }
+
+  .event-preview__card {
+    width: 120px;
+    height: 180px;
+  }
+
+  .event-preview__card-title {
+    font-size: 1.25rem;
+  }
+
+  .event-preview__card-script {
+    font-size: 1rem;
+  }
+}

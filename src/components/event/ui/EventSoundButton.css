@@ -1,0 +1,79 @@
+/**
+ * EventSoundButton Styles
+ * Fixed position sound toggle button
+ */
+
+.event-sound-button {
+  position: fixed;
+  bottom: 24px;
+  right: 2.5%;
+  z-index: 1000;
+  pointer-events: auto;
+  display: flex;
+}
+
+/* Sound Wave Icon Styles - Override GlassThemeButton sizing */
+.glass-theme-btn-icon .sound-wave-container {
+  width: 16px;
+  height: 24px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.glass-theme-btn-icon .sound-wave-svg {
+  width: 80px !important;
+  height: 24px !important;
+  display: block;
+  flex-shrink: 0;
+}
+
+.sound-wave-svg.active {
+  animation: wave-flow 2s linear infinite;
+  will-change: transform;
+}
+
+.wave-path-straight {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.wave-path-straight.visible {
+  opacity: 1;
+}
+
+.wave-group {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.wave-group.visible {
+  opacity: 1;
+}
+
+@keyframes wave-flow {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-16.67%);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .event-sound-button {
+    bottom: 24px;
+  }
+
+  .glass-theme-btn-icon .sound-wave-container {
+    width: 14px;
+    height: 20px;
+  }
+
+  .glass-theme-btn-icon .sound-wave-svg {
+    width: 70px !important;
+    height: 20px !important;
+  }
+}

@@ -31,7 +31,7 @@
 /* ============================================================ */
 
 /* 1. Định nghĩa keyframe cho hiệu ứng fade in từ phải, dừng, rồi fade out sang trái */
-@keyframes slideInFromRight {
+@keyframes collectionSlideFromRight {
   0% {
     opacity: 0;
     transform: translateX(50px);
@@ -54,7 +54,7 @@
 }
 
 /* 2. Định nghĩa keyframe cho hiệu ứng fade in từ trái, dừng, rồi fade out sang phải */
-@keyframes slideInFromLeft {
+@keyframes collectionSlideFromLeft {
   0% {
     opacity: 0;
     transform: translateX(-50px);
@@ -78,16 +78,16 @@
 
 /* 3. Tạo các class để áp dụng animation */
 .slide-effect-right {
-  animation: slideInFromRight 3s ease-in-out forwards;
+  animation: collectionSlideFromRight 3s ease-in-out forwards;
 }
 
 .slide-effect-left {
-  animation: slideInFromLeft 3s ease-in-out forwards;
+  animation: collectionSlideFromLeft 3s ease-in-out forwards;
 }
 
 /* Legacy class for backward compatibility */
 .slide-effect {
-  animation: slideInFromRight 3s ease-in-out forwards;
+  animation: collectionSlideFromRight 3s ease-in-out forwards;
 }
 
 /* Định nghĩa animation nhún nhảy cho mũi tên */
@@ -313,7 +313,7 @@
   gap: 0;
   width: fit-content;
   max-width: 1400px;
-  margin: 120px auto 60px auto;
+  margin: 160px auto 60px auto;
   padding: 0;
   order: 1;
 }
@@ -327,7 +327,7 @@
 
 .collection-page .section-2 .collection-hero-description {
   color: #797979;
-  max-width: 600px;
+  max-width: 464px;
   text-align: center;
   margin: 0 0 36px 0;
 }
@@ -368,7 +368,7 @@
   background: transparent;
   order: 2;
   margin-top: 0;
-  margin-bottom: 240px;
+  margin-bottom: 160px;
 }
 
 .collection-content-panel.full-width .product-slider {
@@ -439,6 +439,13 @@
 .slider-arrow button:hover .glass-layer {
   backdrop-filter: blur(2px) !important;
   -webkit-backdrop-filter: blur(2px) !important;
+}
+
+/* Keep arrow icon white on hover */
+@media (hover: hover) and (pointer: fine) {
+  .arrow-button.slider-arrow:hover svg path {
+    stroke: #fff !important;
+  }
 }
 
 /*
@@ -626,7 +633,7 @@
   text-align: center;
   max-width: 800px;
   width: 100%;
-  padding: 240px 0;
+  padding: 160px 0;
 }
 
 .other-collections-subtitle {

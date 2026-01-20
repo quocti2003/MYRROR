@@ -1,9 +1,9 @@
 import { useState } from "react";
 import "./ContactUs.css";
-import GlassThemeButton from "@components/common/button/GlassThemeButton";
+import ShineGlassButton from "@components/common/button/ShineGlassButton";
 import UnderlineButtonOpposite from "@components/common/button/UnderlineButtonOpposite";
 import { MediaImage } from "@components/common/media";
-import BookingModal from "@components/booking/BookingModal";
+import BookingModalV3 from "@components/booking/BookingModalV3";
 
 const ContactUs = () => {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -37,13 +37,13 @@ const ContactUs = () => {
           Our client care experts are always here to help.
         </p>
         <div className="contact-us-button-wrapper">
-          <GlassThemeButton
-            theme="dark"
+          <ShineGlassButton
+            theme="footer"
             onClick={handleBookAppointmentClick}
             className="contact-us-button"
           >
-            <span className="bodytext-6--no-margin">Book an Appointment</span>
-          </GlassThemeButton>
+            Book an Appointment
+          </ShineGlassButton>
         </div>
         <div className="contact-us-actions">
           <UnderlineButtonOpposite
@@ -63,7 +63,7 @@ const ContactUs = () => {
       </div>
 
       {/* Booking Modal */}
-      <BookingModal
+      <BookingModalV3
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
       />

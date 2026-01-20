@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
  * <MediaImage src="home-page/banner.jpg" alt="Banner" />
  * // Automatically converts to: https://cloudflare-url/home-page/banner.jpg
  */
-const MediaImage = ({ src, alt = "", className = "", ...props }) => {
+const MediaImage = ({ src, alt = "", className = "", loading = "eager", ...props }) => {
   // Generate Cloudflare URL or fallback to public folder
   const imageUrl = getImageUrl(src);
 
@@ -18,6 +18,8 @@ const MediaImage = ({ src, alt = "", className = "", ...props }) => {
       src={imageUrl}
       alt={alt}
       className={className}
+      loading={loading}
+      decoding="async"
       {...props}
     />
   );
@@ -27,6 +29,7 @@ MediaImage.propTypes = {
   src: PropTypes.string.isRequired,
   alt: PropTypes.string,
   className: PropTypes.string,
+  loading: PropTypes.oneOf(["eager", "lazy"]),
 };
 
 export default MediaImage;

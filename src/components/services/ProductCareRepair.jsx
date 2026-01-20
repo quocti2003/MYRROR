@@ -1,5 +1,5 @@
 import React from "react";
-import GlassThemeButton from "@components/common/button/GlassThemeButton";
+import ShineGlassButton from "@components/common/button/ShineGlassButton";
 
 const ProductCareRepair = () => {
   return (
@@ -24,14 +24,14 @@ const ProductCareRepair = () => {
           <ul>
             <li>
               <p className="bodytext-4--no-margin">
-                <strong className="bodytext-2--no-margin">
+                <strong className="bodytext-4--no-margin">
                   Unlimited Lifetime Cleaning
                 </strong>
               </p>
               <ul>
                 <li>
                   <p className="bodytext-4--no-margin">
-                    <strong className="bodytext-2--no-margin">
+                    <strong className="bodytext-4--no-margin">
                       Shining Service:
                     </strong>{" "}
                     Restores the original luster and removes light surface
@@ -43,7 +43,7 @@ const ProductCareRepair = () => {
             </li>
             <li>
               <p className="bodytext-4--no-margin">
-                <strong className="bodytext-2--no-margin">
+                <strong className="bodytext-4--no-margin">
                   Annual Jewelry Inspections
                 </strong>
               </p>
@@ -82,7 +82,7 @@ const ProductCareRepair = () => {
           <ul>
             <li>
               <p className="bodytext-4--no-margin">
-                <strong className="bodytext-2--no-margin">
+                <strong className="bodytext-4--no-margin">
                   Transparent Pricing:
                 </strong>{" "}
                 All repair costs are quoted after inspection, with no hidden
@@ -91,14 +91,14 @@ const ProductCareRepair = () => {
             </li>
             <li>
               <p className="bodytext-4--no-margin">
-                <strong className="bodytext-2--no-margin">
+                <strong className="bodytext-4--no-margin">
                   Repair Services Include:
                 </strong>
               </p>
               <ul>
                 <li>
                   <p className="bodytext-4--no-margin">
-                    <strong className="bodytext-2--no-margin">
+                    <strong className="bodytext-4--no-margin">
                       Component Repair or Replacement:
                     </strong>{" "}
                     Replacement of damaged or missing elements (charged
@@ -107,7 +107,7 @@ const ProductCareRepair = () => {
                 </li>
                 <li>
                   <p className="bodytext-4--no-margin">
-                    <strong className="bodytext-2--no-margin">
+                    <strong className="bodytext-4--no-margin">
                       Reshaping:
                     </strong>{" "}
                     Restores your piece to its original form if distorted.
@@ -115,7 +115,7 @@ const ProductCareRepair = () => {
                 </li>
                 <li>
                   <p className="bodytext-4--no-margin">
-                    <strong className="bodytext-2--no-margin">
+                    <strong className="bodytext-4--no-margin">
                       Clasp or Link Repair:
                     </strong>{" "}
                     Essential to prevent loss from worn or damaged clasps or
@@ -124,7 +124,7 @@ const ProductCareRepair = () => {
                 </li>
                 <li>
                   <p className="bodytext-4--no-margin">
-                    <strong className="bodytext-2--no-margin">
+                    <strong className="bodytext-4--no-margin">
                       Polishing:
                     </strong>{" "}
                     Gently restores shine and removes superficial abrasions
@@ -133,7 +133,7 @@ const ProductCareRepair = () => {
                 </li>
                 <li>
                   <p className="bodytext-4--no-margin">
-                    <strong className="bodytext-2--no-margin">
+                    <strong className="bodytext-4--no-margin">
                       Stone or Pearl Replacement:
                     </strong>{" "}
                     Damaged stones or pearls can be replaced upon request.
@@ -190,9 +190,9 @@ const ProductCareRepair = () => {
       </div>
 
       <div className="cta-section">
-        <GlassThemeButton className="services-cta" theme="light">
-          <span className="bodytext-6--no-margin">Book a Service</span>
-        </GlassThemeButton>
+        <ShineGlassButton className="services-cta" theme="light">
+          Book a Service
+        </ShineGlassButton>
       </div>
     </div>
   );

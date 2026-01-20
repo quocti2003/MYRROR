@@ -1,5 +1,5 @@
 .services-section1 {
-  height: 56vh;
+  height: 40vh;
   position: relative;
   display: flex;
   align-items: center;
@@ -75,7 +75,7 @@
 
 .section1-description {
   color: white;
-  width: 597px;
+  max-width: 464px;
   height: 66px;
   text-align: center;
   margin: 0;

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Footer.css";
+import ShineGlassButton from "@components/common/button/ShineGlassButton";
 import GlassThemeButton from "@components/common/button/GlassThemeButton";
 import UnderlineButton from "@components/common/button/UnderlineButton";
 import { optimizedTransitionUtils } from "@utils/transitionUtil/optimizedTransitionUtils";
@@ -9,11 +10,12 @@ import fbIcon from "@assets/images/icons/fb_icon.svg";
 import instaIcon from "@assets/images/icons/insta_icon.svg";
 import tiktokIcon from "@assets/images/icons/tiktok_icon.svg";
 import PrismaticBurst from "@components/common/prismatic-burst/PrismaticBurst";
-import BookingModal from "@components/booking/BookingModal";
+import BookingModalV3 from "@components/booking/BookingModalV3";
 
 const Footer = () => {
   const navigate = useNavigate();
   const [isFooterVisible, setIsFooterVisible] = useState(false);
+  const [isFooterDeepVisible, setIsFooterDeepVisible] = useState(false); // For footer-content at 80%
   const [shouldRenderBurst, setShouldRenderBurst] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const footerRef = useRef(null);
@@ -122,9 +124,13 @@ const Footer = () => {
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsFooterVisible(entry.isIntersecting);
+        const ratio = entry.intersectionRatio;
+        // footer-center & footer-bottom: trigger at 50%
+        setIsFooterVisible(entry.isIntersecting && ratio >= 0.5);
+        // footer-content: trigger at 80%
+        setIsFooterDeepVisible(entry.isIntersecting && ratio >= 0.8);
       },
-      { threshold: 0.1 } // Trigger when 10% of spacer is visible
+      { threshold: [0, 0.25, 0.5, 0.75, 0.8, 0.9, 1] }
     );
 
     observer.observe(spacer);
@@ -132,76 +138,25 @@ const Footer = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Scroll-linked animation for footer elements
+  // Trigger animation for footer-center & footer-bottom at 50%
   useEffect(() => {
-    let rafId = null;
+    if (isFooterVisible) {
+      footerCenterRef.current?.classList.add('visible');
+      footerBottomRef.current?.classList.add('visible');
+    } else {
+      footerCenterRef.current?.classList.remove('visible');
+      footerBottomRef.current?.classList.remove('visible');
+    }
+  }, [isFooterVisible]);
 
-    // Apply scroll-linked transform to an element
-    const applyScrollTransform = (
-      element,
-      progress,
-      maxTranslate = 50,
-      isCenter = false
-    ) => {
-      if (!element) return;
-      const clampedProgress = Math.max(0, Math.min(1, progress));
-      const translateY = maxTranslate * (1 - clampedProgress);
-      // Only apply translate(-50%, -50%) on desktop (> 1023px)
-      if (isCenter && window.innerWidth > 1023) {
-        element.style.transform = `translate(-50%, -50%) translateY(${translateY}px)`;
-      } else {
-        element.style.transform = `translateY(${translateY}px)`;
-      }
-      element.style.opacity = clampedProgress;
-    };
-
-    const handleScroll = () => {
-      if (rafId) return;
-
-      rafId = requestAnimationFrame(() => {
-        if (document.body.style.position === "fixed") {
-          rafId = null;
-          return;
-        }
-
-        const scrollPosition = window.scrollY + window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
-        const footerHeight = window.innerHeight;
-        const footerStart = documentHeight - footerHeight;
-        const scrollIntoFooter = Math.max(0, scrollPosition - footerStart);
-
-        const elementAnimationRange = footerHeight * 0.35;
-        const bottomStart = footerHeight * 0.25;
-        const centerStart = footerHeight * 0.35;
-        const contentStart = footerHeight * 0.45;
-
-        const bottomProgress =
-          (scrollIntoFooter - bottomStart) / elementAnimationRange;
-        const centerProgress =
-          (scrollIntoFooter - centerStart) / elementAnimationRange;
-        const contentProgress =
-          (scrollIntoFooter - contentStart) / elementAnimationRange;
-
-        applyScrollTransform(footerBottomRef.current, bottomProgress, 80);
-        applyScrollTransform(
-          footerCenterRef.current,
-          centerProgress,
-          100,
-          true
-        );
-        applyScrollTransform(footerContentRef.current, contentProgress, 120);
-
-        rafId = null;
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, []);
+  // Trigger animation for footer-content at 80%
+  useEffect(() => {
+    if (isFooterDeepVisible) {
+      footerContentRef.current?.classList.add('visible');
+    } else {
+      footerContentRef.current?.classList.remove('visible');
+    }
+  }, [isFooterDeepVisible]);
 
   // Handle mount/unmount - fade in only
   useEffect(() => {
@@ -365,15 +320,15 @@ const Footer = () => {
               and your stories shape the luxury you receive.
             </p>
             <div className="newsletter-buttons">
-              <GlassThemeButton
-                onClick={() => console.log("Explore more clicked")}
+              <ShineGlassButton
+                onClick={() => {}}
                 className="newsletter-btn-explore"
-                theme="dark"
+                theme="footer"
               >
-                <span className="bodytext-6--no-margin">Explore more</span>
-              </GlassThemeButton>
+                Explore more
+              </ShineGlassButton>
               <GlassThemeButton
-                onClick={() => console.log("Sign in clicked")}
+                onClick={() => {}}
                 className="newsletter-btn-signin"
                 theme="spec_dark"
               >
@@ -395,7 +350,7 @@ const Footer = () => {
                 <img src={fbIcon} alt="Facebook" />
               </a>
               <a
-                href="https://www.instagram.com/mirrorfuturediamond"
+                href="https://www.instagram.com/mirrorfuturediamond/"
                 className="social-icon instagram"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -403,7 +358,7 @@ const Footer = () => {
                 <img src={instaIcon} alt="Instagram" />
               </a>
               <a
-                href="https://www.tiktok.com/@mirrorfuturediamond?_r=1&_t=ZS-916kE9BBDoC"
+                href="https://www.tiktok.com/@mirrorfuturediamond?lang=vi-VN"
                 className="social-icon tiktok"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -429,7 +384,7 @@ const Footer = () => {
       </div>
 
       {/* Booking Modal */}
-      <BookingModal
+      <BookingModalV3
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
       />

@@ -22,21 +22,21 @@ const ReturnExchange = () => {
         <ul className="international-orders-list">
           <li>
             <p className="bodytext-4--no-margin">
-              <span className="bodytext-2">
+              <span className="bodytext-4">
                 All international sales are final.
               </span>
             </p>
           </li>
           <li>
             <p className="bodytext-4--no-margin">
-              <span className="bodytext-2">No exchanges or returns</span> are
+              <span className="bodytext-4">No exchanges or returns</span> are
               accepted for international shipments.
             </p>
           </li>
           <li>
             <p className="bodytext-4--no-margin">
               We strongly recommend booking{" "}
-              <span className="bodytext-2">a virtual consultation</span> prior
+              <span className="bodytext-4">a virtual consultation</span> prior
               to purchase to ensure accurate sizing, style selection, and
               customization preferences.
             </p>
@@ -49,7 +49,7 @@ const ReturnExchange = () => {
 
         <div className="subsection showroom-purchases">
           <h4>
-            <span className="bodytext-2">
+            <span className="bodytext-4">
               1. Showroom & In-Person Purchases
             </span>
           </h4>
@@ -57,7 +57,7 @@ const ReturnExchange = () => {
             <li>
               <p className="bodytext-4--no-margin">
                 Exchanges may be{" "}
-                <span className="bodytext-2">
+                <span className="bodytext-4">
                   permitted within 3 days of purchase
                 </span>
                 .
@@ -66,7 +66,7 @@ const ReturnExchange = () => {
             <li>
               <p className="bodytext-4--no-margin">
                 Items must be returned{" "}
-                <span className="bodytext-2">in person</span> to the original
+                <span className="bodytext-4">in person</span> to the original
                 showroom.
               </p>
             </li>
@@ -76,7 +76,7 @@ const ReturnExchange = () => {
             <ul>
               <li>
                 <p className="bodytext-4--no-margin">
-                  <span className="bodytext-2">Unworn and in original</span>,
+                  <span className="bodytext-4">Unworn and in original</span>,
                   pristine condition
                 </p>
               </li>
@@ -97,13 +97,13 @@ const ReturnExchange = () => {
 
         <div className="subsection nationwide-shipping">
           <h4>
-            <span className="bodytext-2">2. Nationwide Shipping (Vietnam)</span>
+            <span className="bodytext-4">2. Nationwide Shipping (Vietnam)</span>
           </h4>
           <ul className="nationwide-shipping-list">
             <li>
               <p className="bodytext-4--no-margin">
                 Exchange requests{" "}
-                <span className="bodytext-2">
+                <span className="bodytext-4">
                   may be requested within 5 days
                 </span>{" "}
                 of confirmed delivery.
@@ -132,7 +132,7 @@ const ReturnExchange = () => {
             <li>
               <p className="bodytext-4--no-margin">
                 Customers are responsible for{" "}
-                <span className="bodytext-2">shipping and handling costs</span>{" "}
+                <span className="bodytext-4">shipping and handling costs</span>{" "}
                 associated with the exchange.
               </p>
             </li>

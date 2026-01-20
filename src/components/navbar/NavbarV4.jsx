@@ -1,16 +1,21 @@
 import "./NavbarV4.css";
 import { useState, useRef, useEffect, useCallback } from "react";
 import MirrorLogo from "@assets/images/Mirror_Logo_new.svg";
+import MirrorLogoEvent from "@assets/Mirror_Logo.svg";
+import DmmLogo from "@assets/LOGO DOC MONG MO.svg";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { optimizedTransitionUtils } from "@utils/transitionUtil/optimizedTransitionUtils";
 import UnderlineButton from "@/components/common/button/UnderlineButton";
 import GlassThemeButton from "@/components/common/button/GlassThemeButton";
-import BookingModal from "@/components/booking/BookingModal";
+import ShineGlassButton from "@/components/common/button/ShineGlassButton";
+import BookingModalV3 from "@/components/booking/BookingModalV3";
 import { ROUTES } from "@/constants/routes";
 import { useNavbarTheme } from "@/hooks/useNavbarTheme";
+import useEventStore from "@/store/useEventStore";
+import { clearUserSession } from "@/pages/Event/EventLoginPage";
 
-export default function NavbarV4() {
+export default function NavbarV4({ logoOnly = false, showDmmLogo = false }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,6 +32,9 @@ export default function NavbarV4() {
   const logoRef = useRef(null);
   const { isAuthenticated, user, logout } = useAuth();
 
+  // Event store for event logout
+  const { user: eventUser, reset: resetEventStore } = useEventStore();
+
   // Get current navbar theme from hook
   const { theme: navbarTheme } = useNavbarTheme();
 
@@ -37,18 +45,32 @@ export default function NavbarV4() {
     location.pathname === ROUTES.WELCOME ||
     location.pathname === ROUTES.IMMERSIVE_SHOWROOM;
 
+  // Check if current page is immersive showroom (for always white logo without blend)
+  const isImmersiveShowroomPage = location.pathname === ROUTES.IMMERSIVE_SHOWROOM;
+
   // Check if current page is Milan submission page or Submit Success page
   const isMilanPage = location.pathname.startsWith(ROUTES.MILAN_SUBMIT);
 
   // Check if current page is submit page (not success page)
   const isSubmitPage = location.pathname === ROUTES.MILAN_SUBMIT;
 
-  // Check if should hide menu, account, and immersive button (Milan and Immersive Showroom)
+  // Check if should hide menu, account, and immersive button (Milan, Immersive Showroom, or logoOnly mode)
   const shouldHideButtons =
-    isMilanPage || location.pathname === ROUTES.IMMERSIVE_SHOWROOM;
+    logoOnly || isMilanPage || location.pathname === ROUTES.IMMERSIVE_SHOWROOM;
 
-  // Check if logo click should be disabled (Milan and Immersive Showroom)
-  const shouldDisableLogoClick = shouldHideButtons;
+  // Check if on event pages (the-muse-of-love-grown routes)
+  const isEventPage = location.pathname.startsWith(ROUTES.EVENT_GUIDE);
+
+  // Check if on event pages after login (not guide or login page)
+  const isEventPageAfterLogin = isEventPage &&
+    location.pathname !== ROUTES.EVENT_GUIDE &&
+    location.pathname !== ROUTES.EVENT_LOGIN;
+
+  // Show event logout button if on event pages after login and user is logged in
+  const showEventLogout = isEventPageAfterLogin && !!eventUser;
+
+  // Check if logo click should be disabled (Milan, Immersive Showroom, but NOT event pages)
+  const shouldDisableLogoClick = shouldHideButtons && !isEventPage;
 
   // Helper function to close menu with fade out animation
   const closeMenuWithAnimation = useCallback(() => {
@@ -255,6 +277,16 @@ export default function NavbarV4() {
       return;
     }
 
+    // On event pages, navigate to event guide
+    if (isEventPage) {
+      if (location.pathname === ROUTES.EVENT_GUIDE) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        navigate(ROUTES.EVENT_GUIDE);
+      }
+      return;
+    }
+
     if (window.location.pathname === ROUTES.HOME_PAGE) {
       window.scrollTo(0, 0);
       setTimeout(() => {
@@ -379,6 +411,13 @@ export default function NavbarV4() {
 
   const handleLogoutClick = () => {
     logout();
+  };
+
+  // Event logout - only resets event store, not Mirror account
+  const handleEventLogoutClick = () => {
+    clearUserSession(); // Clear localStorage + sign out from Google
+    resetEventStore();  // Reset Zustand store
+    navigate(ROUTES.EVENT_LOGIN);
   };
 
   const handleLoginClick = async () => {
@@ -511,16 +550,47 @@ export default function NavbarV4() {
           isHomePage && isInScrollContainer && !isMenuOpen ? "scrolled" : ""
         } ${shouldDisableLogoClick ? "no-click" : ""} ${
           isSubmitPage ? "submit-page-logo" : ""
-        } ${isInIntroSubmitSection ? "intro-submit-logo" : ""}`}
+        } ${isInIntroSubmitSection ? "intro-submit-logo" : ""} ${
+          isImmersiveShowroomPage ? "immersive-showroom-logo" : ""
+        } ${isBookingModalOpen ? "above-modal" : ""} ${
+          showDmmLogo ? "collab-mode" : ""
+        } ${logoOnly && !showDmmLogo ? "event-logo" : ""}`}
         onClick={handleLogoClick}
       >
         <img
           ref={logoRef}
-          src={MirrorLogo}
+          src={logoOnly && !showDmmLogo ? MirrorLogoEvent : MirrorLogo}
           alt="Mirror Logo"
           className="navbar-v4-logo-svg"
         />
+        {showDmmLogo && (
+          <>
+            <svg className="navbar-v4-collab-x" xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 9 9" fill="none">
+              <path d="M0.5 0.5L8.5 8.5" stroke="currentColor" strokeLinecap="round"/>
+              <path d="M8.5 0.5L0.5 8.5" stroke="currentColor" strokeLinecap="round"/>
+            </svg>
+            <img
+              src={DmmLogo}
+              alt="Dốc Mộng Mơ Logo"
+              className="navbar-v4-dmm-logo"
+            />
+          </>
+        )}
       </div>
+
+      {/* Event Logout Button - Fixed top right on event pages after login */}
+      {showEventLogout && (
+        <div className={`event-logout-v4-container navbar-v4-theme-${navbarTheme}`}>
+          <UnderlineButton onClick={handleEventLogoutClick}>
+            <span className="event-logout-content">
+              Đăng xuất
+              <svg className="event-logout-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M5.8511 2.3999H3.38051C3.00609 2.3999 2.647 2.5474 2.38225 2.80995C2.11749 3.0725 1.96875 3.4286 1.96875 3.7999V12.1999C1.96875 12.5712 2.11749 12.9273 2.38225 13.1899C2.647 13.4524 3.00609 13.5999 3.38051 13.5999H5.8511M6.02656 7.9999H14.0266M14.0266 7.9999L10.9698 4.7999M14.0266 7.9999L10.9698 11.1999" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
+          </UnderlineButton>
+        </div>
+      )}
 
       {/* MENU VÀ ACCOUNT LINK VỚI BLEND MODE */}
       {!shouldHideButtons && (
@@ -888,15 +958,15 @@ export default function NavbarV4() {
                     <span className="bodytext-6--no-margin">Designer Portal</span>
                   </GlassThemeButton>
                 ) : (
-                  <GlassThemeButton
+                  <ShineGlassButton
                     theme="light"
                     onClick={() => {
                       // TODO: Add Mirror Partners Gate navigation
                       console.log("Enter Mirror Partners Gate clicked");
                     }}
                   >
-                    <span className="bodytext-6--no-margin">Enter Mirror Partners Gate</span>
-                  </GlassThemeButton>
+                    Enter Mirror Partners Gate
+                  </ShineGlassButton>
                 )}
                 <GlassThemeButton
                   theme="spec_light"
@@ -1058,7 +1128,7 @@ export default function NavbarV4() {
       )}
 
       {/* Booking Modal */}
-      <BookingModal
+      <BookingModalV3
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
       />

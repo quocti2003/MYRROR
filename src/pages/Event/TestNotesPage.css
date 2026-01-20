@@ -1,0 +1,362 @@
+/* Test Notes Page Styles - 14 Notes Layout */
+.test-notes {
+  min-height: 100vh;
+  padding: 40px 20px 60px;
+  background: linear-gradient(180deg, #FFF5F7 0%, #FFE8ED 100%);
+}
+
+.test-notes__title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 700;
+  color: #BC224C;
+  margin-bottom: 8px;
+}
+
+.test-notes__subtitle {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 32px;
+}
+
+/* Control buttons */
+.test-notes__controls {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.test-notes__btn {
+  padding: 14px 28px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #FF87A8 0%, #BC224C 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.test-notes__btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(188, 34, 76, 0.4);
+}
+
+.test-notes__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.test-notes__btn--secondary {
+  background: linear-gradient(135deg, #888 0%, #555 100%);
+}
+
+/* Instrument selector */
+.test-notes__instruments {
+  max-width: 700px;
+  margin: 0 auto 32px;
+  text-align: center;
+}
+
+.test-notes__instruments h3 {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.test-notes__instrument-list {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.test-notes__instrument-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 24px;
+  background: #fff;
+  border: 3px solid #ddd;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 140px;
+}
+
+.test-notes__instrument-btn:hover {
+  border-color: #FF87A8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(188, 34, 76, 0.15);
+}
+
+.test-notes__instrument-btn--active {
+  border-color: #BC224C;
+  background: linear-gradient(180deg, #FFF5F7 0%, #FFE8ED 100%);
+  box-shadow: 0 4px 16px rgba(188, 34, 76, 0.25);
+}
+
+.test-notes__instrument-emoji {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.test-notes__instrument-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.test-notes__instrument-desc {
+  font-size: 12px;
+  color: #888;
+}
+
+/* Octave sections */
+.test-notes__octave {
+  max-width: 900px;
+  margin: 0 auto 40px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.test-notes__octave-title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  color: #BC224C;
+  margin-bottom: 20px;
+}
+
+/* Notes row - 7 notes in a row */
+.test-notes__notes-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Note card */
+.test-notes__note-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 12px;
+  background: linear-gradient(180deg, #fff 0%, #FFF5F7 100%);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid transparent;
+  min-width: 100px;
+}
+
+.test-notes__note-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(188, 34, 76, 0.2);
+  border-color: #FF87A8;
+}
+
+.test-notes__note-card--playing {
+  transform: translateY(-6px) scale(1.08);
+  box-shadow: 0 12px 32px rgba(188, 34, 76, 0.4);
+  border-color: #BC224C;
+  background: linear-gradient(180deg, #FFE8ED 0%, #FFCCD8 100%);
+}
+
+.test-notes__note-card--playing .test-notes__note-img {
+  filter: drop-shadow(0 0 20px rgba(255, 100, 150, 0.8));
+}
+
+.test-notes__note-img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  margin-bottom: 12px;
+  transition: filter 0.2s;
+}
+
+.test-notes__note-vn {
+  font-size: 22px;
+  font-weight: 700;
+  color: #BC224C;
+  margin-bottom: 4px;
+}
+
+.test-notes__note-en {
+  font-size: 14px;
+  font-weight: 500;
+  color: #888;
+}
+
+/* Reference table */
+.test-notes__reference {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+}
+
+.test-notes__reference h2 {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.test-notes__table-container {
+  overflow-x: auto;
+}
+
+.test-notes__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.test-notes__table th,
+.test-notes__table td {
+  padding: 12px 16px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.test-notes__table th {
+  font-weight: 600;
+  font-size: 14px;
+  color: #BC224C;
+  background: #FFF5F7;
+}
+
+.test-notes__table tbody tr {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.test-notes__table tbody tr:hover {
+  background: #FFF5F7;
+}
+
+.test-notes__cell-vn {
+  font-weight: 600;
+  color: #BC224C;
+  font-size: 16px;
+}
+
+.test-notes__row--playing {
+  background: #FFCCD8 !important;
+}
+
+.test-notes__row--playing td {
+  font-weight: 700;
+  color: #BC224C;
+}
+
+.test-notes__row--octave-break {
+  border-top: 3px solid #BC224C;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .test-notes__title {
+    font-size: 28px;
+  }
+
+  .test-notes__subtitle {
+    font-size: 14px;
+  }
+
+  .test-notes__instrument-btn {
+    min-width: 110px;
+    padding: 12px 16px;
+  }
+
+  .test-notes__instrument-emoji {
+    font-size: 24px;
+  }
+
+  .test-notes__instrument-name {
+    font-size: 14px;
+  }
+
+  .test-notes__instrument-desc {
+    font-size: 10px;
+  }
+
+  .test-notes__controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .test-notes__btn {
+    width: 100%;
+    max-width: 280px;
+    padding: 12px 20px;
+    font-size: 16px;
+  }
+
+  .test-notes__octave {
+    padding: 16px;
+  }
+
+  .test-notes__octave-title {
+    font-size: 16px;
+  }
+
+  .test-notes__notes-row {
+    gap: 8px;
+  }
+
+  .test-notes__note-card {
+    min-width: 80px;
+    padding: 12px 8px;
+  }
+
+  .test-notes__note-img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 8px;
+  }
+
+  .test-notes__note-vn {
+    font-size: 16px;
+  }
+
+  .test-notes__note-en {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .test-notes {
+    padding: 20px 12px 40px;
+  }
+
+  .test-notes__note-card {
+    min-width: 70px;
+    padding: 10px 6px;
+  }
+
+  .test-notes__note-img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .test-notes__note-vn {
+    font-size: 14px;
+  }
+
+  .test-notes__note-en {
+    font-size: 10px;
+  }
+}

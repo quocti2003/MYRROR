@@ -4,7 +4,7 @@ import { optimizedTransitionUtils } from "@utils/transitionUtil/optimizedTransit
 import { MediaImage } from "@components/common/media";
 import { ROUTES } from "@/constants/routes";
 import "./Section4.css";
-import GlassThemeButton from "@components/common/button/GlassThemeButton";
+import ShineGlassButton from "@components/common/button/ShineGlassButton";
 
 const Section4 = () => {
   const navigate = useNavigate();
@@ -163,13 +163,13 @@ const Section4 = () => {
                 piece as radiant as the day you received it.
               </p>
             </div>
-            <GlassThemeButton
+            <ShineGlassButton
               className="section4-cta"
               theme="light"
               onClick={handleReturnExchangeClick}
             >
-              <span className="bodytext-6--no-margin">See more</span>
-            </GlassThemeButton>
+              See more
+            </ShineGlassButton>
           </div>
         </div>
       </div>
@@ -192,13 +192,13 @@ const Section4 = () => {
                 giving.
               </p>
             </div>
-            <GlassThemeButton
+            <ShineGlassButton
               className="section4-cta"
               theme="light"
               onClick={handleSizingGuideClick}
             >
-              <span className="bodytext-6--no-margin">See more</span>
-            </GlassThemeButton>
+              See more
+            </ShineGlassButton>
           </div>
         </div>
       </div>
@@ -220,13 +220,13 @@ const Section4 = () => {
                 12-month limited warranty
               </p>
             </div>
-            <GlassThemeButton
+            <ShineGlassButton
               className="section4-cta"
               theme="light"
               onClick={handleWarrantyInfoClick}
             >
-              <span className="bodytext-6--no-margin">See more</span>
-            </GlassThemeButton>
+              See more
+            </ShineGlassButton>
           </div>
         </div>
       </div>
@@ -251,13 +251,13 @@ const Section4 = () => {
                   piece as radiant as the day you received it.
                 </p>
               </div>
-              <GlassThemeButton
+              <ShineGlassButton
                 className="section4-cta"
-                theme="dark"
+                theme="footer"
                 onClick={handleReturnExchangeClick}
               >
-                <span className="bodytext-6--no-margin">See more</span>
-              </GlassThemeButton>
+                See more
+              </ShineGlassButton>
             </div>
           </div>
         </div>
@@ -282,13 +282,13 @@ const Section4 = () => {
                   giving.
                 </p>
               </div>
-              <GlassThemeButton
+              <ShineGlassButton
                 className="section4-cta"
-                theme="dark"
+                theme="footer"
                 onClick={handleSizingGuideClick}
               >
-                <span className="bodytext-6--no-margin">See more</span>
-              </GlassThemeButton>
+                See more
+              </ShineGlassButton>
             </div>
           </div>
         </div>
@@ -312,13 +312,13 @@ const Section4 = () => {
                   a 12-month limited warranty
                 </p>
               </div>
-              <GlassThemeButton
+              <ShineGlassButton
                 className="section4-cta"
-                theme="dark"
+                theme="footer"
                 onClick={handleWarrantyInfoClick}
               >
-                <span className="bodytext-6--no-margin">See more</span>
-              </GlassThemeButton>
+                See more
+              </ShineGlassButton>
             </div>
           </div>
         </div>
@@ -330,7 +330,7 @@ const Section4 = () => {
         <div className="section4-desktop-screen">
           <div className="section4-desktop-image">
             <MediaImage
-              src="services/b2f5b664-7235-4fe3-b721-c19450d3518a.webp"
+              src="services/Return & Exchange_960x1080.webp"
               alt="Return & Exchange"
             />
           </div>
@@ -352,13 +352,13 @@ const Section4 = () => {
                     piece as radiant as the day you received it.
                   </p>
                 </div>
-                <GlassThemeButton
+                <ShineGlassButton
                   className="section4-cta"
                   theme="light"
                   onClick={handleReturnExchangeClick}
                 >
-                  <span className="bodytext-6--no-margin">See more</span>
-                </GlassThemeButton>
+                  See more
+                </ShineGlassButton>
               </div>
             </div>
           </div>
@@ -367,7 +367,7 @@ const Section4 = () => {
         {/* Screen 2 - Sizing Guide */}
         <div className="section4-desktop-screen">
           <div className="section4-desktop-image">
-            <MediaImage src="services/product-20.webp" alt="Sizing Guide" />
+            <MediaImage src="services/Sizing Guide.webp" alt="Sizing Guide" />
           </div>
           <div className="section4-desktop-content">
             <div className="section4-content">
@@ -387,13 +387,13 @@ const Section4 = () => {
                     giving.
                   </p>
                 </div>
-                <GlassThemeButton
+                <ShineGlassButton
                   className="section4-cta"
                   theme="light"
                   onClick={handleSizingGuideClick}
                 >
-                  <span className="bodytext-6--no-margin">See more</span>
-                </GlassThemeButton>
+                  See more
+                </ShineGlassButton>
               </div>
             </div>
           </div>
@@ -403,7 +403,7 @@ const Section4 = () => {
         <div className="section4-desktop-screen">
           <div className="section4-desktop-image">
             <MediaImage
-              src="services/Waranty Legacy.webp"
+              src="services/Warranty Legacy.webp"
               alt="Warranty & Info"
             />
           </div>
@@ -424,13 +424,13 @@ const Section4 = () => {
                     by a 12-month limited warranty
                   </p>
                 </div>
-                <GlassThemeButton
+                <ShineGlassButton
                   className="section4-cta"
                   theme="light"
                   onClick={handleWarrantyInfoClick}
                 >
-                  <span className="bodytext-6--no-margin">See more</span>
-                </GlassThemeButton>
+                  See more
+                </ShineGlassButton>
               </div>
             </div>
           </div>

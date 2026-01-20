@@ -330,7 +330,8 @@
 }
 
 .milan-carousel-item {
-  flex: 0 0 calc(33.333% - 0.417%); /* 4 cột trong 12-column grid */
+  flex: 0 0 auto;
+  height: 60vh;
   aspect-ratio: 4/5;
   overflow: hidden;
 }
@@ -651,7 +652,7 @@
   }
 
   .milan-carousel-item {
-    flex: 0 0 calc(50% - 0.3125%); /* 6 cột = 50% trên tablet */
+    height: 50vh;
   }
 
   .milan-large-carousel-item {
@@ -775,7 +776,7 @@
   }
 
   .milan-carousel-item {
-    flex: 0 0 85%; /* 85% width trên mobile cho mỗi ảnh */
+    height: 45vh;
   }
 
   .milan-large-carousel-item {

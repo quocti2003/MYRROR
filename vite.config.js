@@ -12,8 +12,8 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     define: {
       // Make environment variables available at build time
-      'import.meta.env.VITE_API_BASE_URL': JSON.stringify(env.VITE_API_BASE_URL || 'https://xpxr4xbvim.ap-southeast-1.awsapprunner.com'),
-      'import.meta.env.VITE_AUTH_BASE_URL': JSON.stringify(env.VITE_AUTH_BASE_URL || env.VITE_API_BASE_URL || 'https://nwkg3ymv2p.ap-southeast-1.awsapprunner.com'),
+      'import.meta.env.VITE_API_BASE_URL': JSON.stringify(env.VITE_API_BASE_URL || 'https://nsa4fef6um.ap-southeast-1.awsapprunner.com'),
+      'import.meta.env.VITE_AUTH_BASE_URL': JSON.stringify(env.VITE_AUTH_BASE_URL || env.VITE_API_BASE_URL || 'https://nsa4fef6um.ap-southeast-1.awsapprunner.com'),
       'import.meta.env.VITE_NODE_ENV': JSON.stringify(env.VITE_NODE_ENV || mode),
     },
     server: {
@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
       port: 5173,
       proxy: {
         "/api": {
-          target: env.VITE_API_BASE_URL || "http://localhost:8090",
+          target: env.VITE_API_BASE_URL || "http://localhost:8082",
           changeOrigin: true,
           secure: false,
           ws: true,

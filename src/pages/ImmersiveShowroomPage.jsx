@@ -14,12 +14,11 @@ const ScrollEffect = lazy(() =>
 const BrandPillars = lazy(() =>
   import("@components/home-page/brandPillars/BrandPillars")
 );
-const Lumex91 = lazy(() => import("@components/home-page/lumex91/Lumex91"));
 const UniverseSection = lazy(() =>
   import("@components/home-page/universeSection/MirrorExp")
 );
-const FutureDiamond = lazy(() =>
-  import("@components/home-page/futureDiamond/FutureDiamond")
+const FutureDiamondV2 = lazy(() =>
+  import("@components/home-page/futureDiamondV2/FutureDiamondV2")
 );
 const IntroSubmit = lazy(() =>
   import("@components/submit/intro-submit/IntroSubmit")
@@ -38,10 +37,6 @@ const ImmersiveShowroomPage = () => {
   const { theme: arrowTheme } = useBottomTheme();
   const [isImmersiveCollapsed, setIsImmersiveCollapsed] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
-
-  const handleImmersiveClick = () => {
-    console.log("Immersive button clicked");
-  };
 
   useEffect(() => {
     const handleScrollButtons = () => {
@@ -135,9 +130,9 @@ const ImmersiveShowroomPage = () => {
       >
         <ScrollEffect />
 
-        <FutureDiamond />
-
-        <Lumex91 />
+        <div data-section="future-diamond" data-navbar-theme="white">
+          <FutureDiamondV2 />
+        </div>
 
         <BrandPillars />
 
@@ -154,7 +149,6 @@ const ImmersiveShowroomPage = () => {
           theme={arrowTheme === "white" ? "dark" : "light"}
           icon="globe"
           isCollapsed={isImmersiveCollapsed}
-          onClick={handleImmersiveClick}
         >
           Immersive Showroom
         </GlassThemeButton>
@@ -172,7 +166,7 @@ const ImmersiveShowroomPage = () => {
       )}
 
       {/* Fixed Scroll to Top Button - only show when scroll-down arrow is hidden */}
-      <div className={`fixed-scroll-top-container ${showScrollTop ? 'visible' : ''}`}>
+      <div className={`fixed-scroll-top-container no-immersive-btn ${showScrollTop ? 'visible' : ''}`}>
         <GlassThemeButton
           theme={arrowTheme === "white" ? "dark" : "light"}
           icon="arrow-up"

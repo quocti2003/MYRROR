@@ -191,7 +191,7 @@ const Register = () => {
     setResendMessage("");
 
     try {
-      await api.post("/api/auth/resend-verification-email", {
+      await api.post("/api/v1/auth/resend-verification-email", {
         email: registeredEmail,
       });
 
@@ -245,7 +245,7 @@ const Register = () => {
     };
 
     try {
-      await api.post("/api/auth/register", payload);
+      await api.post("/api/v1/auth/register", payload);
 
       // Lưu email và hiển thị thông báo kiểm tra email
       setRegisteredEmail(formData.email);

@@ -2,10 +2,10 @@
  * ResultScreen - Final step: Show result and options
  */
 import React, { useEffect, useMemo, useState } from 'react';
-import { TEXT, getDiamondConfig, calculateNotePositionByOrder } from '../../../constants/eventConstants';
-import { fetchAllNotes } from '../../../services/event/eventApi';
-import { initAudio, isAudioInitialized, playDiamondNote, playNotesFromArray } from '../../../services/event/audio';
-import useEventStore from '../../../store/useEventStore';
+import { TEXT, getDiamondConfig, calculateNotePositionByOrder } from '@/constants/eventConstants';
+import { fetchAllNotes } from '@services/event/eventApi';
+import { initAudio, isAudioInitialized, playDiamondNote, playNotesFromArray } from '@services/event/audio';
+import useEventStore from '@/store/useEventStore';
 import Diamond from '../ui/Diamond';
 import MusicStaff from '../ui/MusicStaff';
 import Logo from '../ui/Logo';

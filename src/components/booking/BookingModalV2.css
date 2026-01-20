@@ -1,0 +1,1335 @@
+/* Booking Modal V2 - New Layout */
+
+/* Modal Overlay */
+.bkv2-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: bkv2-fadeIn 0.3s ease;
+}
+
+@keyframes bkv2-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Container - Split Layout */
+.bkv2-modal-container {
+  display: flex;
+  background: white;
+  width: 80vw;
+  max-width: 1400px;
+  height: 80vh;
+  max-height: 900px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: bkv2-scaleIn 0.3s ease;
+}
+
+@keyframes bkv2-scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Left Panel - Image */
+.bkv2-left-panel {
+  width: 50%;
+  height: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.bkv2-left-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: bkv2-imageReveal 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes bkv2-imageReveal {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Map Container */
+.bkv2-map-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #f0f0f0;
+}
+
+.bkv2-map-iframe {
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.bkv2-map-iframe.loading {
+  opacity: 0.3;
+}
+
+.bkv2-map-link {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 12px;
+  color: #333;
+  text-decoration: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s ease;
+}
+
+.bkv2-map-link:hover {
+  background: white;
+  text-decoration: underline;
+}
+
+/* Right Panel - Content */
+.bkv2-right-panel {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: white;
+}
+
+/* Header */
+.bkv2-header {
+  display: flex;
+  align-items: center;
+  padding: 24px 24px 36px;
+  gap: 48px;
+  flex-shrink: 0;
+}
+
+.bkv2-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.bkv2-back-btn:hover {
+  transform: translateX(-2px);
+}
+
+.bkv2-progress-bar {
+  flex: 1;
+  height: 2px;
+  background: #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.bkv2-progress-fill {
+  height: 100%;
+  background: rgba(188, 34, 76, 1);
+  transition: width 0.3s ease;
+}
+
+.bkv2-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  margin-left: auto;
+}
+
+.bkv2-close-btn:hover {
+  transform: rotate(90deg);
+}
+
+/* Step Title */
+.bkv2-step-title {
+  padding: 0;
+  margin-bottom: 24px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+/* Content Area */
+.bkv2-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 48px 48px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+  animation: bkv2-stepFadeIn 0.6s ease-out;
+}
+
+@keyframes bkv2-stepFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bkv2-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bkv2-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.bkv2-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+/* Footer */
+.bkv2-footer {
+  padding: 24px 30px;
+  flex-shrink: 0;
+  background: white;
+}
+
+.bkv2-continue-btn {
+  width: 100% !important;
+}
+
+.bkv2-continue-btn .glass-layer {
+  padding: 16px 24px !important;
+  border-radius: 999px !important;
+}
+
+.bkv2-continue-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bkv2-continue-btn:disabled .glass-layer {
+  background: rgba(204, 204, 204, 0.8) !important;
+}
+
+.bkv2-continue-btn:disabled .button-text {
+  color: rgba(136, 136, 136, 1) !important;
+}
+
+.bkv2-error-message {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* Loading & Empty States */
+.bkv2-loading,
+.bkv2-empty {
+  padding: 24px;
+  text-align: center;
+  color: #666;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+/* ==================== Step 1: Introduction ==================== */
+.bkv2-intro-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 36px;
+  color: #797979;
+}
+
+.bkv2-intro-divider {
+  color: #ddd;
+}
+
+.bkv2-intro-duration {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bkv2-intro-section {
+  margin-bottom: 36px;
+}
+
+.bkv2-intro-section h4 {
+  margin-bottom: 12px;
+}
+
+.bkv2-intro-section p {
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.bkv2-intro-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+}
+
+.bkv2-intro-section ul li {
+  color: #666;
+  margin-bottom: 8px;
+  padding-left: 16px;
+  position: relative;
+}
+
+.bkv2-intro-section ul li::before {
+  content: "-";
+  position: absolute;
+  left: 0;
+}
+
+/* ==================== Step 2: Venue ==================== */
+.bkv2-filter-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 36px;
+}
+
+.bkv2-filter-section label {
+  color: #797979;
+  white-space: nowrap;
+}
+
+.bkv2-city-filter {
+  position: relative;
+  flex: 1;
+}
+
+.bkv2-dropdown-selected {
+  display: flex;
+  align-items: center;
+  padding: 12px 40px 12px 16px;
+  border: 1px solid #ddd;
+  background: #f6f6f6;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.bkv2-dropdown-selected::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 8px;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23797979' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  transition: transform 0.3s ease;
+}
+
+.bkv2-dropdown-selected:hover,
+.bkv2-dropdown-selected.open {
+  border-color: #333;
+}
+
+.bkv2-dropdown-selected.open::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.bkv2-dropdown-selected span.default {
+  color: #797979;
+}
+
+.bkv2-dropdown-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #333;
+  border-top: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.bkv2-dropdown-option {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.bkv2-dropdown-option:hover,
+.bkv2-dropdown-option.selected {
+  background: #f6f6f6;
+}
+
+.bkv2-venue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.bkv2-venue-item {
+  padding-left: 12px;
+  border-left: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.bkv2-venue-item:hover {
+  border-left-color: rgba(188, 34, 76, 1);
+}
+
+.bkv2-venue-item.selected {
+  border-left-color: rgba(188, 34, 76, 1);
+  border-left-width: 2px;
+}
+
+.bkv2-venue-item h3 {
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.bkv2-venue-item p {
+  color: #797979;
+  transition: all 0.3s ease;
+}
+
+.bkv2-venue-item:hover h3,
+.bkv2-venue-item:hover p,
+.bkv2-venue-item.selected h3,
+.bkv2-venue-item.selected p {
+  transform: translateX(6px);
+}
+
+.bkv2-venue-item:hover h3,
+.bkv2-venue-item.selected h3 {
+  color: rgba(188, 34, 76, 1);
+}
+
+/* ==================== Step 3: Service ==================== */
+.bkv2-service-subtitle {
+  color: #797979;
+  margin-bottom: 24px;
+}
+
+.bkv2-service-list {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  margin-top: 36px;
+}
+
+.bkv2-service-item {
+  padding-left: 12px;
+  border-left: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.bkv2-service-item:hover {
+  border-left-color: rgba(188, 34, 76, 1);
+}
+
+.bkv2-service-item.selected {
+  border-left-color: rgba(188, 34, 76, 1);
+  border-left-width: 2px;
+}
+
+.bkv2-service-item h3 {
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.bkv2-service-item p {
+  color: #797979;
+  transition: all 0.3s ease;
+}
+
+.bkv2-service-item:hover h3,
+.bkv2-service-item:hover p,
+.bkv2-service-item.selected h3,
+.bkv2-service-item.selected p {
+  transform: translateX(6px);
+}
+
+.bkv2-service-item:hover h3,
+.bkv2-service-item.selected h3 {
+  color: rgba(188, 34, 76, 1);
+}
+
+.bkv2-service-input {
+  width: 100%;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+  background: transparent;
+  margin-top: 12px;
+  outline: none;
+}
+
+/* ==================== Step 4: Date & Time ==================== */
+
+/* Special Split Layout for Step 4 */
+.bkv2-datetime-layout {
+  display: flex;
+}
+
+.bkv2-datetime-panel {
+  width: 50%;
+  height: 100%;
+}
+
+.bkv2-datetime-panel-left {
+  background: #f6f6f6;
+  padding: 80px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.bkv2-datetime-panel-right {
+  background: #f6f6f6;
+  display: flex;
+  flex-direction: column;
+}
+
+.bkv2-datetime-title {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.bkv2-datetime-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  padding: 48px;
+}
+
+/* Override header/footer backgrounds for datetime layout */
+.bkv2-datetime-panel-right .bkv2-header {
+  background: #f6f6f6;
+}
+
+.bkv2-datetime-panel-right .bkv2-content {
+  background: #f6f6f6;
+}
+
+.bkv2-datetime-panel-right .bkv2-footer {
+  background: #f6f6f6;
+}
+
+/* Larger Calendar for Date Panel */
+.bkv2-calendar-large {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  background: white;
+  font-family: inherit;
+}
+
+.bkv2-calendar-large .react-datepicker__month-container {
+  width: 100%;
+}
+
+.bkv2-calendar-large .react-datepicker__header {
+  background: transparent;
+  border-bottom: none;
+  padding: 24px 0;
+}
+
+.bkv2-calendar-large .react-datepicker__current-month,
+.bkv2-calendar-large .react-datepicker__navigation {
+  display: none;
+}
+
+.bkv2-calendar-large .bkv2-calendar-header {
+  padding: 24px;
+}
+
+.bkv2-calendar-large .react-datepicker__day-names {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  padding: 0 16px;
+  margin: 0 0 8px 0;
+}
+
+.bkv2-calendar-large .react-datepicker__day-name {
+  text-align: center;
+  color: #000;
+  text-transform: lowercase;
+  width: auto;
+  margin: 0;
+}
+
+.bkv2-calendar-large .react-datepicker__month {
+  margin: 0;
+  padding: 8px 16px 16px;
+}
+
+.bkv2-calendar-large .react-datepicker__week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.bkv2-calendar-large .react-datepicker__day {
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 50%;
+  margin: 0 auto;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+}
+
+.bkv2-calendar-large .react-datepicker__day:hover {
+  background: #000 !important;
+  color: white !important;
+}
+
+.bkv2-calendar-large .react-datepicker__day--selected {
+  background: #000 !important;
+  color: white !important;
+}
+
+.bkv2-calendar-large .react-datepicker__day--keyboard-selected {
+  background: transparent;
+}
+
+.bkv2-calendar-large .react-datepicker__day--disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.bkv2-calendar-large .react-datepicker__day--disabled:hover {
+  background: none !important;
+  color: #ccc !important;
+}
+
+.bkv2-calendar-large .react-datepicker__day--outside-month {
+  color: #ccc;
+}
+
+/* Time Only Section (for right panel of step 4) */
+.bkv2-time-only {
+  width: 100%;
+}
+
+.bkv2-time-only .bkv2-time-header {
+  margin-bottom: 36px;
+  color: #797979;
+}
+
+.bkv2-time-only .bkv2-time-grid {
+  grid-template-columns: repeat(2, 1fr);
+  row-gap: 24px;
+  column-gap: 0;
+}
+
+/* Default DateTime Layout (for fallback) */
+.bkv2-datetime {
+  display: flex;
+  gap: 24px;
+}
+
+.bkv2-datetime-left {
+  flex: 1;
+}
+
+.bkv2-datetime-right {
+  flex: 1;
+}
+
+/* Calendar Styles */
+.bkv2-calendar {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  background: #f6f6f6;
+  font-family: inherit;
+}
+
+.bkv2-calendar .react-datepicker__month-container {
+  width: 100%;
+}
+
+.bkv2-calendar .react-datepicker__header {
+  background: transparent;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0;
+}
+
+.bkv2-calendar .react-datepicker__current-month,
+.bkv2-calendar .react-datepicker__navigation {
+  display: none;
+}
+
+.bkv2-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.bkv2-calendar-month {
+  font-family: "Orpheus Pro", serif;
+  font-size: 20px;
+}
+
+.bkv2-calendar-nav {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease;
+}
+
+.bkv2-calendar-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.bkv2-calendar-nav:hover:not(:disabled) {
+  transform: translateX(-2px);
+}
+
+.bkv2-calendar-nav:last-child:hover:not(:disabled) {
+  transform: translateX(2px);
+}
+
+.bkv2-calendar .react-datepicker__day-names {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  padding: 0 16px;
+  margin: 0;
+}
+
+.bkv2-calendar .react-datepicker__day-name {
+  text-align: center;
+  color: #000;
+  text-transform: lowercase;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+.bkv2-calendar .react-datepicker__month {
+  margin: 0;
+  padding: 0px 12px;
+}
+
+.bkv2-calendar .react-datepicker__week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+  margin-bottom: 0px;
+}
+
+.bkv2-calendar .react-datepicker__week:last-child {
+  margin-bottom: 0;
+}
+
+.bkv2-calendar .react-datepicker__day {
+  border: none !important;
+  background: none !important;
+  background-color: transparent !important;
+  cursor: pointer;
+  margin: 0 auto;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  padding: 24px;
+  font-size: 14px;
+  position: relative;
+  z-index: 1;
+  border-radius: 0 !important;
+}
+
+.bkv2-calendar .react-datepicker__day::before {
+  content: "";
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: transparent;
+  z-index: -1;
+  transition: background 0.2s ease;
+}
+
+.bkv2-calendar .react-datepicker__day:hover {
+  background: none !important;
+  background-color: transparent !important;
+  color: white !important;
+}
+
+.bkv2-calendar .react-datepicker__day:hover::before {
+  background: #000 !important;
+}
+
+.bkv2-calendar .react-datepicker__day--selected,
+.bkv2-calendar .react-datepicker__day--selected:hover {
+  background: none !important;
+  background-color: transparent !important;
+  color: white !important;
+}
+
+.bkv2-calendar .react-datepicker__day--selected::before {
+  background: #bc224c !important;
+}
+
+.bkv2-calendar .react-datepicker__day--keyboard-selected {
+  background: transparent;
+}
+
+.bkv2-calendar .react-datepicker__day--disabled {
+  color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+.bkv2-calendar .react-datepicker__day--disabled:hover {
+  color: #e0e0e0 !important;
+}
+
+.bkv2-calendar .react-datepicker__day--disabled:hover::before {
+  background: transparent !important;
+}
+
+.bkv2-calendar .react-datepicker__day--outside-month {
+  color: #e0e0e0;
+}
+
+/* Time Selection */
+.bkv2-time-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 24px;
+}
+
+.bkv2-timezone {
+  color: #999;
+}
+
+.bkv2-time-placeholder {
+  color: #797979;
+  text-align: center;
+  padding: 80px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.bkv2-time-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.bkv2-time-slot {
+  padding-left: 12px;
+  border: none;
+  border-left: 1px solid #e0e0e0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  color: #000;
+  transition: all 0.3s ease;
+}
+
+.bkv2-time-slot span {
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.bkv2-time-slot:hover:not(.booked) {
+  border-left-color: rgba(188, 34, 76, 1);
+  color: rgba(188, 34, 76, 1);
+}
+
+.bkv2-time-slot:hover:not(.booked) span {
+  transform: translateX(6px);
+}
+
+.bkv2-time-slot.selected {
+  border-left-color: rgba(188, 34, 76, 1);
+  border-left-width: 2px;
+  color: rgba(188, 34, 76, 1);
+}
+
+.bkv2-time-slot.selected span {
+  transform: translateX(6px);
+}
+
+.bkv2-time-slot.booked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.bkv2-booked-label {
+  font-size: 10px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* ==================== Step 5: Form ==================== */
+.bkv2-form-title-group {
+  margin-bottom: 24px;
+}
+
+.bkv2-form-title-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #797979;
+}
+
+.bkv2-form-title-options {
+  display: flex;
+  gap: 24px;
+}
+
+.bkv2-form-title-option {
+  cursor: pointer;
+}
+
+.bkv2-form-title-option .underline-button-text {
+  color: #797979;
+  transition: color 0.2s ease;
+}
+
+.bkv2-form-title-option .underline-button-text::after {
+  background: #000;
+}
+
+.bkv2-form-title-option:hover .underline-button-text {
+  color: #000;
+}
+
+.bkv2-form-title-option.active .underline-button-text {
+  color: #000;
+}
+
+.bkv2-form-title-option.active .underline-button-text::after {
+  transform: scaleX(1);
+}
+
+.bkv2-form-field {
+  margin-bottom: 24px;
+}
+
+.bkv2-form-field label {
+  display: block;
+  color: #797979;
+  margin-bottom: 4px;
+}
+
+.bkv2-form-input,
+.bkv2-form-textarea {
+  width: 100%;
+  padding: 12px 0;
+  border: none;
+  border-bottom: 1px solid rgba(224, 224, 224, 1);
+  background: transparent;
+  outline: none;
+  color: #333;
+  transition: border-bottom-color 0.3s ease;
+}
+
+.bkv2-form-textarea {
+  resize: none;
+  min-height: auto;
+  max-height: 96px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.bkv2-form-textarea::-webkit-scrollbar {
+  display: none;
+}
+
+/* ==================== Step 6: Review ==================== */
+.bkv2-review {
+  padding-bottom: 24px;
+}
+
+.bkv2-review-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.bkv2-review-item:last-of-type {
+  border-bottom: none;
+}
+
+.bkv2-review-item h4 {
+  color: #797979;
+  margin-bottom: 4px;
+}
+
+.bkv2-review-item p {
+  color: #0b0b0b;
+}
+
+.bkv2-review-edit .underline-button-opposite-text {
+  color: #000;
+}
+
+.bkv2-review-edit .underline-button-opposite-text::after {
+  background: #000;
+}
+
+.bkv2-privacy {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.bkv2-privacy h4 {
+  margin-bottom: 16px;
+}
+
+.bkv2-privacy p {
+  color: #797979;
+  line-height: 1.6;
+}
+
+.bkv2-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bkv2-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.bkv2-checkbox-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid #797979;
+  border-radius: 2px;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.bkv2-checkbox-item input[type="checkbox"]:checked {
+  background: #000;
+  border-color: #000;
+}
+
+.bkv2-checkbox-item span {
+  color: #797979;
+}
+
+.bkv2-checkbox-item:has(input:checked) span {
+  color: #000;
+}
+
+.bkv2-link {
+  color: #797979;
+  text-decoration: underline;
+}
+
+.bkv2-link:hover {
+  color: #000;
+}
+
+/* ==================== Step 7: Confirmation ==================== */
+
+/* Full width confirmation layout */
+.bkv2-confirmation-layout {
+  background: var(--gradient-1, linear-gradient(180deg, #bb234c 0%, #000 100%));
+}
+
+.bkv2-confirmation-full {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+
+.bkv2-confirmation-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.bkv2-confirmation-close:hover {
+  transform: rotate(90deg);
+}
+
+.bkv2-confirmation-content {
+  max-width: 800px;
+}
+
+.bkv2-confirmation-full h1 {
+  color: white;
+  margin-bottom: 12px;
+}
+
+.bkv2-confirmation-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 8px;
+}
+
+.bkv2-confirmation-text {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 48px;
+}
+
+.bkv2-confirmation-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 36px;
+}
+
+.bkv2-confirmation-btn {
+  min-width: 200px !important;
+}
+
+.bkv2-confirmation-btn .glass-layer {
+  padding: 16px 32px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(
+    -75deg,
+    rgba(80, 20, 40, 0.6),
+    rgba(100, 30, 50, 0.6),
+    rgba(80, 20, 40, 0.6)
+  ) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.bkv2-confirmation-btn .button-text {
+  color: white !important;
+}
+
+.bkv2-confirmation-btn:hover .glass-layer {
+  background: linear-gradient(
+    -75deg,
+    rgba(100, 30, 50, 0.8),
+    rgba(120, 40, 60, 0.8),
+    rgba(100, 30, 50, 0.8)
+  ) !important;
+}
+
+/* Legacy confirmation styles (fallback) */
+.bkv2-confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  padding: 60px 30px;
+}
+
+.bkv2-confirmation h1 {
+  margin-bottom: 12px;
+}
+
+/* ==================== Mobile Responsive ==================== */
+@media screen and (max-width: 1024px) {
+  .bkv2-datetime {
+    flex-direction: column;
+  }
+
+  /* Datetime layout responsive */
+  .bkv2-datetime-layout {
+    flex-direction: column;
+  }
+
+  .bkv2-datetime-panel {
+    width: 100%;
+    height: auto;
+  }
+
+  .bkv2-datetime-panel-left {
+    padding: 20px;
+    min-height: auto;
+  }
+
+  .bkv2-datetime-title {
+    margin-bottom: 24px;
+  }
+
+  .bkv2-datetime-panel-right {
+    flex: 1;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .bkv2-modal-container {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    max-height: 100%;
+    flex-direction: column;
+  }
+
+  .bkv2-left-panel {
+    display: none;
+  }
+
+  .bkv2-right-panel {
+    width: 100%;
+  }
+
+  .bkv2-header {
+    padding: 16px 20px;
+  }
+
+  .bkv2-step-title {
+    padding: 0 20px 20px;
+  }
+
+  .bkv2-content {
+    padding: 0 20px;
+  }
+
+  .bkv2-footer {
+    padding: 20px;
+  }
+
+  .bkv2-time-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bkv2-confirmation-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .bkv2-confirmation-btn {
+    width: 100% !important;
+  }
+
+  /* Datetime layout - mobile full screen */
+  .bkv2-datetime-layout {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    max-height: 100%;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .bkv2-datetime-panel-left {
+    padding: 20px;
+    flex: 0 0 auto;
+    overflow-y: auto;
+  }
+
+  .bkv2-datetime-panel-right {
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .bkv2-datetime-panel-right .bkv2-content {
+    overflow-y: auto;
+  }
+
+  .bkv2-calendar-large .react-datepicker__day {
+    width: 32px;
+    height: 32px;
+    font-size: 13px;
+  }
+
+  .bkv2-time-only .bkv2-time-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Confirmation layout - mobile full screen */
+  .bkv2-confirmation-layout {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .bkv2-confirmation-full {
+    padding: 40px 20px;
+  }
+
+  .bkv2-confirmation-content {
+    max-width: 100%;
+  }
+}

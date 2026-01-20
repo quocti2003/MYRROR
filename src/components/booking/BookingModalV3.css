@@ -1,0 +1,1597 @@
+/* Booking Modal V3 - New Layout */
+
+/* Modal Overlay */
+.bkv3-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: bkv3-fadeIn 0.3s ease;
+}
+
+@keyframes bkv3-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Modal Container - Split Layout */
+.bkv3-modal-container {
+  display: flex;
+  background: white;
+  width: 80vw;
+  max-width: 1400px;
+  height: 80vh;
+  max-height: 900px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: bkv3-scaleIn 0.3s ease;
+}
+
+@keyframes bkv3-scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Left Panel - Image */
+.bkv3-left-panel {
+  width: 50%;
+  height: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #f6f6f6;
+  position: relative;
+}
+
+.bkv3-left-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: bkv3-imageFadeIn 0.4s ease-out;
+}
+
+@keyframes bkv3-imageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Date/Time Overlay for Choose time step */
+.bkv3-date-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: #1a1a1a;
+  animation: bkv3-overlayFadeIn 0.4s ease-out;
+}
+
+@keyframes bkv3-overlayFadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0);
+  }
+}
+
+.bkv3-date-overlay-day {
+  font-family: "Saol Display";
+  font-size: 240px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 100%;
+  margin-block: 36px;
+}
+
+.bkv3-date-overlay-weekday {
+  margin-top: 8px;
+  color: #e0e0e0;
+}
+
+.bkv3-date-overlay-full {
+  margin-top: 4px;
+  color: #e0e0e0;
+}
+
+.bkv3-date-overlay-suffix {
+  font-size: 0.35em;
+  vertical-align: super;
+  font-style: normal;
+}
+
+.bkv3-date-overlay-suffix-small {
+  font-size: 0.7em;
+  vertical-align: super;
+}
+
+/* Map Container */
+.bkv3-map-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #f0f0f0;
+}
+
+.bkv3-map-iframe {
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.bkv3-map-iframe.loading {
+  opacity: 0.3;
+}
+
+.bkv3-map-link {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 6px 12px;
+  color: #333;
+  text-decoration: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s ease;
+}
+
+.bkv3-map-link:hover {
+  background: white;
+  text-decoration: underline;
+}
+
+/* Right Panel - Content */
+.bkv3-right-panel {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #F6F6F6;
+}
+
+/* Header */
+.bkv3-header {
+  display: flex;
+  align-items: center;
+  padding: 24px 24px 36px;
+  gap: 48px;
+  flex-shrink: 0;
+}
+
+.bkv3-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.bkv3-back-btn:hover {
+  transform: translateX(-2px);
+}
+
+.bkv3-progress-bar {
+  flex: 1;
+  height: 2px;
+  background: #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.bkv3-progress-fill {
+  height: 100%;
+  background: rgba(188, 34, 76, 1);
+  transition: width 0.3s ease;
+}
+
+.bkv3-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  margin-left: auto;
+}
+
+.bkv3-close-btn:hover {
+  transform: rotate(90deg);
+}
+
+/* Step Title */
+.bkv3-step-title {
+  padding: 0;
+  margin-bottom: 24px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+/* Content Area */
+.bkv3-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 48px 96px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+  animation: bkv3-stepFadeIn 0.6s ease-out;
+}
+
+@keyframes bkv3-stepFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bkv3-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.bkv3-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.bkv3-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+/* Footer */
+.bkv3-footer {
+  padding: 24px 30px;
+  flex-shrink: 0;
+  background: white;
+}
+
+.bkv3-continue-btn {
+  width: 100% !important;
+}
+
+.bkv3-continue-btn .glass-layer {
+  padding: 16px 24px !important;
+  border-radius: 999px !important;
+}
+
+.bkv3-continue-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.bkv3-continue-btn:disabled .glass-layer {
+  background: rgba(204, 204, 204, 0.8) !important;
+}
+
+.bkv3-continue-btn:disabled .button-text {
+  color: rgba(136, 136, 136, 1) !important;
+}
+
+.bkv3-error-message {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+/* Loading & Empty States */
+.bkv3-loading,
+.bkv3-empty {
+  padding: 24px;
+  text-align: center;
+  color: #666;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+/* ==================== Step 1: Landing ==================== */
+.bkv3-landing {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.bkv3-landing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.bkv3-landing-info {
+  display: contents;
+  color: #797979;
+}
+
+.bkv3-landing-duration {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #797979;
+}
+
+.bkv3-landing-tagline {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #797979;
+}
+
+.bkv3-landing-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bkv3-landing-title {
+  text-align: center;
+  color: #000;
+}
+
+.bkv3-landing-footer {
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  padding: 0px 24px 24px;
+}
+
+.bkv3-landing .bkv3-landing-footer {
+  padding: 0;
+}
+
+
+/* Expandable arrow button */
+.bkv3-landing-arrow-btn .button-text {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 16px 24px !important;
+}
+
+.bkv3-landing-arrow-btn svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.bkv3-landing-btn-text {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+  transition: width 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+}
+
+.bkv3-landing-arrow-btn:hover .bkv3-landing-btn-text {
+  width: auto;
+  opacity: 1;
+  margin-right: 8px;
+}
+
+/* Booking Button for Review step */
+.bkv3-booking-btn {
+  width: 100%;
+}
+
+/* ==================== Step 1: Introduction ==================== */
+.bkv3-intro {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  padding: 24px;
+  gap: 48px;
+}
+
+@keyframes bkv3-titleFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bkv3-titleMoveUp {
+  from {
+    transform: translateY(calc(50% + 24px));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes bkv3-sectionsFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bkv3-intro-title {
+  color: #000;
+  width: max-content;
+  opacity: 0;
+  transform: translateY(calc(50% + 24px));
+  animation:
+    bkv3-titleFadeIn 0.5s ease-out 0.2s forwards,
+    bkv3-titleMoveUp 0.6s ease-out 0.8s forwards;
+}
+
+.bkv3-intro-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  max-width: 236px;
+  opacity: 0;
+  animation: bkv3-sectionsFadeInUp 0.6s ease-out 0.8s forwards;
+}
+
+.bkv3-intro-section {
+  text-align: center;
+}
+
+.bkv3-intro-section-title {
+  color: #E0E0E0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px !important;
+}
+
+.bkv3-intro-section-text {
+  color: #797979;
+  line-height: 1.6;
+}
+
+/* ==================== Step 2: Venue ==================== */
+.bkv3-filter-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 36px;
+}
+
+.bkv3-filter-section label {
+  color: #797979;
+  white-space: nowrap;
+}
+
+.bkv3-city-filter {
+  position: relative;
+  flex: 1;
+}
+
+.bkv3-dropdown-selected {
+  display: flex;
+  align-items: center;
+  padding: 12px 40px 12px 16px;
+  border: 1px solid #ddd;
+  background: #f6f6f6;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.bkv3-dropdown-selected::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 8px;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23797979' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  transition: transform 0.3s ease;
+}
+
+.bkv3-dropdown-selected:hover,
+.bkv3-dropdown-selected.open {
+  border-color: #333;
+}
+
+.bkv3-dropdown-selected.open::after {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.bkv3-dropdown-selected span.default {
+  color: #797979;
+}
+
+.bkv3-dropdown-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #333;
+  border-top: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.bkv3-dropdown-option {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.bkv3-dropdown-option:hover,
+.bkv3-dropdown-option.selected {
+  background: #f6f6f6;
+}
+
+.bkv3-venue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.bkv3-venue-item {
+  padding-left: 12px;
+  border-left: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.bkv3-venue-item:hover {
+  border-left-color: rgba(188, 34, 76, 1);
+}
+
+.bkv3-venue-item.selected {
+  border-left-color: rgba(188, 34, 76, 1);
+  border-left-width: 2px;
+}
+
+.bkv3-venue-item h3 {
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.bkv3-venue-item p {
+  color: #797979;
+  transition: all 0.3s ease;
+}
+
+.bkv3-venue-item:hover h3,
+.bkv3-venue-item:hover p,
+.bkv3-venue-item.selected h3,
+.bkv3-venue-item.selected p {
+  transform: translateX(6px);
+}
+
+.bkv3-venue-item:hover h3,
+.bkv3-venue-item.selected h3 {
+  color: rgba(188, 34, 76, 1);
+}
+
+/* ==================== Step 3: Service ==================== */
+.bkv3-service-subtitle {
+  color: #797979;
+  margin-bottom: 24px;
+}
+
+.bkv3-service-list {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  margin-top: 36px;
+}
+
+.bkv3-service-item {
+  padding-left: 12px;
+  border-left: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.bkv3-service-item:hover {
+  border-left-color: rgba(188, 34, 76, 1);
+}
+
+.bkv3-service-item.selected {
+  border-left-color: rgba(188, 34, 76, 1);
+  border-left-width: 2px;
+}
+
+.bkv3-service-item h3 {
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.bkv3-service-item p {
+  color: #797979;
+  transition: all 0.3s ease;
+}
+
+.bkv3-service-item:hover h3,
+.bkv3-service-item:hover p,
+.bkv3-service-item.selected h3,
+.bkv3-service-item.selected p {
+  transform: translateX(6px);
+}
+
+.bkv3-service-item:hover h3,
+.bkv3-service-item.selected h3 {
+  color: rgba(188, 34, 76, 1);
+}
+
+.bkv3-service-input {
+  width: 100%;
+  padding: 12px 0 6px 1px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+  background: transparent;
+  outline: none;
+}
+
+/* ==================== Step 5: Choose Date & Time ==================== */
+.bkv3-datetime {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.bkv3-datetime-calendar {
+  display: flex;
+  justify-content: center;
+}
+
+.bkv3-datetime-time {
+  display: flex;
+  flex-direction: column;
+  animation: bkv3-fadeInUp 0.5s ease-out;
+  border-top: 1px solid #e0e0e0;
+}
+
+@keyframes bkv3-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bkv3-datetime-time .bkv3-time-header {
+  display: none;
+}
+
+.bkv3-datetime-time .bkv3-time-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  row-gap: 24px;
+  column-gap: 12px;
+  padding: 36px;
+}
+
+/* ==================== Legacy: Date & Time Split Layout ==================== */
+
+/* Special Split Layout for Step 4 */
+.bkv3-datetime-layout {
+  display: flex;
+}
+
+.bkv3-datetime-panel {
+  width: 50%;
+  height: 100%;
+}
+
+.bkv3-datetime-panel-left {
+  background: #f6f6f6;
+  padding: 80px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.bkv3-datetime-panel-right {
+  background: #f6f6f6;
+  display: flex;
+  flex-direction: column;
+}
+
+.bkv3-datetime-title {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.bkv3-datetime-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  padding: 48px;
+}
+
+/* Override header/footer backgrounds for datetime layout */
+.bkv3-datetime-panel-right .bkv3-header {
+  background: #f6f6f6;
+}
+
+.bkv3-datetime-panel-right .bkv3-content {
+  background: #f6f6f6;
+}
+
+.bkv3-datetime-panel-right .bkv3-footer {
+  background: #f6f6f6;
+}
+
+/* Larger Calendar for Date Panel */
+.bkv3-calendar-large {
+  width: 100%;
+  max-width: 100%;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  font-family: inherit;
+}
+
+.bkv3-calendar-large.react-datepicker {
+  border: none;
+  box-shadow: none;
+}
+
+.bkv3-calendar-large .react-datepicker__month-container {
+  width: 100%;
+  max-width: 100%;
+}
+
+.bkv3-calendar-large .react-datepicker__header {
+  background: transparent;
+  border-bottom: none;
+  padding: 24px 0;
+}
+
+.bkv3-calendar-large .react-datepicker__current-month,
+.bkv3-calendar-large .react-datepicker__navigation {
+  display: none;
+}
+
+.bkv3-calendar-large .bkv3-calendar-header {
+  padding: 0px;
+  height: 48px;
+}
+
+.bkv3-calendar-large .react-datepicker__day-names {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  padding: 0 8px;
+  margin: 0 0 8px 0;
+}
+
+.bkv3-calendar-large .react-datepicker__day-name {
+  text-align: center;
+  color: #999;
+  text-transform: uppercase;
+  width: auto;
+  margin: 0;
+  font-size: clamp(11px, 1.8vw, 13px);
+}
+
+.bkv3-calendar-large .react-datepicker__month {
+  margin: 0;
+  padding: 8px 8px 16px;
+}
+
+.bkv3-calendar-large .react-datepicker__week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.bkv3-calendar-large .react-datepicker__day {
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 50%;
+  margin: 0;
+  padding: 0;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  font-size: clamp(11px, 1.5vw, 14px);
+  min-width: 0;
+}
+
+.bkv3-calendar-large .react-datepicker__day:hover {
+  background: #000 !important;
+  color: white !important;
+}
+
+.bkv3-calendar-large .react-datepicker__day--selected {
+  background: rgba(188, 34, 76, 1) !important;
+  color: white !important;
+}
+
+.bkv3-calendar-large .react-datepicker__day--keyboard-selected {
+  background: transparent;
+}
+
+.bkv3-calendar-large .react-datepicker__day--disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.bkv3-calendar-large .react-datepicker__day--disabled:hover {
+  background: none !important;
+  color: #ccc !important;
+}
+
+.bkv3-calendar-large .react-datepicker__day--outside-month {
+  color: #ccc;
+}
+
+/* Time Only Section (for right panel of step 4) */
+.bkv3-time-only {
+  width: 100%;
+}
+
+.bkv3-time-only .bkv3-time-header {
+  margin-bottom: 36px;
+  color: #797979;
+}
+
+.bkv3-time-only .bkv3-time-grid {
+  grid-template-columns: repeat(2, 1fr);
+  row-gap: 24px;
+  column-gap: 0;
+}
+
+/* Default DateTime Layout (for fallback) */
+.bkv3-datetime {
+  display: flex;
+  gap: 24px;
+}
+
+.bkv3-datetime-left {
+  flex: 1;
+}
+
+.bkv3-datetime-right {
+  flex: 1;
+}
+
+/* Calendar Styles */
+.bkv3-calendar {
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  background: #f6f6f6;
+  font-family: inherit;
+}
+
+.bkv3-calendar .react-datepicker__month-container {
+  width: 100%;
+}
+
+.bkv3-calendar .react-datepicker__header {
+  background: transparent;
+  border-bottom: 0px solid #e0e0e0;
+  padding: 0;
+}
+
+.bkv3-calendar .react-datepicker__current-month,
+.bkv3-calendar .react-datepicker__navigation {
+  display: none;
+}
+
+.bkv3-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 16px;
+}
+
+.bkv3-calendar-month {
+  font-family: "Orpheus Pro", serif;
+  font-size: 20px;
+}
+
+.bkv3-calendar-nav {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  transition: transform 0.2s ease;
+}
+
+.bkv3-calendar-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.bkv3-calendar-nav:hover:not(:disabled) {
+  transform: translateX(-2px);
+}
+
+.bkv3-calendar-nav:last-child:hover:not(:disabled) {
+  transform: translateX(2px);
+}
+
+.bkv3-calendar .react-datepicker__day-names {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  padding: 0 16px;
+  margin: 0;
+}
+
+.bkv3-calendar .react-datepicker__day-name {
+  text-align: center;
+  color: #797979;
+  text-transform: uppercase;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 12px 0;
+}
+
+.bkv3-calendar .react-datepicker__month {
+  margin: 0;
+  padding: 0px 12px;
+}
+
+.bkv3-calendar .react-datepicker__week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+  margin-bottom: 0px;
+}
+
+.bkv3-calendar .react-datepicker__week:last-child {
+  margin-bottom: 0;
+}
+
+.bkv3-calendar .react-datepicker__day {
+  border: none !important;
+  background: none !important;
+  background-color: transparent !important;
+  cursor: pointer;
+  margin: 0 auto;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  padding: 12px;
+  font-size: 14px;
+  position: relative;
+  z-index: 1;
+  border-radius: 0 !important;
+}
+
+.bkv3-calendar .react-datepicker__day::before {
+  content: "";
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: transparent;
+  z-index: -1;
+  transition: background 0.2s ease;
+}
+
+.bkv3-calendar .react-datepicker__day:hover {
+  background: none !important;
+  background-color: transparent !important;
+  color: white !important;
+}
+
+.bkv3-calendar .react-datepicker__day:hover::before {
+  background: #000 !important;
+}
+
+.bkv3-calendar .react-datepicker__day--selected,
+.bkv3-calendar .react-datepicker__day--selected:hover {
+  background: none !important;
+  background-color: transparent !important;
+  color: white !important;
+}
+
+.bkv3-calendar .react-datepicker__day--selected::before {
+  background: #bc224c !important;
+}
+
+.bkv3-calendar .react-datepicker__day--keyboard-selected {
+  background: transparent;
+}
+
+.bkv3-calendar .react-datepicker__day--disabled {
+  color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+.bkv3-calendar .react-datepicker__day--disabled:hover {
+  color: #e0e0e0 !important;
+}
+
+.bkv3-calendar .react-datepicker__day--disabled:hover::before {
+  background: transparent !important;
+}
+
+.bkv3-calendar .react-datepicker__day--outside-month {
+  color: #e0e0e0;
+}
+
+/* Time Selection */
+.bkv3-time-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 24px;
+}
+
+.bkv3-timezone {
+  color: #999;
+}
+
+.bkv3-time-placeholder {
+  color: #797979;
+  text-align: center;
+  padding: 80px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.bkv3-time-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.bkv3-time-slot {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: center;
+  color: #000;
+  transition: all 0.3s ease;
+}
+
+.bkv3-time-slot span {
+  display: block;
+}
+
+.bkv3-time-slot:hover:not(.booked) {
+  color: rgba(188, 34, 76, 1);
+}
+
+.bkv3-time-slot.selected {
+  color: rgba(188, 34, 76, 1);
+}
+
+.bkv3-time-slot.booked {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.bkv3-booked-label {
+  font-size: 10px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* ==================== Step 5: Form ==================== */
+.bkv3-form-title-group {
+  margin-bottom: 24px;
+}
+
+.bkv3-form-title-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #797979;
+}
+
+.bkv3-form-title-options {
+  display: flex;
+  gap: 24px;
+}
+
+.bkv3-form-title-option {
+  cursor: pointer;
+}
+
+.bkv3-form-title-option .underline-button-text {
+  color: #797979;
+  transition: color 0.2s ease;
+}
+
+.bkv3-form-title-option .underline-button-text::after {
+  background: #000;
+}
+
+.bkv3-form-title-option:hover .underline-button-text {
+  color: #000;
+}
+
+.bkv3-form-title-option.active .underline-button-text {
+  color: #000;
+}
+
+.bkv3-form-title-option.active .underline-button-text::after {
+  transform: scaleX(1);
+}
+
+.bkv3-form-field {
+  margin-bottom: 24px;
+}
+
+.bkv3-form-field label {
+  display: block;
+  color: #797979;
+  margin-bottom: 4px;
+}
+
+.bkv3-form-input,
+.bkv3-form-textarea {
+  width: 100%;
+  padding: 12px 0 6px;
+  border: none;
+  border-bottom: 1px solid rgba(224, 224, 224, 1);
+  background: transparent;
+  outline: none;
+  color: #333;
+  transition: border-bottom-color 0.3s ease;
+}
+
+.bkv3-form-textarea {
+  resize: none;
+  min-height: auto;
+  max-height: 96px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.bkv3-form-textarea::-webkit-scrollbar {
+  display: none;
+}
+
+/* ==================== Step 6: Review ==================== */
+.bkv3-review {
+  padding-bottom: 24px;
+}
+
+.bkv3-review-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.bkv3-review-item:last-of-type {
+  border-bottom: none;
+}
+
+.bkv3-review-item h4 {
+  color: #797979;
+  margin-bottom: 4px;
+}
+
+.bkv3-review-item p {
+  color: #0b0b0b;
+}
+
+.bkv3-review-edit .underline-button-opposite-text {
+  color: #000;
+}
+
+.bkv3-review-edit .underline-button-opposite-text::after {
+  background: #000;
+}
+
+.bkv3-privacy {
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.bkv3-privacy h4 {
+  margin-bottom: 16px;
+}
+
+.bkv3-privacy p {
+  color: #797979;
+  line-height: 1.6;
+}
+
+.bkv3-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bkv3-checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.bkv3-checkbox-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid #797979;
+  /* border-radius: 2px; */
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.bkv3-checkbox-item input[type="checkbox"]:checked {
+  background: #000;
+  border-color: #000;
+}
+
+.bkv3-checkbox-item span {
+  color: #797979;
+}
+
+.bkv3-checkbox-item:has(input:checked) span {
+  color: #000;
+}
+
+.bkv3-link {
+  color: #797979;
+  text-decoration: underline;
+}
+
+.bkv3-link:hover {
+  color: #000;
+}
+
+/* ==================== Step 7: Confirmation ==================== */
+
+/* Full width confirmation layout */
+.bkv3-confirmation-layout {
+  background: var(--gradient-1, linear-gradient(180deg, #bb234c 0%, #000 100%));
+}
+
+.bkv3-confirmation-full {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+
+.bkv3-confirmation-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.bkv3-confirmation-close:hover {
+  transform: rotate(90deg);
+}
+
+.bkv3-confirmation-content {
+  max-width: 800px;
+}
+
+.bkv3-confirmation-full h1 {
+  color: white;
+  margin-bottom: 12px;
+}
+
+.bkv3-confirmation-subtitle {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 8px;
+}
+
+.bkv3-confirmation-text {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 48px;
+}
+
+.bkv3-confirmation-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 36px;
+}
+
+.bkv3-confirmation-btn {
+  min-width: 200px !important;
+}
+
+.bkv3-confirmation-btn .glass-layer {
+  padding: 16px 32px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(
+    -75deg,
+    rgba(80, 20, 40, 0.6),
+    rgba(100, 30, 50, 0.6),
+    rgba(80, 20, 40, 0.6)
+  ) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.bkv3-confirmation-btn .button-text {
+  color: white !important;
+}
+
+.bkv3-confirmation-btn:hover .glass-layer {
+  background: linear-gradient(
+    -75deg,
+    rgba(100, 30, 50, 0.8),
+    rgba(120, 40, 60, 0.8),
+    rgba(100, 30, 50, 0.8)
+  ) !important;
+}
+
+/* Legacy confirmation styles (fallback) */
+.bkv3-confirmation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  padding: 60px 30px;
+}
+
+.bkv3-confirmation h1 {
+  margin-bottom: 12px;
+}
+
+/* ==================== Mobile Responsive ==================== */
+@media screen and (max-width: 1024px) {
+  .bkv3-datetime {
+    flex-direction: column;
+  }
+
+  /* Datetime layout responsive */
+  .bkv3-datetime-layout {
+    flex-direction: column;
+  }
+
+  .bkv3-datetime-panel {
+    width: 100%;
+    height: auto;
+  }
+
+  .bkv3-datetime-panel-left {
+    padding: 20px;
+    min-height: auto;
+  }
+
+  .bkv3-datetime-title {
+    margin-bottom: 24px;
+  }
+
+  .bkv3-datetime-panel-right {
+    flex: 1;
+  }
+}
+
+/* Medium screens - reduce padding */
+@media screen and (max-width: 1440px) {
+  .bkv3-content {
+    padding: 48px 64px 0;
+  }
+}
+
+@media screen and (max-width: 1200px) {
+  .bkv3-content {
+    padding: 48px 48px 0;
+  }
+
+  .bkv3-date-overlay-day {
+    font-size: 180px;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .bkv3-content {
+    padding: 32px 24px 0;
+  }
+
+  .bkv3-date-overlay-day {
+    font-size: 140px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .bkv3-modal-container {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    max-height: 100%;
+    flex-direction: column;
+  }
+
+  .bkv3-left-panel {
+    display: none;
+  }
+
+  .bkv3-right-panel {
+    width: 100%;
+  }
+
+  .bkv3-header {
+    padding: 16px 20px;
+  }
+
+  .bkv3-step-title {
+    padding: 0 20px 20px;
+  }
+
+  .bkv3-content {
+    padding: 0 20px;
+  }
+
+  .bkv3-footer {
+    padding: 20px;
+  }
+
+  /* Landing step - mobile */
+  .bkv3-landing {
+    padding: 20px;
+  }
+
+  .bkv3-landing-info {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .bkv3-landing-tagline {
+    padding-left: 12px;
+  }
+
+  .bkv3-landing-title {
+    font-size: clamp(36px, 10vw, 48px);
+  }
+
+  .bkv3-landing-arrow-btn {
+    width: 56px;
+    height: 56px;
+  }
+
+  .bkv3-time-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bkv3-confirmation-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .bkv3-confirmation-btn {
+    width: 100% !important;
+  }
+
+  /* Datetime layout - mobile full screen */
+  .bkv3-datetime-layout {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    max-height: 100%;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .bkv3-datetime-panel-left {
+    padding: 20px;
+    flex: 0 0 auto;
+    overflow-y: auto;
+  }
+
+  .bkv3-datetime-panel-right {
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .bkv3-datetime-panel-right .bkv3-content {
+    overflow-y: auto;
+  }
+
+  .bkv3-time-only .bkv3-time-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Confirmation layout - mobile full screen */
+  .bkv3-confirmation-layout {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .bkv3-confirmation-full {
+    padding: 40px 20px;
+  }
+
+  .bkv3-confirmation-content {
+    max-width: 100%;
+  }
+}

@@ -6,6 +6,18 @@
   margin-bottom: 24px;
 }
 
+.sizing-guide .ring-size-section {
+  border-bottom: none;
+  margin-bottom: 84px;
+  padding-bottom: 0;
+}
+
+.sizing-guide .necklace-section {
+  border-top: none;
+  margin-bottom: 84px;
+  padding-bottom: 84px;
+}
+
 /* List styling consistency */
 .sizing-guide ul {
   margin: 16px 0;
@@ -27,23 +39,73 @@
   color: #000000;
 }
 
+/* Ordered list for steps */
+.sizing-guide ol.step-list {
+  margin: 16px 0;
+  padding-left: 20px;
+  list-style: decimal;
+}
+
+.sizing-guide ol.step-list li {
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+.sizing-guide ol.step-list li::marker {
+  color: #000000;
+}
+
 .sizing-guide .tip-text {
   color: #bc224c;
   margin: 0;
 }
 
-.sizing-guide .size-chart {
-  text-align: center;
-  margin: 30px 0;
+/* Ring Size Conversion Chart Table */
+.sizing-guide .size-chart-table {
+  margin: 72px 0 0 0;
 }
 
-.sizing-guide .chart-image {
-  width: auto;
-  height: auto;
-  max-height: 852px;
-  border: 1px solid #e1e1e1;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.sizing-guide .chart-title {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.sizing-guide .ring-size-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sizing-guide .ring-size-table th,
+.sizing-guide .ring-size-table td {
+  padding: 16px 20px;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.sizing-guide .ring-size-table th {
+  background-color: #f6f6f6;
+  font-weight: 400;
+}
+
+.sizing-guide .ring-size-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.sizing-guide .ring-size-table tbody tr:hover {
+  background-color: #fafafa;
 }
 
 /* Responsive Design - Font sizing removed to use global classes */
+@media (max-width: 768px) {
+  .sizing-guide .ring-size-table th,
+  .sizing-guide .ring-size-table td {
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 425px) {
+  .sizing-guide .ring-size-table th,
+  .sizing-guide .ring-size-table td {
+    padding: 10px 12px;
+  }
+}

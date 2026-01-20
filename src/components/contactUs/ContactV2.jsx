@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import UnderlineButton from "@components/common/button/UnderlineButton";
-import BookingModal from "@components/booking/BookingModal";
+import BookingModalV3 from "@components/booking/BookingModalV3";
 import "./ContactV2.css";
 
 // Import icons
@@ -128,7 +128,7 @@ const ContactV2 = () => {
       </div>
 
       {/* Booking Modal */}
-      <BookingModal
+      <BookingModalV3
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
       />

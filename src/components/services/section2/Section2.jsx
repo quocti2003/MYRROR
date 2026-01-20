@@ -4,7 +4,7 @@ import { optimizedTransitionUtils } from "@utils/transitionUtil/optimizedTransit
 import { MediaImage } from "@components/common/media";
 import { ROUTES } from "@/constants/routes";
 import "./Section2.css";
-import GlassThemeButton from "@components/common/button/GlassThemeButton";
+import ShineGlassButton from "@components/common/button/ShineGlassButton";
 
 const Section2 = () => {
   const navigate = useNavigate();
@@ -129,13 +129,13 @@ const Section2 = () => {
                 piece as radiant as the day you received it.
               </p>
             </div>
-            <GlassThemeButton
+            <ShineGlassButton
               className="section2-cta"
               theme="light"
               onClick={handleProductCareClick}
             >
-              <span className="bodytext-6--no-margin">See more</span>
-            </GlassThemeButton>
+              See more
+            </ShineGlassButton>
           </div>
         </div>
       </div>
@@ -158,13 +158,13 @@ const Section2 = () => {
                 promise of continuous evolution in your jewelry journey.
               </p>
             </div>
-            <GlassThemeButton
+            <ShineGlassButton
               className="section2-cta"
               theme="light"
               onClick={handleTradeInClick}
             >
-              <span className="bodytext-6--no-margin">See more</span>
-            </GlassThemeButton>
+              See more
+            </ShineGlassButton>
           </div>
         </div>
       </div>
@@ -189,13 +189,13 @@ const Section2 = () => {
                   piece as radiant as the day you received it.
                 </p>
               </div>
-              <GlassThemeButton
+              <ShineGlassButton
                 className="section2-cta"
-                theme="dark"
+                theme="footer"
                 onClick={handleProductCareClick}
               >
-                <span className="bodytext-6--no-margin">See more</span>
-              </GlassThemeButton>
+                See more
+              </ShineGlassButton>
             </div>
           </div>
         </div>
@@ -220,13 +220,13 @@ const Section2 = () => {
                   promise of continuous evolution in your jewelry journey.
                 </p>
               </div>
-              <GlassThemeButton
+              <ShineGlassButton
                 className="section2-cta"
-                theme="dark"
+                theme="footer"
                 onClick={handleTradeInClick}
               >
-                <span className="bodytext-6--no-margin">See more</span>
-              </GlassThemeButton>
+                See more
+              </ShineGlassButton>
             </div>
           </div>
         </div>
@@ -238,7 +238,7 @@ const Section2 = () => {
         <div className="section2-desktop-screen">
           <div className="section2-desktop-image">
             <MediaImage
-              src="services/Product care & Repair_960x1080.webp"
+              src="services/Product care & Repair_1.webp"
               alt="Product Care"
             />
           </div>
@@ -260,13 +260,13 @@ const Section2 = () => {
                     piece as radiant as the day you received it.
                   </p>
                 </div>
-                <GlassThemeButton
+                <ShineGlassButton
                   className="section2-cta"
                   theme="light"
                   onClick={handleProductCareClick}
                 >
-                  <span className="bodytext-6--no-margin">See more</span>
-                </GlassThemeButton>
+                  See more
+                </ShineGlassButton>
               </div>
             </div>
           </div>
@@ -275,7 +275,7 @@ const Section2 = () => {
         {/* Screen 2 - Trade In */}
         <div className="section2-desktop-screen">
           <div className="section2-desktop-image">
-            <MediaImage src="services/Trade in_960x1080.webp" alt="Trade In" />
+            <MediaImage src="services/Trade in.webp" alt="Trade In" />
           </div>
           <div className="section2-desktop-content">
             <div className="section2-content">
@@ -295,13 +295,13 @@ const Section2 = () => {
                     promise of continuous evolution in your jewelry journey.
                   </p>
                 </div>
-                <GlassThemeButton
+                <ShineGlassButton
                   className="section2-cta"
                   theme="light"
                   onClick={handleTradeInClick}
                 >
-                  <span className="bodytext-6--no-margin">See more</span>
-                </GlassThemeButton>
+                  See more
+                </ShineGlassButton>
               </div>
             </div>
           </div>

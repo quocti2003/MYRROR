@@ -37,12 +37,12 @@ export const DIAMOND_CONFIGS = [
     displayNameVi: "Kim cương trái tim",
   },
   {
-    shape: "princess",
+    shape: "asscher",
     pitch: "G4",
     staffLine: 4,
     color: "#C2185B",
-    displayName: "Princess",
-    displayNameVi: "Kim cương công chúa",
+    displayName: "Asscher",
+    displayNameVi: "Kim cương asscher",
   },
   {
     shape: "emerald",
@@ -62,9 +62,24 @@ export const DIAMOND_CONFIGS = [
   },
 ];
 
-// Get diamond config by shape
-export const getDiamondConfig = (shape) =>
-  DIAMOND_CONFIGS.find((d) => d.shape === shape);
+// Mapping from new shape IDs (h1-h7) to shape names in DIAMOND_CONFIGS
+// Synced with EventChooseShapePage shapes array
+const SHAPE_ID_TO_NAME = {
+  h1: 'heart',      // Heart shape
+  h2: 'oval',       // Oval shape
+  h3: 'round',      // Round shape
+  h4: 'pear',       // Pear shape
+  h5: 'asscher',    // Asscher shape
+  h6: 'emerald',    // Emerald shape
+  h7: 'marquise',   // Marquise shape
+};
+
+// Get diamond config by shape (supports both legacy names and h1-h7 IDs)
+export const getDiamondConfig = (shape) => {
+  // First check if it's a new ID (h1-h7), convert to legacy name
+  const legacyName = SHAPE_ID_TO_NAME[shape] || shape;
+  return DIAMOND_CONFIGS.find((d) => d.shape === legacyName);
+};
 
 // Get diamond config by pitch
 export const getDiamondByPitch = (pitch) =>
@@ -134,8 +149,8 @@ export const TEXT = {
   demoMode: "CHẾ ĐỘ DEMO",
 };
 
-// Admin password
-export const ADMIN_PASSWORD = "mirror-dmm-admin-2024";
+// Admin password (from environment variable)
+export const ADMIN_PASSWORD = import.meta.env.VITE_EVENT_ADMIN_PASSWORD || "";
 
 // Demo ticket prefix
 export const DEMO_TICKET_PREFIX = "MFD";

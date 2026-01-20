@@ -1,0 +1,762 @@
+/* MirrorExpV2 - 3D Elliptical Universe */
+
+.mirror-exp-v2 {
+  background-color: #000;
+  width: 100%;
+  min-height: 100vh;
+  padding: 80px 0 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Header */
+.mirror-exp-v2__header {
+  text-align: center;
+  color: #797979;
+  margin-bottom: 40px;
+}
+
+/* Slider Container */
+.mirror-exp-v2__slider {
+  position: relative;
+  margin-bottom: 60px;
+  z-index: 10;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Track - contains slides with absolute positioning */
+.mirror-exp-v2__track {
+  position: relative;
+  width: 100%;
+  min-height: 320px;
+}
+
+/* Individual Slide - absolutely positioned */
+.mirror-exp-v2__slide {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  text-align: center;
+  width: 345px;
+  min-height: 320px;
+  transition: transform 0.7s ease-in-out, opacity 0.7s ease-in-out;
+}
+
+/* Positions: 5 slides for smooth infinite carousel */
+.mirror-exp-v2__slide--prev-prev {
+  transform: translateX(calc(-50% - 930px));
+  opacity: 0;
+}
+
+.mirror-exp-v2__slide--prev {
+  transform: translateX(calc(-50% - 465px));
+  opacity: 0.4;
+}
+
+.mirror-exp-v2__slide--current {
+  transform: translateX(-50%);
+  opacity: 1;
+}
+
+.mirror-exp-v2__slide--next {
+  transform: translateX(calc(-50% + 465px));
+  opacity: 0.4;
+}
+
+.mirror-exp-v2__slide--next-next {
+  transform: translateX(calc(-50% + 930px));
+  opacity: 0;
+}
+
+/* Disable transition when resetting */
+.mirror-exp-v2__slide--no-transition {
+  transition: none !important;
+}
+
+.mirror-exp-v2__slide--no-transition .mirror-exp-v2__title,
+.mirror-exp-v2__slide--no-transition .mirror-exp-v2__starlight,
+.mirror-exp-v2__slide--no-transition .mirror-exp-v2__description,
+.mirror-exp-v2__slide--no-transition .mirror-exp-v2__details {
+  transition: none !important;
+}
+
+/* Going NEXT: all slides shift left by 465px */
+.mirror-exp-v2__track--next .mirror-exp-v2__slide--prev-prev {
+  transform: translateX(calc(-50% - 1395px));
+  opacity: 0;
+}
+
+.mirror-exp-v2__track--next .mirror-exp-v2__slide--prev {
+  transform: translateX(calc(-50% - 930px));
+  opacity: 0;
+}
+
+.mirror-exp-v2__track--next .mirror-exp-v2__slide--current {
+  transform: translateX(calc(-50% - 465px));
+  opacity: 0.4;
+}
+
+.mirror-exp-v2__track--next .mirror-exp-v2__slide--next {
+  transform: translateX(-50%);
+  opacity: 1;
+}
+
+.mirror-exp-v2__track--next .mirror-exp-v2__slide--next-next {
+  transform: translateX(calc(-50% + 465px));
+  opacity: 0.4;
+}
+
+/* Going PREV: all slides shift right by 465px */
+.mirror-exp-v2__track--prev .mirror-exp-v2__slide--prev-prev {
+  transform: translateX(calc(-50% - 465px));
+  opacity: 0.4;
+}
+
+.mirror-exp-v2__track--prev .mirror-exp-v2__slide--prev {
+  transform: translateX(-50%);
+  opacity: 1;
+}
+
+.mirror-exp-v2__track--prev .mirror-exp-v2__slide--current {
+  transform: translateX(calc(-50% + 465px));
+  opacity: 0.4;
+}
+
+.mirror-exp-v2__track--prev .mirror-exp-v2__slide--next {
+  transform: translateX(calc(-50% + 930px));
+  opacity: 0;
+}
+
+.mirror-exp-v2__track--prev .mirror-exp-v2__slide--next-next {
+  transform: translateX(calc(-50% + 1395px));
+  opacity: 0;
+}
+
+/* Title */
+.mirror-exp-v2__title {
+  color: #fff;
+  margin-bottom: 24px;
+  transition: color 0.7s ease-in-out;
+}
+
+.mirror-exp-v2__title--faded {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Color transitions during animation - Going NEXT */
+.mirror-exp-v2__track--next .mirror-exp-v2__slide--current .mirror-exp-v2__title {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.mirror-exp-v2__track--next .mirror-exp-v2__slide--next .mirror-exp-v2__title {
+  color: #fff !important;
+}
+
+/* Color transitions during animation - Going PREV */
+.mirror-exp-v2__track--prev .mirror-exp-v2__slide--current .mirror-exp-v2__title {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.mirror-exp-v2__track--prev .mirror-exp-v2__slide--prev .mirror-exp-v2__title {
+  color: #fff !important;
+}
+
+/* Navigation Buttons */
+.mirror-exp-v2__nav-btn {
+  position: absolute;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  /* Align with starlight: title height (60px) + title margin (20px) - button offset */
+  margin-top: calc(60px + 20px - 7px);
+}
+
+.mirror-exp-v2__nav-btn--left {
+  left: 50%;
+  /* half slide (172.5px) + small gap (12px) + button width (54px) */
+  transform: translateX(calc(-172.5px - 12px - 54px));
+}
+
+.mirror-exp-v2__nav-btn--right {
+  left: 50%;
+  /* half slide (172.5px) + small gap (12px) */
+  transform: translateX(calc(172.5px + 12px));
+}
+
+@media screen and (max-width: 1023px) {
+  .mirror-exp-v2__nav-btn {
+    margin-top: calc(48px + 20px - 7px);
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .mirror-exp-v2__nav-btn {
+    margin-top: calc(32px + 20px - 7px);
+  }
+}
+
+/* Keep arrow icon white on hover */
+@media (hover: hover) and (pointer: fine) {
+  .mirror-exp-v2__nav-btn .glass-theme-button:hover .glass-theme-btn-icon svg path {
+    stroke: #fff !important;
+  }
+}
+
+/* Reset focus state after click */
+.mirror-exp-v2__nav-btn .glass-theme-button:focus,
+.mirror-exp-v2__nav-btn .glass-theme-button:focus-visible {
+  outline: none !important;
+}
+
+.mirror-exp-v2__nav-btn .glass-theme-button:focus::before {
+  opacity: 0 !important;
+}
+
+.mirror-exp-v2__nav-btn .glass-theme-button:focus:not(:hover)::before {
+  opacity: 0 !important;
+}
+
+.mirror-exp-v2__divider {
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(180deg, transparent, #bc224c, transparent);
+}
+
+/* Starlight divider */
+.mirror-exp-v2__starlight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 24px;
+  height: 40px;
+  position: relative;
+}
+
+/* Override StarlightEffect default positioning */
+.mirror-exp-v2__starlight .universe-star-container-center {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  margin-top: 0;
+}
+
+.mirror-exp-v2__starlight {
+  transition: opacity 0.7s ease-in-out;
+}
+
+.mirror-exp-v2__starlight--faded {
+  opacity: 0.4;
+}
+
+/* Starlight transitions during animation */
+.mirror-exp-v2__track--next .mirror-exp-v2__slide--current .mirror-exp-v2__starlight {
+  opacity: 0.4 !important;
+}
+
+.mirror-exp-v2__track--next .mirror-exp-v2__slide--next .mirror-exp-v2__starlight {
+  opacity: 1 !important;
+}
+
+.mirror-exp-v2__track--prev .mirror-exp-v2__slide--current .mirror-exp-v2__starlight {
+  opacity: 0.4 !important;
+}
+
+.mirror-exp-v2__track--prev .mirror-exp-v2__slide--prev .mirror-exp-v2__starlight {
+  opacity: 1 !important;
+}
+
+/* Description Text */
+.mirror-exp-v2__description {
+  color: rgba(255, 255, 255, 0.50);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  transition: color 0.7s ease-in-out;
+}
+
+.mirror-exp-v2__description--faded {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* Description transitions during animation */
+.mirror-exp-v2__track--next .mirror-exp-v2__slide--current .mirror-exp-v2__description {
+  color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.mirror-exp-v2__track--next .mirror-exp-v2__slide--next .mirror-exp-v2__description {
+  color: rgba(255, 255, 255, 0.50) !important;
+}
+
+.mirror-exp-v2__track--prev .mirror-exp-v2__slide--current .mirror-exp-v2__description {
+  color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.mirror-exp-v2__track--prev .mirror-exp-v2__slide--prev .mirror-exp-v2__description {
+  color: rgba(255, 255, 255, 0.50) !important;
+}
+
+.mirror-exp-v2__details {
+  color: rgba(255, 255, 255, 0.50);
+  max-width: 350px;
+  margin: 0 auto;
+  transition: color 0.7s ease-in-out;
+}
+
+.mirror-exp-v2__details--faded {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* Details transitions during animation */
+.mirror-exp-v2__track--next .mirror-exp-v2__slide--current .mirror-exp-v2__details {
+  color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.mirror-exp-v2__track--next .mirror-exp-v2__slide--next .mirror-exp-v2__details {
+  color: rgba(255, 255, 255, 0.50) !important;
+}
+
+.mirror-exp-v2__track--prev .mirror-exp-v2__slide--current .mirror-exp-v2__details {
+  color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.mirror-exp-v2__track--prev .mirror-exp-v2__slide--prev .mirror-exp-v2__details {
+  color: rgba(255, 255, 255, 0.50) !important;
+}
+
+/* Universe Container */
+.mirror-exp-v2__universe {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  min-height: 400px;
+  margin-top: -20px;
+}
+
+/* SVG Orbits Container */
+.mirror-exp-v2__orbits-svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 1400px;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 15px rgba(188, 34, 76, 0.25));
+}
+
+/* Center Diamond */
+.mirror-exp-v2__center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.mirror-exp-v2__center-diamond {
+  display: block;
+  width: 71px;
+  height: 70px;
+}
+
+/* Small decorative dots on orbits */
+.mirror-exp-v2__small-dot-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+  /* No CSS transition - animation handled by JS for accurate orbit path */
+}
+
+.mirror-exp-v2__small-dot {
+  display: block;
+  width: 54px;
+  height: 52px;
+}
+
+/* Planets Container */
+.mirror-exp-v2__planets {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 1400px;
+  height: 450px;
+  pointer-events: none;
+}
+
+/* Individual Planet - positioned on elliptical orbits via JS */
+.mirror-exp-v2__planet {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: auto;
+  cursor: pointer;
+  /* transform is set via inline style from JS - NO transition for smooth orbit movement */
+}
+
+/* Inner wrapper for scale animation */
+.mirror-exp-v2__planet-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0.7);
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              filter 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Inactive state - blur effect */
+  filter: blur(1px) brightness(0.75);
+  opacity: 0.85;
+  /* Ensure no animation interferes with transition */
+  animation: none;
+}
+
+/* Active planet - scale is set via inline style for dynamic sizing */
+.mirror-exp-v2__planet-inner--active {
+  /* transform: scale() set via JS to normalize all planets to same size */
+  z-index: 5;
+  filter: blur(0) brightness(1);
+  opacity: 1;
+}
+
+/* Bounce animation on separate elements to not interfere with scale transition */
+.mirror-exp-v2__planet-inner--active .mirror-exp-v2__planet-orb {
+  animation: planetOrbBounce 2.5s ease-in-out infinite;
+  animation-delay: 0.7s;
+}
+
+/* Icon and glow need different keyframe that preserves centering transform */
+.mirror-exp-v2__planet-inner--active .mirror-exp-v2__icon-glow,
+.mirror-exp-v2__planet-inner--active .mirror-exp-v2__planet-icon {
+  animation: planetIconBounce 2.5s ease-in-out infinite;
+  animation-delay: 0.7s;
+}
+
+/* Sparkles container - random positioned sparkle dots */
+.mirror-exp-v2__sparkles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 160%;
+  height: 160%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+  animation: sparklesBounce 2.5s ease-in-out infinite 0.7s;
+}
+
+@keyframes sparklesBounce {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-6px);
+  }
+}
+
+/* Individual sparkle dot */
+.mirror-exp-v2__sparkle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  filter: blur(0.5px);
+  box-shadow:
+    0 0 2px 1px rgba(255, 255, 255, 0.8),
+    0 0 6px 2px rgba(255, 255, 255, 0.4),
+    0 0 12px 4px rgba(255, 200, 220, 0.2);
+  animation: sparkleTwinkle ease-in-out infinite;
+}
+
+/* Sparkle glow aura - larger diffused light */
+.mirror-exp-v2__sparkle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%;
+  height: 300%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 200, 220, 0.15) 30%,
+    transparent 70%
+  );
+  filter: blur(2px);
+}
+
+/* Bouncing animation for planet orb (no centering needed) */
+@keyframes planetOrbBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Bouncing animation for icon/glow (preserves centering transform) */
+@keyframes planetIconBounce {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-6px);
+  }
+}
+
+/* Sparkle twinkle animation - slow, elegant, dreamy feel */
+@keyframes sparkleTwinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.3);
+    filter: blur(1.5px);
+  }
+  20% {
+    opacity: 0.5;
+    transform: scale(0.8);
+    filter: blur(0.8px);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.1);
+    filter: blur(0.3px);
+  }
+  60% {
+    opacity: 0.6;
+    transform: scale(0.9);
+    filter: blur(0.6px);
+  }
+  80% {
+    opacity: 0.8;
+    transform: scale(1);
+    filter: blur(0.4px);
+  }
+}
+
+/* Planet Orb SVG */
+.mirror-exp-v2__planet-orb {
+  display: block;
+  transition: transform 0.5s ease-out, filter 0.3s ease;
+}
+
+/* Icon glow and icon also need transition for smooth bounce stop */
+.mirror-exp-v2__icon-glow,
+.mirror-exp-v2__planet-icon {
+  transition: transform 0.5s ease-out;
+}
+
+.mirror-exp-v2__planet:hover .mirror-exp-v2__planet-inner .mirror-exp-v2__planet-orb {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 10px rgba(188, 34, 76, 0.6));
+}
+
+/* Icon Glow - separate element */
+.mirror-exp-v2__icon-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #0a0a0a 0%, transparent 70%);
+  box-shadow:
+    10px 0 8px 0 #BC224C,
+    -10px 0 8px 0 #BC224C,
+    0 -10px 8px 0 #FFF,
+    0 10px 8px 0 #FFF;
+  pointer-events: none;
+}
+
+/* Planet Icons - overlay on top of glow */
+.mirror-exp-v2__planet-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Icon variations */
+.mirror-exp-v2__planet-icon--heart {
+  width: 42px;
+  height: 42px;
+  background: url("__CDN_URL__/universeSection/heart-senses.webp") transparent 50% / cover no-repeat;
+}
+
+/* Larger glow for heart icon */
+.mirror-exp-v2__planet:has(.mirror-exp-v2__planet-icon--heart) .mirror-exp-v2__icon-glow {
+  width: 25px;
+  height: 25px;
+  box-shadow:
+    12px 0 10px 0 #BC224C,
+    -12px 0 10px 0 #BC224C,
+    0 -12px 10px 0 #FFF,
+    0 12px 10px 0 #FFF;
+}
+
+.mirror-exp-v2__planet-icon--circle {
+  width: 25px;
+  height: 25px;
+  background: url("__CDN_URL__/universeSection/circle-presence.webp") transparent 50% / cover no-repeat;
+}
+
+.mirror-exp-v2__planet-icon--droplet {
+  width: 20px;
+  height: 30px;
+  border-radius: 0;
+  top: 48%;
+  background: url("__CDN_URL__/universeSection/droplet-time.webp") transparent 50% / contain no-repeat;
+}
+
+.mirror-exp-v2__planet-icon--rect {
+  width: 48px;
+  height: 48px;
+  background: url("__CDN_URL__/universeSection/rect-space.webp") transparent 50% / cover no-repeat;
+}
+
+/* Larger glow for rect icon */
+.mirror-exp-v2__planet:has(.mirror-exp-v2__planet-icon--rect) .mirror-exp-v2__icon-glow {
+  width: 24px;
+  height: 24px;
+  box-shadow:
+    12px 0 9px 0 #BC224C,
+    -12px 0 9px 0 #BC224C,
+    0 -12px 9px 0 #FFF,
+    0 12px 9px 0 #FFF;
+}
+
+.mirror-exp-v2__planet-icon--diamond {
+  width: 20px;
+  height: 28px;
+  border-radius: 0;
+  background: url("__CDN_URL__/universeSection/marquise-senses.webp") transparent 50% / contain no-repeat;
+}
+
+.mirror-exp-v2__planet-icon--star {
+  width: 25px;
+  height: 25px;
+  border-radius: 0;
+  background: url("__CDN_URL__/universeSection/cushion-senses.webp") transparent 50% / contain no-repeat;
+}
+
+/* Glow for droplet icon */
+.mirror-exp-v2__planet:has(.mirror-exp-v2__planet-icon--droplet) .mirror-exp-v2__icon-glow {
+  width: 16px;
+  height: 16px;
+  top: 55%;
+  box-shadow:
+    8px 0 6px 0 #BC224C,
+    -8px 0 6px 0 #BC224C,
+    0 -8px 6px 0 #FFF,
+    0 8px 6px 0 #FFF;
+}
+
+/* Glow for star icon (size 55) */
+.mirror-exp-v2__planet:has(.mirror-exp-v2__planet-icon--star) .mirror-exp-v2__icon-glow {
+  width: 18px;
+  height: 18px;
+  box-shadow:
+    9px 0 7px 0 #BC224C,
+    -9px 0 7px 0 #BC224C,
+    0 -9px 7px 0 #FFF,
+    0 9px 7px 0 #FFF;
+}
+
+/* Smaller glow for diamond icon (size 45) */
+.mirror-exp-v2__planet:has(.mirror-exp-v2__planet-icon--diamond) .mirror-exp-v2__icon-glow {
+  width: 12px;
+  height: 12px;
+  box-shadow:
+    6px 0 4px 0 #BC224C,
+    -6px 0 4px 0 #BC224C,
+    0 -6px 4px 0 #FFF,
+    0 6px 4px 0 #FFF;
+}
+
+/* Responsive - Large Desktop */
+@media screen and (max-width: 1440px) {
+  .mirror-exp-v2__orbits-svg {
+    max-width: 1100px;
+  }
+
+  .mirror-exp-v2__planets {
+    max-width: 1100px;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+}
+
+/* Responsive - Tablet */
+@media screen and (max-width: 1023px) {
+  .mirror-exp-v2__track {
+    gap: 0;
+  }
+
+  .mirror-exp-v2__track--next,
+  .mirror-exp-v2__track--prev {
+    transform: none;
+  }
+
+  .mirror-exp-v2__slide--prev,
+  .mirror-exp-v2__slide--next {
+    display: none;
+  }
+
+  .mirror-exp-v2__orbits-svg {
+    max-width: 900px;
+  }
+
+  .mirror-exp-v2__planets {
+    max-width: 900px;
+    transform: translate(-50%, -50%) scale(0.7);
+  }
+}
+
+/* Responsive - Mobile */
+@media screen and (max-width: 425px) {
+  .mirror-exp-v2 {
+    padding: 60px 0 0;
+  }
+
+  .mirror-exp-v2__title {
+    font-size: 40px;
+  }
+
+  .mirror-exp-v2__universe {
+    height: 40vh;
+    min-height: 300px;
+  }
+
+  .mirror-exp-v2__orbits-svg {
+    max-width: 100%;
+  }
+
+  .mirror-exp-v2__planets {
+    max-width: 100%;
+    transform: translate(-50%, -50%) scale(0.45);
+  }
+
+  .mirror-exp-v2__planet-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .mirror-exp-v2__center-diamond {
+    width: 30px;
+    height: 30px;
+  }
+}

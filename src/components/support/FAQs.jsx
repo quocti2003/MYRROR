@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./FAQs.css";
-import GlassThemeButton from "@components/common/button/GlassThemeButton";
+import MediaImage from "@components/common/media/MediaImage";
 
 const FAQs = () => {
   const [expandedFAQ, setExpandedFAQ] = useState(null);
   const [activeSection, setActiveSection] = useState("products");
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Dữ liệu FAQs cho từng section
   const faqData = {
@@ -134,12 +135,12 @@ const FAQs = () => {
 
   // Dữ liệu để định nghĩa các section và sidebar, giúp chúng đồng bộ
   const sectionsInfo = [
-    { id: "products", title: "Products" },
-    { id: "orders", title: "Orders & Payments" },
-    { id: "exchanges", title: "Exchanges & Returns" },
-    { id: "care", title: "Care & Repairs" },
-    { id: "shipping", title: "Shipping & Delivery" },
-    { id: "location", title: "Location" },
+    { id: "products", title: "Products", image: "support/Products.webp" },
+    { id: "orders", title: "Orders & Payments", image: "support/Orders & Payments.webp" },
+    { id: "exchanges", title: "Exchanges & Returns", image: "support/Exchange & Return.webp" },
+    { id: "care", title: "Care & Repairs", image: "support/Care & Repairs.webp" },
+    { id: "shipping", title: "Shipping & Delivery", image: "support/Shipping & Delivery.webp" },
+    { id: "location", title: "Location", image: "support/Location.webp" },
   ];
 
   // Logic Intersection Observer để theo dõi section active (giữ nguyên)
@@ -214,6 +215,34 @@ const FAQs = () => {
     }
   };
 
+  // Filter FAQs based on search query
+  const getFilteredFAQs = () => {
+    if (!searchQuery.trim()) return null;
+
+    const query = searchQuery.toLowerCase();
+    const results = [];
+
+    sectionsInfo.forEach((section) => {
+      faqData[section.id]?.forEach((faq, index) => {
+        if (
+          faq.question.toLowerCase().includes(query) ||
+          faq.answer.toLowerCase().includes(query)
+        ) {
+          results.push({
+            ...faq,
+            sectionId: section.id,
+            sectionTitle: section.title,
+            id: `search-${section.id}-${index}`,
+          });
+        }
+      });
+    });
+
+    return results;
+  };
+
+  const filteredFAQs = getFilteredFAQs();
+
   return (
     // Thêm container để xác định vùng hoạt động của sticky
     <div className="faqs-sticky-container">
@@ -229,7 +258,7 @@ const FAQs = () => {
                     activeSection === section.id ? "active" : ""
                   }`}
                 >
-                  <a href={`#${section.id}`} className="bodytext-4--no-margin">
+                  <a href={`#${section.id}`} className="bodytext-6--no-margin">
                     {section.title}
                   </a>
                 </li>
@@ -241,62 +270,104 @@ const FAQs = () => {
         <div className="faqs-main-section">
           <div className="search-section">
             <div className="search-container">
+              <svg className="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M14 14L18 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
               <input
                 type="text"
-                placeholder="Search"
+                placeholder="What you are looking for"
                 className="search-input bodytext-4--no-margin"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <GlassThemeButton className="search-button" theme="light">
-                <span className="bodytext-6--no-margin">Search</span>
-              </GlassThemeButton>
+              <svg className="search-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M4 10H16M16 10L11 5M16 10L11 15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
           </div>
 
           <div className="faq-content-section">
-            <div className="faq-sections">
-              {/* Lặp qua `sectionsInfo` để tạo các section */}
-              {sectionsInfo.map((section) => (
-                <div key={section.id} id={section.id} className="faq-section">
-                  <div className="faq-image-placeholder">
-                    <h3 className="heading-3--no-margin placeholder-box">
-                      {section.title}
-                    </h3>
-                  </div>
-
+            {/* Search Results */}
+            {filteredFAQs !== null ? (
+              <div className="faq-search-results">
+                {filteredFAQs.length > 0 ? (
                   <div className="faq-list">
-                    {/* Render câu hỏi riêng cho từng section */}
-                    {faqData[section.id]?.map((faq, index) => (
+                    {filteredFAQs.map((faq) => (
                       <div
-                        key={`${section.id}-${index}`}
+                        key={faq.id}
                         className={`faq-item ${
-                          expandedFAQ === `${section.id}-${index}`
-                            ? "active"
-                            : ""
+                          expandedFAQ === faq.id ? "active" : ""
                         }`}
-                        onClick={() => toggleFAQ(`${section.id}-${index}`)}
+                        onClick={() => toggleFAQ(faq.id)}
                       >
                         <button className="faq-question">
-                          <span>{faq.question}</span>
+                          <span className="bodytext-4--no-margin">{faq.question}</span>
                           <span
                             className={`faq-icon ${
-                              expandedFAQ === `${section.id}-${index}`
-                                ? "expanded"
-                                : ""
+                              expandedFAQ === faq.id ? "expanded" : ""
                             }`}
                           ></span>
                         </button>
-                        <div
-                          className="faq-answer"
-                          data-faq-id={`${section.id}-${index}`}
-                        >
-                          <p>{faq.answer}</p>
+                        <div className="faq-answer" data-faq-id={faq.id}>
+                          <p className="bodytext-6--no-margin">{faq.answer}</p>
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
-              ))}
-            </div>
+                ) : (
+                  <div className="faq-no-results">
+                    <p className="bodytext-4--no-margin">No results found for "{searchQuery}"</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Normal Sections View */
+              <div className="faq-sections">
+                {sectionsInfo.map((section) => (
+                  <div key={section.id} id={section.id} className="faq-section">
+                    <div className="faq-section-image">
+                      <MediaImage
+                        src={section.image}
+                        alt={section.title}
+                        className="faq-image"
+                      />
+                    </div>
+
+                    <div className="faq-list">
+                      {faqData[section.id]?.map((faq, index) => (
+                        <div
+                          key={`${section.id}-${index}`}
+                          className={`faq-item ${
+                            expandedFAQ === `${section.id}-${index}`
+                              ? "active"
+                              : ""
+                          }`}
+                          onClick={() => toggleFAQ(`${section.id}-${index}`)}
+                        >
+                          <button className="faq-question">
+                            <span className="bodytext-4--no-margin">{faq.question}</span>
+                            <span
+                              className={`faq-icon ${
+                                expandedFAQ === `${section.id}-${index}`
+                                  ? "expanded"
+                                  : ""
+                              }`}
+                            ></span>
+                          </button>
+                          <div
+                            className="faq-answer"
+                            data-faq-id={`${section.id}-${index}`}
+                          >
+                            <p className="bodytext-6--no-margin">{faq.answer}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

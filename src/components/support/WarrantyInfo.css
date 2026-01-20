@@ -32,4 +32,8 @@
   margin: 0;
 }
 
+.warranty-info .warranty-highlight {
+  color: #bc224c;
+}
+
 /* Typography overrides removed - using global classes */

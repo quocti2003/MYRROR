@@ -2,9 +2,9 @@
  * NameScreen - Step 2: Enter display name
  */
 import React, { useState } from 'react';
-import { TEXT } from '../../../constants/eventConstants';
-import { registerUser } from '../../../services/event/eventApi';
-import useEventStore from '../../../store/useEventStore';
+import { TEXT } from '@/constants/eventConstants';
+import { registerUser } from '@services/event/eventApi';
+import useEventStore from '@/store/useEventStore';
 import Logo from '../ui/Logo';
 
 const NameScreen = () => {

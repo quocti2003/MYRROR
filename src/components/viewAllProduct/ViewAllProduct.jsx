@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { optimizedTransitionUtils } from "@utils/transitionUtil/optimizedTransitionUtils";
-import GlassThemeButton from "@components/common/button/GlassThemeButton";
+import ShineGlassButton from "@components/common/button/ShineGlassButton";
 import MediaImage from "@components/common/media/MediaImage";
 import "./ViewAllProduct.css";
 import { ROUTES } from "@/constants/routes";
@@ -195,9 +195,7 @@ const ViewAllProduct = ({ showViewProductButton = false }) => {
           <div className="same-collection-header">
             <h2 className="heading-1 same-collection-title">MORE GEMS</h2>
             <p className="bodytext-4 same-collection-description">
-              Mirror's curation of visionary designs - where each piece embodies
-              the essence of future luxury. From bold signatures to refined
-              silhouettes, these are the diamonds reimagined for a new era.
+              Mirror’s curation of visionary designs - where each piece embodies the essence of future luxury.
             </p>
           </div>
 
@@ -226,9 +224,9 @@ const ViewAllProduct = ({ showViewProductButton = false }) => {
 
       {showViewProductButton && (
         <div className="view-product-button-container">
-          <GlassThemeButton theme="light" onClick={handleViewAllProducts}>
-            <span className="bodytext-6--no-margin">View all products</span>
-          </GlassThemeButton>
+          <ShineGlassButton theme="light" onClick={handleViewAllProducts}>
+            View all products
+          </ShineGlassButton>
         </div>
       )}
     </>

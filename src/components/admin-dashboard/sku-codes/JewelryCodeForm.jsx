@@ -19,6 +19,10 @@ const JewelryCodeForm = ({ onCodeGenerated }) => {
     countryOfOrigin: "",
     itemName: "",
     variant: "",
+    // Product details
+    unitLocation: "",
+    unitCostPrice: "",
+    unitSalePrice: "",
   });
 
   const [result, setResult] = useState(null);
@@ -84,6 +88,9 @@ const JewelryCodeForm = ({ onCodeGenerated }) => {
       countryOfOrigin: "",
       itemName: "",
       variant: "",
+      unitLocation: "",
+      unitCostPrice: "",
+      unitSalePrice: "",
     });
     setResult(null);
     setError(null);
@@ -124,31 +131,35 @@ const JewelryCodeForm = ({ onCodeGenerated }) => {
 
   const helpSections = [
     {
-      heading: "All fields except Variant are required",
+      heading: "Required fields for SKU generation",
       items: [
-        "Prefix, Material, Stone Origin, Stone Shape, Stone Weight, Side Stones, and Country of Origin must all be selected.",
+        "Prefix, Material, Material Color, Material Weight, Stone Origin, Stone Shape, Stone Weight, Side Stones, Country of Origin, and Item Name are required.",
+        "Is Coated checkbox - if checked, Coating Material becomes required.",
         "Variant/Notes is the only optional field and won't be used in SKU code generation.",
       ],
     },
     {
-      heading: "Use dropdown selections",
+      heading: "SKU code format",
       items: [
-        "All required fields are now pre-configured dropdowns to ensure consistency.",
-        "Select the appropriate option from each dropdown - no manual typing needed.",
+        "Format: PREFIX-MATERIAL-COLOR-WEIGHT-[COATING]-ORIGIN-SHAPE-CARATS-SIDESTONES",
+        "Example: RNG-18KWG-W-2.09-LG-RD-1.29-N (Ring, 18K White Gold, White, 2.09g, Lab Grown, Round, 1.29ct, No side stones)",
+        "Abbreviations are applied automatically (e.g., WHITE -> W, ROUND -> RD, NONE -> N).",
       ],
     },
     {
-      heading: "Country of Origin is required",
+      heading: "Barcode generation",
       items: [
-        "Every jewelry SKU must have a country of origin specified.",
-        "Options include China (CN), India (IN), Thailand (TH), and Hongkong (HK).",
+        "A unique 13-character barcode is auto-generated: MIR + timestamp + random digits.",
+        "Barcode format is optimized for label printing and scanning.",
+        "System checks database to ensure no duplicate barcodes exist.",
       ],
     },
     {
       heading: "What happens after generation",
       items: [
-        "Every successful result is saved with a unique barcode for MISA export.",
-        "You can copy the SKU and barcode from the confirmation card or from the catalog history tab.",
+        "Every successful result is saved with SKU code, barcode, and item details.",
+        "You can copy the SKU and barcode from the confirmation card.",
+        "All generated SKUs are available in the Generated SKUs tab for MISA export.",
       ],
     },
   ];
@@ -350,21 +361,16 @@ const JewelryCodeForm = ({ onCodeGenerated }) => {
               <label htmlFor="weight">
                 Stone Weight <span className="required">*</span>
               </label>
-              <select
+              <input
+                type="text"
                 id="weight"
                 name="weight"
                 value={formData.weight}
                 onChange={handleInputChange}
+                placeholder="e.g., 1.29"
                 required
-              >
-                <option value="">Select weight...</option>
-                {options.stoneWeights.map((opt) => (
-                  <option key={opt.id} value={opt.code}>
-                    {opt.name}
-                  </option>
-                ))}
-              </select>
-              <span className="hint">Carat weight</span>
+              />
+              <span className="hint">Carat weight (e.g., 1.29, 0.5)</span>
             </div>
 
             <div className="form-group">
@@ -443,6 +449,57 @@ const JewelryCodeForm = ({ onCodeGenerated }) => {
           </div>
         </div>
 
+        <div className="form-section">
+          <h3>Product Details (Optional)</h3>
+          <p style={{ fontSize: "0.875rem", color: "#64748b", marginBottom: "1rem" }}>
+            Each product gets a unique barcode as its SKU identifier.
+          </p>
+          <div className="form-grid">
+            <div className="form-group">
+              <label htmlFor="unitLocation">Storage Location</label>
+              <input
+                type="text"
+                id="unitLocation"
+                name="unitLocation"
+                value={formData.unitLocation}
+                onChange={handleInputChange}
+                placeholder="e.g., Showroom A, Safe-1"
+              />
+              <span className="hint">Where product is stored</span>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="unitCostPrice">Cost Price (USD)</label>
+              <input
+                type="number"
+                id="unitCostPrice"
+                name="unitCostPrice"
+                value={formData.unitCostPrice}
+                onChange={handleInputChange}
+                step="0.01"
+                min="0"
+                placeholder="e.g., 1500.00"
+              />
+              <span className="hint">Product cost</span>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="unitSalePrice">Sale Price (USD)</label>
+              <input
+                type="number"
+                id="unitSalePrice"
+                name="unitSalePrice"
+                value={formData.unitSalePrice}
+                onChange={handleInputChange}
+                step="0.01"
+                min="0"
+                placeholder="e.g., 2500.00"
+              />
+              <span className="hint">Product sale price</span>
+            </div>
+          </div>
+        </div>
+
         <div className="form-actions">
           <button type="submit" className="btn-primary" disabled={loading}>
             {loading ? "Generating..." : "Generate SKU"}
@@ -467,9 +524,12 @@ const JewelryCodeForm = ({ onCodeGenerated }) => {
         <div className="code-result success">
           <div className="result-header">
             <span className="result-icon">✅</span>
-            <h4>Generated SKU</h4>
+            <h4>Product Created</h4>
           </div>
+
+          {/* Descriptive Code (human-readable specs) */}
           <div className="result-code-display">
+            <div style={{ fontSize: "0.75rem", color: "#64748b", marginBottom: "4px" }}>Descriptive Code:</div>
             <code className="generated-code">{result.code}</code>
             <button
               className="btn-copy"
@@ -478,34 +538,45 @@ const JewelryCodeForm = ({ onCodeGenerated }) => {
               📋 Copy
             </button>
           </div>
+
+          {/* SKU/Barcode (unique identifier) */}
           {result.barcode && (
-            <div className="result-code-display">
-              <code className="generated-barcode">{result.barcode}</code>
+            <div className="result-code-display" style={{ marginTop: "0.5rem" }}>
+              <div style={{ fontSize: "0.75rem", color: "#64748b", marginBottom: "4px" }}>SKU Code (Barcode):</div>
+              <code className="generated-barcode" style={{ background: "#e0f2fe", color: "#0369a1" }}>{result.barcode}</code>
               <button
                 className="btn-copy"
                 onClick={() => navigator.clipboard.writeText(result.barcode)}
               >
-                📋 Copy Barcode
+                📋 Copy
               </button>
             </div>
           )}
+
           <div className="result-details">
             <div className="result-detail-item">
-              <span className="detail-label">Length:</span>
+              <span className="detail-label">Descriptive Code Length:</span>
               <span className="detail-value">
-                {result.length} / 30 characters
-              </span>
-            </div>
-            <div className="result-detail-item">
-              <span className="detail-label">Truncated:</span>
-              <span className={`detail-value ${result.truncated ? "warning" : ""}`}>
-                {result.truncated ? "Yes ⚠️" : "No"}
+                {result.length} characters
               </span>
             </div>
             <div className="result-detail-item">
               <span className="detail-label">Description:</span>
               <span className="detail-value">{result.description}</span>
             </div>
+          </div>
+
+          {/* Info box explaining the new model */}
+          <div style={{ marginTop: "1rem", padding: "1rem", background: "#f0fdf4", borderRadius: "8px", border: "1px solid #bbf7d0" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
+              <span style={{ background: "#22c55e", color: "white", padding: "2px 8px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: "600" }}>
+                Unique Product
+              </span>
+            </div>
+            <p style={{ fontSize: "0.875rem", color: "#666", margin: 0 }}>
+              The SKU code (barcode) is the unique identifier for this product.
+              The descriptive code shows the product specifications for easy reference.
+            </p>
           </div>
         </div>
       )}
@@ -525,7 +596,7 @@ const JewelryCodeForm = ({ onCodeGenerated }) => {
             <p>
               Upload a CSV file with required columns: prefix, material, <strong>material_color</strong>, <strong>material_weight</strong>, <strong>is_coated</strong>, coating_material (if coated), stone_origin, main_shape, main_weight, side_stones, country_of_origin, <strong>item_name</strong>, and optional variant.{" "}
               <a
-                href="/api/sku-codes/templates/jewelry"
+                href="/api/skus/templates/jewelry"
                 download="jewelry_items_template.csv"
                 style={{color: '#007bff', textDecoration: 'underline'}}
               >

@@ -17,13 +17,13 @@
   --border-width: 2px;
 }
 
-/* Navbar Liquid Glass Background - Always 80px bar */
+/* Navbar Liquid Glass Background - Always 69px bar */
 .navbar-v4-glass-background {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 80px;
+  height: 69px;
   z-index: 200;
   pointer-events: none;
   overflow: visible;
@@ -118,6 +118,16 @@
   cursor: pointer;
 }
 
+/* Logo above modal - higher z-index when booking modal is open */
+.logo-v4-fixed-container.above-modal {
+  z-index: 10000;
+  mix-blend-mode: normal;
+}
+
+.logo-v4-fixed-container.above-modal .navbar-v4-logo-svg path {
+  fill: rgba(0, 0, 0, 1);
+}
+
 /* Submit page: absolute on mobile/tablet (no sticky), fixed on desktop (prevent pin) */
 @media screen and (max-width: 1023px) {
   body:has(.submit-page) .logo-v4-fixed-container,
@@ -167,12 +177,127 @@
 
 .logo-v4-fixed-container .navbar-v4-logo-svg {
   width: auto;
-  height: 32px;
+  height: 24px;
   display: block;
 }
 
 .logo-v4-fixed-container .navbar-v4-logo-svg path {
   fill: white;
+}
+
+/* Collab mode - Mirror x DMM logos */
+.logo-v4-fixed-container.collab-mode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  position: fixed;
+  height: 69px;
+}
+
+.navbar-v4-collab-x {
+  width: 9px;
+  height: 9px;
+  color: white;
+}
+
+.navbar-v4-dmm-logo {
+  width: auto;
+  height: 56px;
+  display: block;
+}
+
+.navbar-v4-dmm-logo path {
+  fill: white;
+}
+
+/* Collab mode responsive - Tablet */
+@media screen and (max-width: 1024px) {
+  .logo-v4-fixed-container.collab-mode {
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 16px;
+    height: auto;
+  }
+
+  .logo-v4-fixed-container.collab-mode .navbar-v4-logo-svg {
+    width: auto;
+    height: 20px;
+  }
+
+  .logo-v4-fixed-container.collab-mode .navbar-v4-dmm-logo {
+    height: 40px;
+  }
+
+  .logo-v4-fixed-container.collab-mode .navbar-v4-collab-x {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* Collab mode responsive - Mobile */
+@media screen and (max-width: 480px) {
+  .logo-v4-fixed-container.collab-mode {
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 12px;
+    height: auto;
+  }
+
+  .logo-v4-fixed-container.collab-mode .navbar-v4-logo-svg {
+    width: auto;
+    height: 18px;
+  }
+
+  .logo-v4-fixed-container.collab-mode .navbar-v4-dmm-logo {
+    height: 36px;
+  }
+
+  .logo-v4-fixed-container.collab-mode .navbar-v4-collab-x {
+    width: 7px;
+    height: 7px;
+  }
+}
+
+/* Event logo - larger size for event pages (logoOnly without showDmmLogo) */
+.logo-v4-fixed-container.event-logo {
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.logo-v4-fixed-container.event-logo .navbar-v4-logo-svg {
+  width: auto;
+  height: 38px;
+}
+
+/* Event logo responsive - Tablet */
+@media screen and (max-width: 1024px) {
+  .logo-v4-fixed-container.event-logo {
+    top: 21px;
+  }
+
+  .logo-v4-fixed-container.event-logo .navbar-v4-logo-svg {
+    width: auto;
+    height: 43px;
+  }
+}
+
+/* Event logo responsive - Mobile */
+@media screen and (max-width: 480px) {
+  .logo-v4-fixed-container.event-logo {
+    top: 21px;
+  }
+
+  .logo-v4-fixed-container.event-logo .navbar-v4-logo-svg {
+    width: auto;
+    height: 29px;
+  }
 }
 
 /* Submit page logo override - must be after default styles */
@@ -211,6 +336,31 @@
   .logo-v4-fixed-container.intro-submit-logo .navbar-v4-logo-svg {
     filter: brightness(0) invert(1) !important;
   }
+}
+
+/* Immersive Showroom page logo - always white, no mix-blend-mode */
+/* Override all themes with high specificity */
+.logo-v4-fixed-container.immersive-showroom-logo,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-white,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-black,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-blend {
+  mix-blend-mode: normal !important;
+}
+
+.logo-v4-fixed-container.immersive-showroom-logo .navbar-v4-logo-svg,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-white .navbar-v4-logo-svg,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-black .navbar-v4-logo-svg,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-blend .navbar-v4-logo-svg {
+  filter: none !important;
+}
+
+.logo-v4-fixed-container.immersive-showroom-logo .navbar-v4-logo-svg path,
+.logo-v4-fixed-container.immersive-showroom-logo .navbar-v4-logo-svg g path,
+.logo-v4-fixed-container.immersive-showroom-logo .navbar-v4-logo-svg *,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-white .navbar-v4-logo-svg path,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-black .navbar-v4-logo-svg path,
+.logo-v4-fixed-container.immersive-showroom-logo.navbar-v4-theme-blend .navbar-v4-logo-svg path {
+  fill: rgba(255, 255, 255, 1) !important;
 }
 
 /* Menu container với blend mode */
@@ -381,12 +531,12 @@
 /* Immersive button container KHÔNG có blend mode cho background */
 .immersive-v4-fixed-container {
   position: fixed;
-  top: 12.5px;
+  top: 12px;
   right: 2.5%;
   z-index: 201;
   pointer-events: auto;
-  /* Match immersive-v4-button height (bodytext-6 + padding 18px 36px) */
-  height: 49px;
+  /* Button centered in 69px navbar: 12px top + 45px button + 12px bottom */
+  height: 45px;
   display: flex;
   align-items: center;
   /* opacity: 0.75; */
@@ -690,9 +840,9 @@
   cursor: pointer;
   transition: all 0.5s ease;
   text-transform: capitalize;
-  /* Calculated from bodytext-6 (13px) + ShineGlassButton padding (18px 36px) */
+  /* Button centered in 69px navbar: 12px top + 45px button + 12px bottom */
   width: 212px;
-  height: 49px;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -707,11 +857,11 @@
 /* Container riêng cho text với blend mode */
 .immersive-v4-text-container {
   position: fixed;
-  top: 12.5px;
+  top: 12px;
   right: 2.5%;
-  /* Match immersive-v4-button size (bodytext-6 + padding 18px 36px) */
+  /* Button centered in 69px navbar: 12px top + 45px button + 12px bottom */
   width: 212px;
-  height: 49px;
+  height: 45px;
   z-index: 203; /* Cao nhất để ở trên cùng */
   mix-blend-mode: difference;
   pointer-events: none;
@@ -767,11 +917,11 @@
 /* Container riêng cho border với blend mode */
 .immersive-v4-border-container {
   position: fixed;
-  top: 12.5px;
+  top: 12px;
   right: 2.5%;
-  /* Match immersive-v4-button size (bodytext-6 + padding 18px 36px) */
+  /* Button centered in 69px navbar: 12px top + 45px button + 12px bottom */
   width: 212px;
-  height: 49px;
+  height: 45px;
   z-index: 202; /* Cao hơn button nhưng thấp hơn text */
   mix-blend-mode: difference;
   pointer-events: none;
@@ -1129,18 +1279,10 @@
 
 /* Responsive Glass Background */
 /* Tablet - Large (769px-1023px) */
-@media screen and (min-width: 769px) and (max-width: 1023px) {
-  .navbar-v4-glass-background {
-    height: 78px; /* immersive height: 49px at top default position */
-  }
-}
+
 
 /* Tablet - Medium (426px-768px) */
-@media screen and (min-width: 426px) and (max-width: 768px) {
-  .navbar-v4-glass-background {
-    height: 85px; /* button height: 45px, top: 20px => 20 + 45 + 20 = 85px */
-  }
-}
+
 
 /* Mobile - 425px and below */
 @media screen and (max-width: 425px) {
@@ -1863,6 +2005,18 @@
   fill: rgba(255, 255, 255, 1) !important;
 }
 
+.logo-v4-fixed-container.navbar-v4-theme-white .navbar-v4-collab-x {
+  color: rgba(255, 255, 255, 1) !important;
+}
+
+.logo-v4-fixed-container.navbar-v4-theme-white .navbar-v4-collab-x path {
+  stroke: rgba(255, 255, 255, 1) !important;
+}
+
+.logo-v4-fixed-container.navbar-v4-theme-white .navbar-v4-dmm-logo {
+  filter: brightness(0) invert(1) !important;
+}
+
 /* Black Theme - Black logo for light background sections */
 .logo-v4-fixed-container.navbar-v4-theme-black {
   mix-blend-mode: normal !important;
@@ -1870,6 +2024,18 @@
 
 .logo-v4-fixed-container.navbar-v4-theme-black .navbar-v4-logo-svg {
   filter: invert(1) !important;
+}
+
+.logo-v4-fixed-container.navbar-v4-theme-black .navbar-v4-collab-x {
+  color: rgba(0, 0, 0, 1) !important;
+}
+
+.logo-v4-fixed-container.navbar-v4-theme-black .navbar-v4-collab-x path {
+  stroke: rgba(0, 0, 0, 1) !important;
+}
+
+.logo-v4-fixed-container.navbar-v4-theme-black .navbar-v4-dmm-logo {
+  filter: brightness(0) !important;
 }
 
 /* Blend Theme - Default mix-blend-mode for logo */
@@ -2361,4 +2527,82 @@ body:has(.navbar-v4-theme-white) .immersive-v4-button:hover {
   border: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+
+/* ========== EVENT LOGOUT BUTTON ========== */
+.event-logout-v4-container {
+  position: fixed;
+  top: 12px;
+  right: 2.5%;
+  z-index: 201;
+  height: 49px;
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.event-logout-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Fix underline width to match content exactly */
+.event-logout-v4-container .underline-button-text {
+  display: inline-block;
+  width: auto;
+}
+
+.event-logout-v4-container .underline-button-text::after {
+  width: 100%;
+  will-change: transform;
+}
+
+.event-logout-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* Black Theme - Black text and icon */
+.event-logout-v4-container.navbar-v4-theme-black .underline-button-text {
+  color: rgba(0, 0, 0, 1) !important;
+}
+
+.event-logout-v4-container.navbar-v4-theme-black .underline-button-text::after {
+  background: rgba(0, 0, 0, 1) !important;
+}
+
+.event-logout-v4-container.navbar-v4-theme-black .event-logout-icon {
+  color: rgba(0, 0, 0, 1);
+}
+
+/* White Theme - White text and icon */
+.event-logout-v4-container.navbar-v4-theme-white .underline-button-text {
+  color: rgba(255, 255, 255, 1) !important;
+}
+
+.event-logout-v4-container.navbar-v4-theme-white .underline-button-text::after {
+  background: rgba(255, 255, 255, 1) !important;
+}
+
+.event-logout-v4-container.navbar-v4-theme-white .event-logout-icon {
+  color: rgba(255, 255, 255, 1);
+}
+
+/* Tablet */
+@media screen and (max-width: 1024px) {
+  .event-logout-v4-container {
+    top: 12px;
+    right: 2.5%;
+    height: 45px;
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 480px) {
+  .event-logout-v4-container {
+    top: 10px;
+    right: 2.5%;
+  }
 }

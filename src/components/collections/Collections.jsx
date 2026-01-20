@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { optimizedTransitionUtils } from "@utils/transitionUtil/optimizedTransitionUtils";
 import CollectionHeroSection from "./CollectionHeroSection";
-import GlassThemeButton from "@components/common/button/GlassThemeButton";
+import ShineGlassButton from "@components/common/button/ShineGlassButton";
 import UnderlineButton from "@components/common/button/UnderlineButton";
 import ArrowButton from "@components/common/button/ArrowButton";
 import { collectionsAPI } from "@services/api";
@@ -172,7 +172,7 @@ function Collection() {
             THE NEW COLLECTION
           </div>
           <div className="collection-hero-title">
-            <div className="collection-title-text heading-1--no-margin">
+            <div className="collection-title-text heading-2--no-margin">
               {loading
                 ? "Loading..."
                 : featuredCollection?.title || "TREASURE OF THE ORIENT"}
@@ -196,13 +196,13 @@ function Collection() {
                   </>
                 )}
           </div>
-          <GlassThemeButton
-            theme="dark"
+          <ShineGlassButton
+            theme="footer"
             onClick={handleExploreCollection}
             className="collection-hero-explore-button"
           >
-            <span className="bodytext-6--no-margin">Explore this collection</span>
-          </GlassThemeButton>
+            Explore this collection
+          </ShineGlassButton>
         </div>
 
         <div className="collection-content-panel full-width">
@@ -243,12 +243,12 @@ function Collection() {
               >
                 {currentProduct.title}
               </h3>
-              <GlassThemeButton
+              <ShineGlassButton
                 className="shop-now-button"
-                theme="dark"
+                theme="footer"
               >
-                <span className="bodytext-6--no-margin">Shop now</span>
-              </GlassThemeButton>
+                Shop now
+              </ShineGlassButton>
             </div>
           </div>
         </div>

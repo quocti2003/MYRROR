@@ -52,3 +52,28 @@ __pycache__/
 *.pyc
 
 .claude/*
+.agent/
+.codex/
+.cursor/
+.opencode/
+
+# AI/Agent documentation
+REACT_BEST_PRACTICES.md
+docs/PODS_SYSTEM_REQUIREMENTS.md
+docs/diagrams/
+
+# DMM images (served from Cloudflare R2)
+src/assets/images/dmm/
+
+# Wrangler local state
+.wrangler/
+
+# DMM structure documentation
+dmmstructure12022026.md
+
+# Playwright
+tests/
+test-results/
+playwright-report/
+playwright/.cache/
+playwright.config.js

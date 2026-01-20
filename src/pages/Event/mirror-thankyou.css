@@ -1,0 +1,488 @@
+/* ============================================
+   MIRROR THANK YOU PAGE - Final Step
+   ============================================ */
+
+.mirror-thankyou {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height */
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* iOS Safari: prevent rubber band scrolling on mobile */
+@media (max-width: 480px) {
+  .mirror-thankyou {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    min-height: unset;
+    height: 100%;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
+    touch-action: pan-x pan-y;
+  }
+}
+
+/* Background - dark red gradient */
+.mirror-thankyou__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #860710 0%, #250000 100%);
+  z-index: 0;
+}
+
+/* Left Side Container - Social Icons (next to back button on desktop) */
+.mirror-thankyou__left {
+  position: fixed;
+  left: calc(2.5% + 145px + 35px); /* back button position + width (with text) + gap */
+  bottom: 24px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  z-index: 20;
+}
+
+/* Social Icons */
+.mirror-thankyou__social {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+.mirror-thankyou__social .glass-theme-btn-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Right Side Container - Navigation Icons (at bottom right on desktop) */
+.mirror-thankyou__right {
+  position: fixed;
+  right: 2.5%;
+  bottom: 24px;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  z-index: 20;
+}
+
+.mirror-thankyou__right .glass-theme-btn-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Icon-only buttons - glass effect on pink background (same as your-wallpaper) */
+.mirror-thankyou .glass-theme-button--icon-only.glass-theme-button--light {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Main Content */
+.mirror-thankyou__main {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 120px;
+  max-width: 600px;
+}
+
+/* Title */
+.mirror-thankyou__title {
+  align-self: stretch;
+  width: calc(938 / 1512 * 100vw);
+  color: var(--White, #FFF);
+  text-align: center;
+  font-family: var(--font-brikey-moura);
+  font-size: 60px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 105%;
+  margin: 26.8vh 0 24px 0;
+}
+
+.mirror-thankyou__title--highlight {
+  font-style: italic;
+}
+
+/* Description */
+.mirror-thankyou__description {
+  width: calc(345 / 1512 * 100vw);
+  color: var(--White, #FFF);
+  text-align: center;
+  font-family: var(--font-beau-sans);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 120%;
+  margin-bottom: 24px;
+}
+
+/* Action Buttons */
+.mirror-thankyou__actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+/* Make all buttons same width */
+.mirror-thankyou__actions .glass-theme-button {
+  min-width: 180px;
+}
+
+/* Override light theme button - glass effect on pink background */
+.mirror-thankyou__actions .glass-theme-button--light {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Lucky Ring Video */
+.mirror-thankyou__lucky-ring {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.mirror-thankyou__lucky-ring-img {
+  width: calc(100vw - 180px);
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin-bottom: -50%;
+}
+
+/* ============================================
+   MIRROR THANK YOU - ENTRANCE ANIMATIONS
+   ============================================ */
+
+/* Background - soft fade in */
+.mirror-thankyou__bg {
+  opacity: 0;
+  animation: bgSoftFadeIn 1s ease-out 0.3s forwards;
+}
+
+@keyframes bgSoftFadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Radial glow that expands from center and fades out */
+.mirror-thankyou::before {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 150vmax;
+  height: 150vmax;
+  transform: translate(-50%, -50%) scale(0);
+  background: radial-gradient(circle,
+    rgba(255, 180, 180, 0.6) 0%,
+    rgba(200, 100, 100, 0.4) 20%,
+    rgba(134, 7, 16, 0.2) 40%,
+    transparent 70%
+  );
+  animation: glowExpand 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes glowExpand {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Main content - fade in after background (no transform to preserve mobile centering) */
+.mirror-thankyou__main {
+  opacity: 0;
+  animation: contentFadeInOnly 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s forwards;
+}
+
+@keyframes contentFadeInOnly {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Title - staggered fade in */
+.mirror-thankyou__title {
+  opacity: 0;
+  animation: itemFadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s forwards;
+}
+
+/* Description - staggered fade in */
+.mirror-thankyou__description {
+  opacity: 0;
+  animation: itemFadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s forwards;
+}
+
+/* Actions - staggered fade in */
+.mirror-thankyou__actions {
+  opacity: 0;
+  animation: itemFadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s forwards;
+}
+
+/* Lucky ring - fade in from bottom */
+.mirror-thankyou__lucky-ring {
+  opacity: 0;
+  animation: ringFadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s forwards;
+}
+
+@keyframes ringFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Left side (social icons) - fade in */
+.mirror-thankyou__left {
+  opacity: 0;
+  animation: itemFadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards;
+}
+
+/* Right side (nav icons) - fade in */
+.mirror-thankyou__right {
+  opacity: 0;
+  animation: itemFadeIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards;
+}
+
+@keyframes itemFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   MIRROR THANK YOU - DESKTOP (≥1025px)
+   ============================================ */
+
+@media (min-width: 1025px) {
+  .mirror-thankyou__left {
+    top: auto;
+    transform: none;
+    bottom: 24px;
+    right: auto;
+    left: calc(2.5% + 145px + 35px); /* back button position + width (with text) + gap */
+    align-items: flex-start;
+  }
+
+  .mirror-thankyou__social {
+    flex-direction: row; /* Horizontal row */
+  }
+
+  .mirror-thankyou__right {
+    top: auto;
+    transform: none;
+    bottom: 24px;
+    left: auto;
+    right: 2.5%;
+    flex-direction: row; /* Horizontal row */
+  }
+
+  .mirror-thankyou__main {
+    padding-top: 0; /* Remove padding so title margin-top is from viewport top */
+    margin-top: calc(178 / 982 * 100vh);
+  }
+
+  .mirror-thankyou__title {
+    margin-top: 0;
+    font-size: 60px;
+    width: calc(938 / 1512 * 100vw); /* ~62.04vw */
+    align-self: center;
+  }
+
+  .mirror-thankyou__lucky-ring {
+    top: auto;
+    bottom: 0;
+  }
+
+  .mirror-thankyou__lucky-ring-img {
+    width: calc(1000 / 1512 * 100vw); /* ~66.14vw */
+    height: auto;
+    margin-bottom: -70%;
+  }
+}
+
+/* ============================================
+   MIRROR THANK YOU - TABLET RESPONSIVE (≤1024px)
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .mirror-thankyou__main {
+    margin-top: calc(320 / 1194 * 100vh);
+    padding-top: 0;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .mirror-thankyou__title {
+    margin: 0 0 36px 0;
+    width: calc(520 / 834 * 100vw);
+    font-size: 40px;
+    color: var(--White, #FFF);
+  }
+
+  .mirror-thankyou__description {
+    width: calc(400 / 834 * 100vw);
+    color: var(--White, #FFF);
+  }
+}
+
+/* ============================================
+   MIRROR THANK YOU - TABLET RESPONSIVE (481px - 1024px)
+   ============================================ */
+
+@media (min-width: 481px) and (max-width: 1024px) {
+  .mirror-thankyou__left {
+    bottom: 24px;
+    left: calc(2.5% + 145px + 35px); /* back button position + width (with text) + gap */
+  }
+
+  .mirror-thankyou__right {
+    bottom: 24px;
+  }
+}
+
+/* ============================================
+   MIRROR THANK YOU - MOBILE RESPONSIVE (≤480px)
+   ============================================ */
+
+@media (max-width: 480px) {
+  /* Prevent body/html scroll when mirror-thankyou is shown */
+  html:has(.mirror-thankyou),
+  body:has(.mirror-thankyou) {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #FFEDFE;
+  }
+
+  /* Fix height to viewport on mobile - use position fixed to cover entire screen */
+  .mirror-thankyou {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(180deg, #FFF6F6 0%, #FFDCE5 12.53%, #FFEFF6 25.06%, #FFF8F8 37.53%, rgba(255, 241, 241, 0.91) 50%, #FFE6EC 63.82%, #FFEDFE 77.64%, #FFEDFE 100%);
+  }
+
+  /* Background - dark red gradient */
+  .mirror-thankyou__bg {
+    background: linear-gradient(180deg, #860710 0%, #250000 100%);
+  }
+
+  /* Hide right side navigation icons on mobile */
+  .mirror-thankyou__right {
+    display: none;
+  }
+
+  /* Social icons - bottom center horizontal */
+  .mirror-thankyou__left {
+    position: fixed;
+    top: auto;
+    bottom: 24px;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .mirror-thankyou__social {
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  /* Main content - positioned from top, centered horizontally */
+  .mirror-thankyou__main {
+    position: absolute;
+    top: calc(169 / 844 * 100vh);
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 0;
+    padding: 0;
+    width: calc(304 / 390 * 100vw);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Title */
+  .mirror-thankyou__title {
+    align-self: center;
+    margin: 0 0 36px 0;
+    padding: 0;
+    width: calc(304 / 390 * 100vw);
+    color: var(--White, #FFF);
+    text-align: center;
+    font-family: var(--font-brikey-moura);
+    font-size: 32px;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 105%;
+  }
+
+  /* Description - uses bodytext-6--no-margin from typography */
+  .mirror-thankyou__description {
+    align-self: center;
+    width: 100%;
+    color: var(--White, #FFF);
+    text-align: center;
+    font-size: 12px;
+  }
+
+  /* Action buttons - side by side */
+  .mirror-thankyou__actions {
+    flex-direction: row;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  /* Lucky ring - centered at bottom */
+  .mirror-thankyou__lucky-ring {
+    bottom: 0;
+  }
+
+  .mirror-thankyou__lucky-ring-img {
+    width: 150vw;
+    margin-bottom: -60%;
+  }
+}

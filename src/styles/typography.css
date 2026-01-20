@@ -84,6 +84,23 @@
   font-display: swap;
 }
 
+/* BrikeyMoura Font Family */
+@font-face {
+  font-family: "BrikeyMoura";
+  src: url("@fonts/BrikeyMoura/1FTVVIPBrikeyMoura-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BrikeyMoura";
+  src: url("@fonts/BrikeyMoura/1FTVVIPBrikeyMoura-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
 /* Saol Display Font Family */
 @font-face {
   font-family: "Saol Display";
@@ -174,6 +191,7 @@
 :root {
   --font-saol: "Saol Display", serif;
   --font-bt-beau-sans: "BT Beau Sans", sans-serif;
+  --font-brikey-moura: "BrikeyMoura", serif;
 }
 
 /* Typography Classes */
@@ -207,7 +225,8 @@
 .heading-3 {
   font-family: var(--font-saol);
   font-size: 28px;
-  font-weight: 400;
+  font-style: italic;
+  font-weight: 300;
   /* regular */
   line-height: 1;
   letter-spacing: 0;
@@ -283,9 +302,9 @@
 .bodytext-6 {
   font-family: var(--font-bt-beau-sans);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   /* regular */
-  line-height: 1;
+  line-height: 1.2;
   letter-spacing: 0;
   /* 0% */
   margin-bottom: 0;
@@ -318,7 +337,8 @@
 .heading-3--no-margin {
   font-family: var(--font-saol);
   font-size: 28px;
-  font-weight: 400;
+  font-style: italic;
+  font-weight: 300;
   /* regular */
   line-height: 1;
   letter-spacing: 0;
@@ -375,8 +395,8 @@
 .bodytext-6--no-margin {
   font-family: var(--font-bt-beau-sans);
   font-size: 13px;
-  font-weight: 700;
-  line-height: 1;
+  font-weight: 400;
+  line-height: 1.2;
   letter-spacing: 0;
   margin: 0;
 }
@@ -385,14 +405,17 @@
 @media screen and (min-width: 1301px) and (max-width: 1550px) {
   .heading-1 {
     font-size: 48px;
+    line-height: 1.05;
   }
 
   .heading-2 {
     font-size: 48px;
+    line-height: 1.05;
   }
 
   .heading-3 {
     font-size: 28px;
+    line-height: 1.05;
   }
 
   .bodytext-1 {
@@ -421,14 +444,17 @@
 
   .heading-1--no-margin {
     font-size: 48px;
+    line-height: 1.05;
   }
 
   .heading-2--no-margin {
     font-size: 48px;
+    line-height: 1.05;
   }
 
   .heading-3--no-margin {
     font-size: 28px;
+    line-height: 1.05;
   }
 
   .bodytext-1--no-margin {
@@ -458,15 +484,18 @@
 
 @media screen and (min-width: 481px) and (max-width: 1300px) {
   .heading-1 {
-    font-size: 36px;
+    font-size: 40px;
+    line-height: 1.05;
   }
 
   .heading-2 {
-    font-size: 36px;
+    font-size: 40px;
+    line-height: 1.05;
   }
 
   .heading-3 {
     font-size: 24px;
+    line-height: 1.05;
   }
 
   .bodytext-1 {
@@ -494,15 +523,18 @@
   }
 
   .heading-1--no-margin {
-    font-size: 36px;
+    font-size: 40px;
+    line-height: 1.05;
   }
 
   .heading-2--no-margin {
-    font-size: 36px;
+    font-size: 40px;
+    line-height: 1.05;
   }
 
   .heading-3--no-margin {
     font-size: 24px;
+    line-height: 1.05;
   }
 
   .bodytext-1--no-margin {
@@ -533,14 +565,17 @@
 @media screen and (max-width: 480px) {
   .heading-1 {
     font-size: 32px;
+    line-height: 1.05;
   }
 
   .heading-2 {
     font-size: 32px;
+    line-height: 1.05;
   }
 
   .heading-3 {
     font-size: 20px;
+    line-height: 1.05;
   }
 
   .bodytext-1 {
@@ -565,18 +600,22 @@
 
   .bodytext-6 {
     font-size: 12px;
+    line-height: 1.2;
   }
 
   .heading-1--no-margin {
     font-size: 32px;
+    line-height: 1.05;
   }
 
   .heading-2--no-margin {
     font-size: 32px;
+    line-height: 1.05;
   }
 
   .heading-3--no-margin {
     font-size: 20px;
+    line-height: 1.05;
   }
 
   .bodytext-1--no-margin {
@@ -601,5 +640,87 @@
 
   .bodytext-6--no-margin {
     font-size: 12px;
+    line-height: 1.2;
   }
+}
+
+/* ============================================
+   Event Pages - BrikeyMoura Font Override
+   ============================================ */
+
+/* Apply BrikeyMoura font to event pages */
+.event-guide .heading-1,
+.event-guide .heading-1--no-margin,
+.event-guide .heading-2,
+.event-guide .heading-2--no-margin,
+.event-guide .heading-3,
+.event-guide .heading-3--no-margin,
+.event-login .heading-1,
+.event-login .heading-1--no-margin,
+.event-login .heading-2,
+.event-login .heading-2--no-margin,
+.event-name .heading-1,
+.event-name .heading-1--no-margin,
+.event-name .heading-2,
+.event-name .heading-2--no-margin,
+.event-choose-shape .heading-1,
+.event-choose-shape .heading-1--no-margin,
+.event-choose-shape .heading-2,
+.event-choose-shape .heading-2--no-margin,
+.event-choose-shape .heading-3,
+.event-choose-shape .heading-3--no-margin,
+.place-note-new .heading-1,
+.place-note-new .heading-1--no-margin,
+.place-note-new .heading-2,
+.place-note-new .heading-2--no-margin,
+.place-note-new .heading-3,
+.place-note-new .heading-3--no-margin,
+.write-message .heading-1,
+.write-message .heading-1--no-margin,
+.write-message .heading-2,
+.write-message .heading-2--no-margin,
+.write-message .heading-3,
+.write-message .heading-3--no-margin,
+.choose-note-shape .heading-1,
+.choose-note-shape .heading-1--no-margin,
+.choose-note-shape .heading-2,
+.choose-note-shape .heading-2--no-margin,
+.choose-note-shape .heading-3,
+.choose-note-shape .heading-3--no-margin,
+.your-melody .heading-1,
+.your-melody .heading-1--no-margin,
+.your-melody .heading-2,
+.your-melody .heading-2--no-margin,
+.your-melody .heading-3,
+.your-melody .heading-3--no-margin,
+.your-wallpaper .heading-1,
+.your-wallpaper .heading-1--no-margin,
+.your-wallpaper .heading-2,
+.your-wallpaper .heading-2--no-margin,
+.your-wallpaper .heading-3,
+.your-wallpaper .heading-3--no-margin {
+  font-family: var(--font-brikey-moura);
+}
+
+/* heading-2--no-margin should be italic */
+.event-guide .heading-2--no-margin,
+.event-login .heading-2--no-margin,
+.event-name .heading-2--no-margin,
+.event-choose-shape .heading-2--no-margin,
+.place-note-new .heading-2--no-margin,
+.write-message .heading-2--no-margin,
+.choose-note-shape .heading-2--no-margin,
+.your-melody .heading-2--no-margin,
+.your-wallpaper .heading-2--no-margin {
+  font-style: italic;
+}
+
+/* heading-3--no-margin should be italic */
+.event-guide .heading-3--no-margin,
+.event-choose-shape .heading-3--no-margin,
+.place-note-new .heading-3--no-margin,
+.write-message .heading-3--no-margin,
+.choose-note-shape .heading-3--no-margin,
+.your-melody .heading-3--no-margin {
+  font-style: italic;
 }

@@ -40,6 +40,10 @@ const BookingModal = ({ isOpen, onClose, initialStep = 1 }) => {
   const [bookedSlots, setBookedSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
 
+  // Unavailable dates state (fully blocked dates)
+  const [unavailableDates, setUnavailableDates] = useState([]);
+  const [loadingUnavailableDates, setLoadingUnavailableDates] = useState(false);
+
   // Submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
@@ -105,9 +109,14 @@ const BookingModal = ({ isOpen, onClose, initialStep = 1 }) => {
 
       setLoadingSlots(true);
       try {
-        // Format date as YYYY-MM-DD for the API
-        const dateStr = selectedDate.toISOString().split('T')[0];
+        // Format date as YYYY-MM-DD for the API (use local date to avoid timezone issues)
+        const year = selectedDate.getFullYear();
+        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(selectedDate.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
+        console.log('[BookingModal] Fetching slots for:', { dateStr, venueId: selectedVenue.id });
         const response = await appointmentsAPI.getBookedSlots(dateStr, selectedVenue.id);
+        console.log('[BookingModal] API response:', response.data);
 
         // Convert LocalTime strings (e.g., "09:00:00") to display format (e.g., "09:00 AM")
         const booked = (response.data?.bookedSlots || []).map(timeStr => {
@@ -118,6 +127,7 @@ const BookingModal = ({ isOpen, onClose, initialStep = 1 }) => {
           return `${displayHour.toString().padStart(2, '0')}:${minutes} ${ampm}`;
         });
 
+        console.log('[BookingModal] Converted booked slots:', booked);
         setBookedSlots(booked);
       } catch (err) {
         console.error("Error fetching booked slots:", err);
@@ -129,6 +139,50 @@ const BookingModal = ({ isOpen, onClose, initialStep = 1 }) => {
 
     fetchBookedSlots();
   }, [selectedDate, selectedVenue]);
+
+  // Fetch unavailable dates when venue is selected
+  useEffect(() => {
+    const fetchUnavailableDates = async () => {
+      if (!selectedVenue) {
+        setUnavailableDates([]);
+        return;
+      }
+
+      setLoadingUnavailableDates(true);
+      try {
+        // Get unavailable dates for the next 90 days
+        const today = new Date();
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + 90);
+
+        const formatDate = (d) => {
+          const year = d.getFullYear();
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+
+        console.log('[BookingModal] Fetching unavailable dates for venue:', selectedVenue.id);
+        const response = await appointmentsAPI.getUnavailableDates(
+          formatDate(today),
+          formatDate(endDate),
+          selectedVenue.id
+        );
+
+        // Convert date strings to Date objects for comparison
+        const dates = (response.data?.unavailableDates || []).map(dateStr => new Date(dateStr + 'T00:00:00'));
+        console.log('[BookingModal] Unavailable dates:', dates);
+        setUnavailableDates(dates);
+      } catch (err) {
+        console.error("Error fetching unavailable dates:", err);
+        setUnavailableDates([]);
+      } finally {
+        setLoadingUnavailableDates(false);
+      }
+    };
+
+    fetchUnavailableDates();
+  }, [selectedVenue]);
 
   // Disable scroll when modal is open
   useEffect(() => {
@@ -183,6 +237,8 @@ const BookingModal = ({ isOpen, onClose, initialStep = 1 }) => {
         setHasNavigatedBack(false);
         setBookedSlots([]);
         setLoadingSlots(false);
+        setUnavailableDates([]);
+        setLoadingUnavailableDates(false);
         setIsSubmitting(false);
         setSubmissionError(null);
         setBookingReference(null);
@@ -284,7 +340,10 @@ const BookingModal = ({ isOpen, onClose, initialStep = 1 }) => {
     setSubmissionError(null);
 
     try {
-      // Prepare appointment data
+      // Prepare appointment data (use local date to avoid timezone issues)
+      const year = selectedDate.getFullYear();
+      const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+      const day = String(selectedDate.getDate()).padStart(2, '0');
       const appointmentData = {
         customerTitle: formData.title,
         customerFirstName: formData.firstName,
@@ -293,7 +352,7 @@ const BookingModal = ({ isOpen, onClose, initialStep = 1 }) => {
         customerPhone: formData.phone,
         venueId: selectedVenue.id,
         service: selectedService?.title || '',
-        appointmentDate: selectedDate.toISOString().split('T')[0], // YYYY-MM-DD
+        appointmentDate: `${year}-${month}-${day}`, // YYYY-MM-DD (local date)
         appointmentTime: convertTo24HourFormat(selectedTime), // HH:mm:ss
         language: 'en',
         preferences: formData.preferences || '',
@@ -436,6 +495,7 @@ const BookingModal = ({ isOpen, onClose, initialStep = 1 }) => {
                         setSelectedTime,
                         formData,
                         setFormData,
+                        unavailableDates,
                       },
                       handleNext
                     )}
@@ -462,6 +522,7 @@ const BookingModal = ({ isOpen, onClose, initialStep = 1 }) => {
                       setSelectedTime,
                       formData,
                       setFormData,
+                      unavailableDates,
                     },
                     handleNext
                   )}
@@ -508,6 +569,7 @@ const BookingModal = ({ isOpen, onClose, initialStep = 1 }) => {
                     setAcceptPrivacy,
                     bookedSlots,
                     loadingSlots,
+                    unavailableDates,
                   }
                 )}
               </div>
@@ -574,6 +636,7 @@ const BookingModal = ({ isOpen, onClose, initialStep = 1 }) => {
                       setAcceptPrivacy,
                       bookedSlots,
                       loadingSlots,
+                      unavailableDates,
                     }
                   )}
                 </div>
@@ -665,6 +728,7 @@ const renderStep = (
           onBack={onBack}
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
+          unavailableDates={stateProps.unavailableDates}
         />
       );
     case 4:
@@ -729,6 +793,7 @@ const renderPreviousStepReadonly = (
     setSelectedTime,
     formData,
     setFormData,
+    unavailableDates,
   } = stateProps;
 
   switch (step) {
@@ -756,6 +821,7 @@ const renderPreviousStepReadonly = (
         <ChooseDateReadonly
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
+          unavailableDates={unavailableDates}
         />
       );
     case 4:
@@ -1274,11 +1340,23 @@ const ChooseServiceReadonly = ({
 };
 
 // Step 3: Choose Date
-const ChooseDate = ({ onNext, onBack, selectedDate, setSelectedDate }) => {
+const ChooseDate = ({ onNext, onBack, selectedDate, setSelectedDate, unavailableDates = [] }) => {
   const handleContinue = () => {
     if (selectedDate) {
       onNext({ date: selectedDate });
     }
+  };
+
+  // Filter function to disable unavailable dates
+  const isDateAvailable = (date) => {
+    const checkDate = new Date(date);
+    checkDate.setHours(0, 0, 0, 0);
+
+    return !unavailableDates.some(unavailableDate => {
+      const unavailable = new Date(unavailableDate);
+      unavailable.setHours(0, 0, 0, 0);
+      return checkDate.getTime() === unavailable.getTime();
+    });
   };
 
   const renderCustomHeader = ({
@@ -1357,6 +1435,7 @@ const ChooseDate = ({ onNext, onBack, selectedDate, setSelectedDate }) => {
           minDate={new Date()}
           calendarClassName="booking-calendar"
           renderCustomHeader={renderCustomHeader}
+          filterDate={isDateAvailable}
           dayClassName={(date) => {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -1384,6 +1463,8 @@ const ChooseTime = ({
   bookedSlots = [],
   loadingSlots = false,
 }) => {
+  console.log('[ChooseTime] Props received:', { bookedSlots, loadingSlots, selectedDate });
+
   const timeSlots = [
     "09:00 AM",
     "10:00 AM",
@@ -1726,7 +1807,19 @@ const FillForm = ({ onNext, onBack, formData, setFormData }) => {
 };
 
 // Readonly version of ChooseDate
-const ChooseDateReadonly = ({ selectedDate, setSelectedDate }) => {
+const ChooseDateReadonly = ({ selectedDate, setSelectedDate, unavailableDates = [] }) => {
+  // Filter function to disable unavailable dates
+  const isDateAvailable = (date) => {
+    const checkDate = new Date(date);
+    checkDate.setHours(0, 0, 0, 0);
+
+    return !unavailableDates.some(unavailableDate => {
+      const unavailable = new Date(unavailableDate);
+      unavailable.setHours(0, 0, 0, 0);
+      return checkDate.getTime() === unavailable.getTime();
+    });
+  };
+
   const renderCustomHeader = ({
     date,
     decreaseMonth,
@@ -1802,6 +1895,7 @@ const ChooseDateReadonly = ({ selectedDate, setSelectedDate }) => {
           minDate={new Date()}
           calendarClassName="booking-calendar"
           renderCustomHeader={renderCustomHeader}
+          filterDate={isDateAvailable}
           dayClassName={(date) => {
             const today = new Date();
             today.setHours(0, 0, 0, 0);

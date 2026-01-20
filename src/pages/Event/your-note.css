@@ -1,0 +1,782 @@
+/* ============================================
+   Place Note Screen - New Pink Design
+   ============================================ */
+
+.place-note-new {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* iOS Safari: prevent rubber band scrolling on mobile */
+@media (max-width: 480px) {
+  .place-note-new {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    min-height: unset;
+    height: 100%;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
+    touch-action: pan-x pan-y;
+  }
+}
+
+/* Background with gradient and rings */
+.place-note-new__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(121.12% 87.58% at 50% 50%, #FF87A8 0%, rgba(255, 255, 255, 0.50) 56.25%, rgba(246, 246, 246, 0.00) 100%),
+    linear-gradient(180deg, #FFF6F6 0%, #FFDCE5 12.53%, #FFEFF6 25.06%, #FFF8F8 37.53%, rgba(255, 241, 241, 0.91) 50%, #FFE6EC 63.82%, #FFEDFE 77.64%, #F6F6F6 100%);
+  z-index: 0;
+}
+
+/* Side glow overlay - above lines with blur effect */
+.place-note-new::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(270deg, #FFF 0%, rgba(255, 255, 255, 0.00) 15%, rgba(255, 255, 255, 0.00) 85%, #FFF 100%);
+  z-index: 5;
+  pointer-events: none;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  mask: linear-gradient(90deg, black 0%, transparent 15%, transparent 85%, black 100%);
+  -webkit-mask: linear-gradient(90deg, black 0%, transparent 15%, transparent 85%, black 100%);
+}
+
+.place-note-new__rings {
+  display: none;
+}
+
+/* Note title - centered, top: 180px */
+.place-note-new__note-title {
+  position: absolute;
+  top: calc(160 / 982 * 100vh);
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--Pink, #BC224C);
+  text-align: center;
+  z-index: 2;
+}
+
+.place-note-new__note-title--animate {
+  animation: noteTitleFadeIn 0.8s ease-out forwards;
+}
+
+@keyframes noteTitleFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Wave animation for note title characters */
+.place-note-new__note-char {
+  display: inline-block;
+  animation: noteWave 2s ease-in-out infinite;
+}
+
+@keyframes noteWave {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Phase 2: Title exit animation - slide up and fade out */
+.place-note-new__note-title--exit {
+  animation: noteTitleExit 0.5s ease-out forwards !important;
+}
+
+.place-note-new__note-title--exit .place-note-new__note-char {
+  animation: none !important; /* Stop wave animation during exit */
+}
+
+@keyframes noteTitleExit {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-40px);
+  }
+}
+
+/* Phase 2: Diamond moves to right with smooth transition */
+.place-note-new__diamond--phase2 {
+  transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Phase 2: Random notes container */
+.place-note-new__random-note {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  pointer-events: auto; /* Enable click like your-melody */
+}
+
+/* Phase 2: Random note slide up animation */
+.place-note-new__random-note--animate {
+  animation: placeNoteSlideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  opacity: 0;
+}
+
+@keyframes placeNoteSlideUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 80px); /* Start 80px below final position */
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Phase 2: Random note image size */
+/* Phase 2: Random note image size - EXACTLY like your-melody */
+.place-note-new__random-heart {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.1));
+}
+
+/* Phase 2: Ledger line for random Đô notes */
+.place-note-new__random-note--position-do::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 99px; /* Same as your-melody */
+  height: calc(8 / 982 * 100vh);
+  border-radius: calc(8 / 982 * 100vh);
+  background: linear-gradient(180deg, #FF92B0 0%, #FFE1E9 24.04%, rgba(255, 232, 238, 0.50) 50.48%, #FFAFC5 71.15%, #FF8FAE 78.85%, #C4637E 100%);
+  box-shadow: 0 1px 1px 0 #BC224C;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Phase 2: Actions container - EXACTLY like your-melody */
+.place-note-new__actions {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 24px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  pointer-events: auto;
+  z-index: 1000;
+}
+
+/* Hint text - hidden on desktop (like your-melody) */
+.place-note-new__hint {
+  display: none;
+  width: 100%;
+  color: var(--Pink, #BC224C);
+  text-align: center;
+}
+
+/* Disabled state for buttons (like your-melody) */
+.place-note-new__actions .glass-theme-button.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* Dark theme button text color - black text (like your-melody) */
+.place-note-new__actions .glass-theme-button--dark {
+  color: #0B0B0B;
+}
+
+/* Phase 2: Playing animation for notes */
+.place-note-new__note--playing {
+  z-index: 15;
+}
+
+.place-note-new__note--playing .place-note-new__heart,
+.place-note-new__note--playing .place-note-new__random-heart {
+  filter: drop-shadow(0 0 20px rgba(255, 146, 176, 0.8))
+          drop-shadow(0 0 40px rgba(255, 146, 176, 0.6));
+}
+
+/* Playing ripple effect using ::after */
+.place-note-new__note--playing::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0) 35%,
+    rgba(255, 255, 255, 0.03) 42%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.1) 58%,
+    rgba(255, 255, 255, 0.16) 65%,
+    rgba(255, 255, 255, 0.25) 72%,
+    rgba(255, 255, 255, 0.38) 78%,
+    rgba(255, 255, 255, 0.55) 84%,
+    rgba(255, 255, 255, 0.75) 89%,
+    rgba(255, 255, 255, 0.9) 93%,
+    rgba(255, 255, 255, 0.6) 96%,
+    rgba(255, 255, 255, 0.25) 98%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  opacity: 0.65;
+  pointer-events: none;
+  z-index: -1;
+  animation: placeNotePlayingPulse 0.4s ease-out forwards;
+}
+
+@keyframes placeNotePlayingPulse {
+  0% {
+    width: 40px;
+    height: 40px;
+    opacity: 0.8;
+  }
+  100% {
+    width: 160px;
+    height: 160px;
+    opacity: 0;
+  }
+}
+
+/* Phase 2: Header (like your-melody) */
+.place-note-new__phase2-header {
+  position: absolute;
+  top: calc(100 / 982 * 100vh);
+  left: 8vw;
+  max-width: 475px;
+  z-index: 10;
+}
+
+.place-note-new__phase2-title {
+  color: var(--Pink, #BC224C);
+  font-size: 48px;
+  line-height: 105%;
+  margin: 0 0 16px 0;
+}
+
+.place-note-new__phase2-description {
+  color: var(--Black, #0B0B0B);
+  width: 345px;
+}
+
+.place-note-new__phase2-header--hidden {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+.place-note-new__phase2-header--animate {
+  animation: phase2HeaderSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes phase2HeaderSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Header */
+.place-note-new__header {
+  position: relative;
+  z-index: 1;
+  padding: 2rem;
+  text-align: center;
+}
+
+.place-note-new__title {
+  font-family: 'Playfair Display', 'Times New Roman', serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: #333;
+  margin: 0;
+}
+
+/* Main content - music staff */
+.place-note-new__main {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.place-note-new__staff-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Arrow buttons - fixed position, bottom (same as choose-shape) */
+.place-note-new__arrow {
+  position: fixed;
+  bottom: 24px;
+  z-index: 1000;
+}
+
+.place-note-new__arrow--left {
+  left: 2.5%;
+}
+
+.place-note-new__arrow--right {
+  right: 2.5%;
+}
+
+/* Arrow icon size */
+.place-note-new__arrow .glass-theme-btn-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Music Staff */
+.place-note-new__staff {
+  position: relative;
+  width: 100%;
+  height: 360px; /* 5 lines * 8px + 4 gaps * 80px */
+  cursor: pointer;
+}
+
+/* Solock decoration - left side, show 40% */
+/* Staff should be vertically centered within solock */
+.place-note-new__solock {
+  position: fixed;
+  left: 0;
+  top: calc(280 / 982 * 100vh + 180px); /* Staff center = staff top + half staff height (180px) */
+  transform: translate(-40%, -50%); /* Show 60%, hide 40% on left */
+  height: 650px; /* staff height (360px) × 1.67 */
+  width: auto;
+  z-index: 4; /* Below gradient overlay (z-index: 5) */
+  pointer-events: none;
+  animation: solockSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Solock slide-in animation - from left to right */
+@keyframes solockSlideIn {
+  0% {
+    opacity: 0;
+    transform: translate(-100%, -50%); /* Start fully hidden on left */
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-40%, -50%); /* End at 60% visible */
+  }
+}
+
+/* Placement zones - 4 spaces between 5 lines */
+/* Red highlights on lines - where notes can be placed */
+.place-note-new__line-highlights {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.place-note-new__line-highlight {
+  position: absolute;
+  left: 0;
+  height: 12px; /* Same as line height */
+  width: 100%;
+  background: rgba(244, 67, 54, 0.4); /* Red highlight */
+  pointer-events: none;
+}
+
+/* Position each line highlight on the lines */
+.place-note-new__line-highlight:nth-child(1) { top: 0px; }    /* Line 1 */
+.place-note-new__line-highlight:nth-child(2) { top: 92px; }   /* Line 2 */
+.place-note-new__line-highlight:nth-child(3) { top: 184px; }  /* Line 3 */
+.place-note-new__line-highlight:nth-child(4) { top: 276px; }  /* Line 4 */
+.place-note-new__line-highlight:nth-child(5) { top: 368px; }  /* Line 5 */
+
+/* Green zones - spaces between lines */
+.place-note-new__zones {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.place-note-new__zone {
+  position: absolute;
+  left: 0;
+  height: 80px; /* Gap between lines */
+  width: 100%;
+  background: rgba(76, 175, 80, 0.3); /* Green for spaces between lines */
+  transition: background 0.3s ease;
+  pointer-events: none;
+}
+
+/* Position each zone in the space between lines */
+.place-note-new__zone:nth-child(1) { top: 12px; }   /* Between line 1-2 */
+.place-note-new__zone:nth-child(2) { top: 104px; }  /* Between line 2-3 */
+.place-note-new__zone:nth-child(3) { top: 196px; }  /* Between line 3-4 */
+.place-note-new__zone:nth-child(4) { top: 288px; }  /* Between line 4-5 */
+
+.place-note-new__zone--active {
+  background: rgba(76, 175, 80, 0.5); /* Brighter green when note is in this zone */
+}
+
+/* Staff lines - 5 lines with 80px gap (like your-melody) */
+.place-note-new__lines {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  width: 100vw;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Staff 1 - always visible */
+.place-note-new__lines--staff1 {
+  /* Same as base .place-note-new__lines */
+}
+
+/* Staff 2 - hidden by default (desktop), shown on mobile/tablet Phase 2 */
+.place-note-new__lines--staff2 {
+  display: none;
+}
+
+.place-note-new__line {
+  width: 100%;
+  height: 8px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #FF92B0 0%, #FFE1E9 24.04%, rgba(255, 232, 238, 0.50) 50.48%, #FFAFC5 71.15%, #FF8FAE 78.85%, #C4637E 100%);
+  box-shadow: 0 1px 1px 0 #BC224C;
+  pointer-events: none;
+}
+
+/* Line entrance animation - draw from left with staggered delays (same as your-melody) */
+.place-note-new__line--animate {
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: lineDrawIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Staggered line animation delays */
+.place-note-new__line--animate:nth-child(1) { animation-delay: 0.1s; }
+.place-note-new__line--animate:nth-child(2) { animation-delay: 0.15s; }
+.place-note-new__line--animate:nth-child(3) { animation-delay: 0.2s; }
+.place-note-new__line--animate:nth-child(4) { animation-delay: 0.25s; }
+.place-note-new__line--animate:nth-child(5) { animation-delay: 0.3s; }
+
+/* Line entrance animation keyframes */
+@keyframes lineDrawIn {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* Heart note on staff - positioned dynamically */
+.place-note-new__diamond {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  transition: left 0.3s ease, top 0.3s ease;
+  z-index: 10;
+}
+
+/* Diamond entrance animation - scale from big to small */
+.place-note-new__diamond--animate {
+  animation: diamondScaleIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes diamondScaleIn {
+  0% {
+    transform: translate(-50%, -50%) scale(3);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.place-note-new__heart {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  position: relative;
+  z-index: 2;
+}
+
+/* RippleEffect container styles */
+/* Using !important to override RippleEffect's injected overflow: hidden */
+.place-note-new__diamond .ripple-effect-area {
+  overflow: visible !important;
+}
+
+/* Ledger line bar behind Đồ note (position 0) */
+.place-note-new__diamond--position-do::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;
+  height: calc(8 / 982 * 100vh);
+  border-radius: calc(8 / 982 * 100vh);
+  background: linear-gradient(180deg, #FF92B0 0%, #FFE1E9 24.04%, rgba(255, 232, 238, 0.50) 50.48%, #FFAFC5 71.15%, #FF8FAE 78.85%, #C4637E 100%);
+  box-shadow: 0 1px 1px 0 #BC224C;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Active line highlight - brighter red */
+.place-note-new__line-highlight--active {
+  background: rgba(244, 67, 54, 0.6) !important;
+}
+
+/* Footer - fixed bottom left */
+.place-note-new__footer {
+  position: fixed;
+  bottom: 40px;
+  left: 40px;
+  z-index: 10;
+  max-width: 320px;
+}
+
+/* Progress bar 1/3 */
+.place-note-new__progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.place-note-new__progress-step {
+  width: 60px;
+  height: 2px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 13px;
+}
+
+.place-note-new__progress-step--active {
+  background: var(--gray-3, #797979);
+}
+
+.place-note-new__subtitle {
+  font-style: italic;
+  color: var(--Black, #0B0B0B);
+  margin-bottom: 0.5rem;
+}
+
+.place-note-new__description {
+  color: var(--Black, #0B0B0B);
+}
+
+.place-note-new__error {
+  color: #e53935;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+/* Next button - bottom right */
+.place-note-new__next {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  z-index: 10;
+}
+
+/* Responsive - Tablet (max-width: 1024px) */
+@media (max-width: 1024px) {
+  /* Hide phase 2 header on tablet (like your-melody) */
+  .place-note-new__phase2-header {
+    display: none;
+  }
+
+  .place-note-new__header {
+    padding: 1.5rem;
+  }
+
+  /* Move staff higher on tablet */
+  .place-note-new__main {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* Staff - same gap as desktop (80px) for consistent note positioning */
+
+  /* Heart/Diamond note - 100px on tablet */
+  .place-note-new__heart {
+    width: 100px;
+    height: auto;
+  }
+
+  /* Note title - lower on tablet */
+  /* .place-note-new__note-title {
+    top: 160px;
+  } */
+
+  /* Ledger line bar - tablet */
+  .place-note-new__diamond--position-do::before {
+    width: 150px;
+    height: calc(7 / 768 * 100vh);
+    border-radius: calc(7 / 768 * 100vh);
+  }
+
+  .place-note-new__footer {
+    bottom: 32px;
+    left: 32px;
+    max-width: 300px;
+  }
+
+  /* Solock - equal to staff height on tablet, show 100% */
+  .place-note-new__solock {
+    top: 49.5%; /* Same as staff center on tablet */
+    transform: translate(-40%, -50%); /* Show 100%, only center vertically */
+    height: 600px; /* = staff height */
+    animation: solockSlideInTabletPlaceNote 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes solockSlideInTabletPlaceNote {
+    0% {
+      opacity: 0;
+      transform: translate(-100%, -50%);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-40%, -50%); /* Show 100% on tablet */
+    }
+  }
+
+}
+
+/* Responsive - Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+  /* Hide phase 2 header on mobile (like your-melody) */
+  .place-note-new__phase2-header {
+    display: none;
+  }
+
+  .place-note-new__header {
+    padding: 1.5rem 1rem;
+  }
+
+  .place-note-new__title {
+    font-size: 1.25rem;
+    letter-spacing: 0.2em;
+  }
+
+  /* Move staff higher on mobile */
+  .place-note-new__main {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* Staff - same gap as desktop (80px) for consistent note positioning */
+
+  /* Heart/Diamond note - 90px on mobile */
+  .place-note-new__heart {
+    width: 90px;
+    height: auto;
+  }
+
+  /* Note title - on mobile */
+  /* .place-note-new__note-title {
+    top: 140px;
+  } */
+
+  /* Footer - adjusted for mobile */
+  .place-note-new__footer {
+    bottom: 24px;
+    left: 20px;
+    right: 20px;
+    max-width: none;
+  }
+
+  .place-note-new__progress-step {
+    width: 40px;
+  }
+
+  .place-note-new__subtitle {
+    font-size: 1rem;
+  }
+
+  .place-note-new__description {
+    font-size: 0.875rem;
+  }
+
+  /* Solock - larger on mobile, show 20% */
+  .place-note-new__solock {
+    top: 49%; /* Same as staff center on mobile */
+    transform: translate(-50%, -50%); /* Show 20%, hide 80% on left */
+    height: 620px; /* larger than staff */
+    animation: solockSlideInMobilePlaceNote 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes solockSlideInMobilePlaceNote {
+    0% {
+      opacity: 0;
+      transform: translate(-100%, -50%);
+    }
+    100% {
+      opacity: 1;
+      transform: translate(-50%, -50%); /* Show 20% on mobile */
+    }
+  }
+
+  /* Ledger line bar - mobile */
+  .place-note-new__diamond--position-do::before {
+    width: 135px;
+    height: calc(6 / 844 * 100vh);
+    border-radius: calc(6 / 844 * 100vh);
+  }
+}
+

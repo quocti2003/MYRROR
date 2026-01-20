@@ -13,10 +13,6 @@ const AllGemsPage = () => {
   const [isImmersiveCollapsed, setIsImmersiveCollapsed] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const handleImmersiveClick = () => {
-    console.log("Immersive button clicked");
-  };
-
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -29,7 +25,7 @@ const AllGemsPage = () => {
   }, []);
 
   return (
-    <div className="all-gems-page">
+    <div className="all-gems-page-wrapper">
       <AllGems />
 
       <div className="fixed-immersive-container">
@@ -37,7 +33,6 @@ const AllGemsPage = () => {
           theme={arrowTheme === "white" ? "dark" : "light"}
           icon="globe"
           isCollapsed={isImmersiveCollapsed}
-          onClick={handleImmersiveClick}
         >
           Immersive Showroom
         </GlassThemeButton>

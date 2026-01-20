@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import "./Section1ProductHero.css";
 
 const Section1ProductHero = ({ product, onOrderNow }) => {
@@ -14,7 +14,43 @@ const Section1ProductHero = ({ product, onOrderNow }) => {
   const validImages = getValidImages();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [is3DViewActive, setIs3DViewActive] = useState(false);
   const selectedImage = validImages[selectedImageIndex] || null;
+
+  // Check if product has 3D model
+  const hasModel3d = product?.model3dId && product.model3dId.trim().length > 0;
+
+  // Build iJewel 3D viewer iframe URL
+  const iframeUrl = useMemo(() => {
+    if (!hasModel3d) return null;
+    const baseUrl = 'https://drive.ijewel3d.com/drive/files';
+    const params = new URLSearchParams({
+      slug: product.model3dId,
+      isAutoplay: 'true',
+      isRemoveHologram: 'true',
+      isDisplayThumbnail: 'false',
+      isRemoveBackground: 'true',
+      backgroundType: 'transparent',
+      isLoadHighQuality: 'true',
+      isLoadMediumQuality: 'true',
+      isDisplayLogo: 'false',
+      isDisplayShadow: 'true',
+      isDisplayFloatingBtn: 'false',
+      isDisplayAnnotation: 'false',
+    });
+    return `${baseUrl}/${product.model3dId}/embedded?${params.toString()}`;
+  }, [hasModel3d, product?.model3dId]);
+
+  // Handle thumbnail click - deactivate 3D view when selecting an image
+  const handleImageSelect = (index) => {
+    setSelectedImageIndex(index);
+    setIs3DViewActive(false);
+  };
+
+  // Handle 3D view thumbnail click
+  const handle3DViewSelect = () => {
+    setIs3DViewActive(true);
+  };
 
   // Format price
   const formatPrice = (price) => {
@@ -32,9 +68,19 @@ const Section1ProductHero = ({ product, onOrderNow }) => {
       <div className="product-hero-container">
         {/* Left: Product Image Gallery */}
         <div className="product-hero-gallery">
-          {/* Main Image */}
+          {/* Main Image or 3D View */}
           <div className="gallery-main-image-wrapper">
-            {selectedImage ? (
+            {is3DViewActive && iframeUrl ? (
+              <div className="gallery-3d-viewer">
+                <iframe
+                  src={iframeUrl}
+                  title="3D Product View"
+                  frameBorder="0"
+                  allowFullScreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                />
+              </div>
+            ) : selectedImage ? (
               <img
                 src={selectedImage}
                 alt={product?.name || "Product"}
@@ -48,17 +94,33 @@ const Section1ProductHero = ({ product, onOrderNow }) => {
           </div>
 
           {/* Thumbnail Gallery */}
-          {validImages.length > 1 && (
+          {(validImages.length > 1 || hasModel3d) && (
             <div className="gallery-thumbnails">
               {validImages.map((image, index) => (
                 <div
                   key={index}
-                  className={`gallery-thumbnail ${index === selectedImageIndex ? 'active' : ''}`}
-                  onClick={() => setSelectedImageIndex(index)}
+                  className={`gallery-thumbnail ${index === selectedImageIndex && !is3DViewActive ? 'active' : ''}`}
+                  onClick={() => handleImageSelect(index)}
                 >
                   <img src={image} alt={`${product?.name} - ${index + 1}`} />
                 </div>
               ))}
+              {/* 3D View Thumbnail */}
+              {hasModel3d && (
+                <div
+                  className={`gallery-thumbnail gallery-thumbnail-3d ${is3DViewActive ? 'active' : ''}`}
+                  onClick={handle3DViewSelect}
+                >
+                  <div className="thumbnail-3d-content">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                      <path d="M2 17l10 5 10-5" />
+                      <path d="M2 12l10 5 10-5" />
+                    </svg>
+                    <span>3D</span>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

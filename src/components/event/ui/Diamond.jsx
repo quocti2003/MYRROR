@@ -2,7 +2,7 @@
  * Diamond Component - SVG-based diamond shape renderer
  */
 import React from 'react';
-import { getDiamondConfig } from '../../../constants/eventConstants';
+import { getDiamondConfig } from '@/constants/eventConstants';
 
 // SVG paths for different diamond shapes
 const DIAMOND_PATHS = {
@@ -10,7 +10,7 @@ const DIAMOND_PATHS = {
   oval: 'M50,5 Q85,25 85,50 Q85,75 50,95 Q15,75 15,50 Q15,25 50,5',
   pear: 'M50,5 Q80,30 75,60 Q65,95 50,95 Q35,95 25,60 Q20,30 50,5',
   heart: 'M50,90 L15,50 Q5,30 25,15 Q45,5 50,25 Q55,5 75,15 Q95,30 85,50 Z',
-  princess: 'M50,5 L95,50 L50,95 L5,50 Z',
+  asscher: 'M50,5 L95,50 L50,95 L5,50 Z',
   emerald: 'M20,15 L80,15 L95,35 L95,65 L80,85 L20,85 L5,65 L5,35 Z',
   marquise: 'M50,5 Q85,25 85,50 Q85,75 50,95 Q15,75 15,50 Q15,25 50,5',
 };
@@ -46,7 +46,7 @@ const FACET_LINES = {
     'M15,50 L50,50',
     'M85,50 L50,50',
   ],
-  princess: [
+  asscher: [
     'M50,5 L50,95',
     'M5,50 L95,50',
     'M50,5 L5,50',

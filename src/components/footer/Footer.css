@@ -61,8 +61,15 @@
   position: relative;
   padding-top: 0;
   opacity: 0;
-  transform: translateY(120px);
+  transform: translateY(80px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  transition-delay: 0.15s;
   will-change: transform, opacity;
+}
+
+.footer-content.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* LEFT SECTION - Discover Menu */
@@ -90,8 +97,15 @@
   left: 50%;
   top: 50%;
   opacity: 0;
-  transform: translate(-50%, -50%) translateY(100px);
+  transform: translate(-50%, -50%) translateY(60px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  transition-delay: 0s;
   will-change: transform, opacity;
+}
+
+.footer-center.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) translateY(0);
 }
 
 /* ========================================
@@ -180,7 +194,7 @@
 .newsletter-tagline {
   margin-bottom: 12px !important;
   margin-top: 0 !important;
-  color: #e0e0e0;
+  color: #797979;
   text-align: center;
 }
 
@@ -193,18 +207,21 @@
 }
 
 .newsletter-subtitle {
-  color: rgba(255, 255, 255, 0.8);
+  color: #797979;
   margin-bottom: 36px !important;
   margin-top: 0 !important;
   text-align: center;
+  max-width: 464px;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 .newsletter-buttons {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  width: 100%;
-  margin: 0;
+  width: 276px;
+  margin: auto;
 }
 
 /* GlassThemeButton in footer - full width */
@@ -223,8 +240,15 @@
   justify-content: flex-end;
   margin-top: 36px;
   opacity: 0;
-  transform: translateY(80px);
+  transform: translateY(40px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  transition-delay: 0.3s;
   will-change: transform, opacity;
+}
+
+.footer-bottom.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Footer Bottom Row - Contains left and right */
@@ -342,14 +366,22 @@
     max-width: 450px;
     min-height: 100px;
     height: auto;
-    transform: none;
+    transform: translateY(40px);
     margin: 0 auto 36px;
     order: -1;
     padding: 0;
   }
 
   .footer-center.visible {
-    transform: none;
+    transform: translateY(0);
+  }
+
+  .footer-content {
+    transform: translateY(40px);
+  }
+
+  .footer-content.visible {
+    transform: translateY(0);
   }
 
   .newsletter-section {
@@ -364,26 +396,6 @@
   .newsletter-subtitle {
     margin-bottom: 12px !important;
     font-size: 14px;
-  }
-
-  .newsletter-form {
-    flex-direction: row;
-    gap: 12px;
-    max-width: 100%;
-    margin: 0 auto;
-    align-items: flex-end;
-  }
-
-  .email-input {
-    flex: 1;
-    padding: 10px 0;
-    font-size: 14px;
-  }
-
-  .signup-button {
-    width: 90px;
-    height: 44px;
-    font-size: 12px;
   }
 
   .footer-title {
@@ -474,14 +486,22 @@
     max-width: 304px;
     min-height: 100px;
     height: auto;
-    transform: none;
+    transform: translateY(40px);
     margin: 0 auto 36px;
     order: -1;
     padding: 0;
   }
 
   .footer-center.visible {
-    transform: none;
+    transform: translateY(0);
+  }
+
+  .footer-content {
+    transform: translateY(40px);
+  }
+
+  .footer-content.visible {
+    transform: translateY(0);
   }
 
   .newsletter-section {
@@ -496,26 +516,6 @@
   .newsletter-subtitle {
     margin-bottom: 12px !important;
     font-size: 14px;
-  }
-
-  .newsletter-form {
-    flex-direction: row;
-    gap: 12px;
-    max-width: 100%;
-    margin: 0 auto;
-    align-items: flex-end;
-  }
-
-  .email-input {
-    flex: 1;
-    padding: 10px 0;
-    font-size: 14px;
-  }
-
-  .signup-button {
-    width: 90px;
-    height: 44px;
-    font-size: 12px;
   }
 
   .footer-title {

@@ -32,6 +32,8 @@
   transform: scaleX(1);
   transform-origin: left center;
   transition: transform 0.3s linear;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 /* Hover: underline slides out from right to left (disappears) */

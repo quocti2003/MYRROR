@@ -15,10 +15,6 @@ const AllNewsPage = () => {
   const [isImmersiveCollapsed, setIsImmersiveCollapsed] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  const handleImmersiveClick = () => {
-    console.log("Immersive button clicked");
-  };
-
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -44,7 +40,6 @@ const AllNewsPage = () => {
           theme={arrowTheme === "white" ? "dark" : "light"}
           icon="globe"
           isCollapsed={isImmersiveCollapsed}
-          onClick={handleImmersiveClick}
         >
           Immersive Showroom
         </GlassThemeButton>

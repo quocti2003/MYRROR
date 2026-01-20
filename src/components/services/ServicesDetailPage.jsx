@@ -40,7 +40,7 @@ const ServicesDetailPage = () => {
   const getHeroImage = () => {
     switch (activeTab) {
       case "product-care-repair":
-        return getImageUrl("services/Product care & Repair_1920x600.webp");
+        return getImageUrl("services/Product care & Repair_2.webp");
       case "trade-in-upgrade":
         return getImageUrl("services/Trade in_1920x600.webp");
       default:
@@ -51,8 +51,8 @@ const ServicesDetailPage = () => {
   const getHeroTheme = () => {
     switch (activeTab) {
       case "trade-in-upgrade":
-        return "white";
       case "product-care-repair":
+        return "white";
       default:
         return "blend";
     }
@@ -65,9 +65,6 @@ const ServicesDetailPage = () => {
         data-navbar-theme={getHeroTheme()}
         style={{ backgroundImage: `url("${getHeroImage()}")` }}
       >
-        <div className="hero-content">
-          <h1>Services</h1>
-        </div>
       </div>
 
       <div className="services-detail-wrapper" data-navbar-theme="blend">

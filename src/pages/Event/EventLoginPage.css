@@ -1,0 +1,368 @@
+/**
+ * EventLoginPage Styles
+ * Desktop: Split screen (image left, content right)
+ * Mobile/Tablet: Full background with centered glass card
+ */
+
+.event-login-wrapper {
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height - accounts for mobile address bar */
+  overflow: hidden;
+  /* iOS Safari: prevent rubber band scrolling */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+  touch-action: none;
+}
+
+.event-login {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  background: #f6f6f6;
+}
+
+/* Gradient background - now a real div for animation */
+.event-login__gradient {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 200%;
+  height: 200%;
+  border-radius: 3468px;
+  background: radial-gradient(70.29% 50.83% at 50% 50%, #BC224C 0%, rgba(255, 255, 255, 0.50) 58.27%, rgba(246, 246, 246, 0.00) 71.12%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Background - Left half on Desktop, Full on Mobile */
+.event-login__bg {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.event-login__bg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(270deg, #F6F6F6 0%, rgba(246, 246, 246, 0.00) 20%);
+  pointer-events: none;
+}
+
+.event-login__bg-img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+}
+
+/* Navigation Buttons - Circular style */
+.event-login__nav-btn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+}
+
+.event-login__nav-btn.shine-glass-button,
+.event-login__nav-btn.shine-glass-button .glass-layer,
+.event-login__nav-btn.shine-glass-button .shine-layer,
+.event-login__nav-btn.shine-glass-button .border-layer {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.event-login__nav-btn .button-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Remove hover transform/bouncing effect */
+.event-login__nav-btn.shine-glass-button:hover {
+  transform: translateY(-50%) scale(1);
+}
+
+.event-login__nav-btn--left {
+  left: 48px;
+}
+
+.event-login__nav-btn--right {
+  right: 48px;
+}
+
+/* Content - Right half on Desktop */
+.event-login__content {
+  position: relative;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.event-login__content > * {
+  pointer-events: auto;
+  touch-action: auto; /* Re-enable touch on interactive elements */
+}
+
+/* Card - Only visible on mobile, transparent on desktop */
+.event-login__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 498px;
+  touch-action: auto; /* Re-enable touch for card content */
+}
+
+/* Title - uses heading-2--no-margin from typography.css */
+.event-login__title {
+  margin-bottom: 48px !important;
+  text-align: center;
+}
+
+/* Subtitle with lines - uses bodytext-6--no-margin from typography.css */
+.event-login__subtitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #797979;
+  margin-bottom: 48px !important;
+  width: 100%;
+}
+
+.event-login__subtitle::before,
+.event-login__subtitle::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--Gray-2, #E0E0E0);
+}
+
+/* Error Message */
+.event-login__error {
+  color: #dc3545;
+  font-size: 14px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* Social Login Buttons - Full width with text on all devices */
+.event-login__social {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+  max-width: 228px;
+}
+
+/* Social login button - icon on left */
+.event-login__social-btn.glass-theme-button {
+  width: 100%;
+  flex-direction: row-reverse;
+}
+
+.event-login__social-btn .glass-theme-btn-icon img {
+  width: 15px;
+  height: 15px;
+}
+
+/* Back button - icon on left */
+.event-login__back .glass-theme-button {
+  flex-direction: row-reverse;
+}
+
+.event-login__back .glass-theme-btn-icon svg {
+  width: 20px;
+  height: 16px;
+}
+
+/* ============================================
+   RESPONSIVE - Tablet & Mobile
+   ============================================ */
+
+/* Tablet - Full background with centered glass card */
+@media (max-width: 1024px) {
+  .event-login {
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Hide the radial gradient on tablet */
+  .event-login__gradient {
+    display: none;
+  }
+
+  /* Full screen background image */
+  .event-login__bg {
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: url("__CDN_URL__/mirror_DMM/KV-tablet.webp") center center / cover no-repeat;
+  }
+
+  /* Hide the img, use CSS background instead */
+  .event-login__bg-img {
+    display: none;
+  }
+
+  /* Remove the right-side gradient overlay */
+  .event-login__bg::after {
+    display: none;
+  }
+
+  /* Content wrapper */
+  .event-login__content {
+    width: auto;
+    /* max-width: calc(100% - 48px); */
+    max-width: 248px;
+  }
+
+  /* Glass Card */
+  .event-login__card {
+    padding: 160px 133px;
+    border-radius: 22.5px;
+    background: var(--transparent-white-50, rgba(255, 255, 255, 0.50));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  .event-login__title {
+    margin-bottom: 48px !important;
+    white-space: nowrap;
+  }
+
+  .event-login__subtitle {
+    margin-bottom: 48px !important;
+  }
+
+  .event-login__nav-btn--left {
+    left: 24px;
+  }
+
+  .event-login__nav-btn--right {
+    right: 24px;
+  }
+
+  .event-login__nav-btn.shine-glass-button:hover {
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+/* Mobile small - Full screen glass */
+@media (max-width: 480px) {
+  .event-login__bg {
+    background-image: url("__CDN_URL__/mirror_DMM/KV-mobile.webp");
+  }
+
+  .event-login__content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+  }
+
+  .event-login__card {
+    width: 100%;
+    min-height: 100%;
+    max-width: none;
+    /* Safe area padding for iPhone notch */
+    padding: 0;
+    /* padding-top: max(120px, calc(100px + env(safe-area-inset-top)));
+    padding-bottom: max(40px, calc(20px + env(safe-area-inset-bottom))); */
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
+    border-radius: 0;
+    background: var(--transparent-white-50, rgba(255, 255, 255, 0.50));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+    justify-content: center;
+  }
+
+  /* Limit content width to 78% */
+  .event-login__card > * {
+    max-width: 62%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .event-login__nav-btn--left {
+    left: 16px;
+  }
+
+  .event-login__nav-btn--right {
+    right: 16px;
+  }
+
+  .event-login__nav-btn.shine-glass-button:hover {
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+/* Back Button - Fixed bottom left */
+.event-login__back {
+  position: fixed;
+  left: 2.5%;
+  bottom: 24px;
+  z-index: 1000;
+}
+
+/* In-app browser disclaimer */
+.event-login__inapp-disclaimer {
+  padding: 12px 24px;
+  border-radius: 23px;
+  background: var(--transparent-white-75, rgba(255, 255, 255, 0.75));
+  border: 1px solid var(--Pink, #BC224C);
+  text-align: center;
+}
+
+.event-login__inapp-disclaimer-text {
+  color: #1a1a1a;
+  white-space: nowrap;
+}
+
+.event-login__dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  vertical-align: middle;
+  margin: 0 4px;
+}
+
+.event-login__dots--vertical {
+  flex-direction: column;
+}
+
+.event-login__dots--horizontal {
+  flex-direction: row;
+}

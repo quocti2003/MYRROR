@@ -2,9 +2,9 @@
  * TicketScreen - Step 1: Enter ticket code
  */
 import React, { useState } from 'react';
-import { TEXT } from '../../../constants/eventConstants';
-import { validateTicket } from '../../../services/event/eventApi';
-import useEventStore from '../../../store/useEventStore';
+import { TEXT } from '@/constants/eventConstants';
+import { validateTicket } from '@services/event/eventApi';
+import useEventStore from '@/store/useEventStore';
 import Logo from '../ui/Logo';
 
 const TicketScreen = () => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { productsAPI, fileUploadAPI, certificatesAPI } from "@/services/api";
+import { productsAPI, r2API, certificatesAPI } from "@/services/api";
 import "./ProductFulfillment.css";
 
 const CERTIFICATE_TYPES = [
@@ -19,6 +19,7 @@ const ProductFulfillment = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState("pending");
+  const [searchQuery, setSearchQuery] = useState("");
   const [uploadingImages, setUploadingImages] = useState(false);
   const [notification, setNotification] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
@@ -41,9 +42,8 @@ const ProductFulfillment = () => {
   const [fulfillmentData, setFulfillmentData] = useState({
     description: "",
     videoUrls: [],
-    has3DModel: false,
-    iJewel3DUrl: "",
-    hasARTryOn: false,
+    hasModel3d: null, // null = not chosen, true = has 3D model, false = no 3D model needed
+    model3dId: "", // iJewel Drive model ID
     markReadyForRelease: false,
     hasCertificates: null, // null = not chosen, true = has certificates, false = no certificates
   });
@@ -109,16 +109,28 @@ const ProductFulfillment = () => {
     // Load existing certificates
     setCertificateCodes(product.certificateCodes || []);
 
-    // Initialize hasCertificates based on existing certificates
+    // Initialize hasCertificates based on existing certificates or certificatesNotRequired flag
     const existingCertificates = product.certificateCodes || [];
-    const hasCerts = existingCertificates.length > 0 ? true : null; // true if has certs, null if user needs to choose
+    let hasCerts = null; // null means user needs to choose
+    if (product.certificatesNotRequired === true) {
+      hasCerts = false; // "No certificates needed" was selected
+    } else if (existingCertificates.length > 0) {
+      hasCerts = true; // Has certificates
+    }
+
+    // Initialize hasModel3d based on existing 3D model or model3dNotRequired flag
+    let hasModel3d = null; // null means user needs to choose
+    if (product.model3dNotRequired === true) {
+      hasModel3d = false; // "No 3D model needed" was selected
+    } else if (product.model3dId && product.model3dId.trim()) {
+      hasModel3d = true; // Has 3D model
+    }
 
     setFulfillmentData({
       description: product.description || "",
       videoUrls: [],
-      has3DModel: false,
-      iJewel3DUrl: "",
-      hasARTryOn: false,
+      hasModel3d: hasModel3d,
+      model3dId: product.model3dId || "",
       markReadyForRelease: false,
       hasCertificates: hasCerts,
     });
@@ -187,15 +199,15 @@ const ProductFulfillment = () => {
     setLoading(true);
     setError(null);
     try {
-      // Upload new images to S3
+      // Upload new images to Cloudflare R2
       let newUploadedUrls = [];
       if (imageFiles.length > 0) {
         setUploadingImages(true);
         const uploadPromises = imageFiles.map(async (img) => {
           if (img.file) {
             try {
-              const response = await fileUploadAPI.upload(img.file, "Product image", "mirror-storage", "products");
-              return response.data.publicUrl || response.data.downloadUrl;
+              const response = await r2API.upload(img.file, "products");
+              return response.data.publicUrl;
             } catch (err) {
               console.error("Failed to upload image:", err);
               return null;
@@ -217,6 +229,13 @@ const ProductFulfillment = () => {
       const imageUrl = allImageUrls[0] || "";
       const imageUrls = allImageUrls.length > 0 ? allImageUrls : [];
 
+      // dimensions needs to be a JSON string, not an object
+      const dimensionsStr = selectedProduct.dimensions
+        ? (typeof selectedProduct.dimensions === 'string'
+            ? selectedProduct.dimensions
+            : JSON.stringify(selectedProduct.dimensions))
+        : null;
+
       const submitData = {
         description: fulfillmentData.description,
         imageUrl: imageUrl,
@@ -230,13 +249,19 @@ const ProductFulfillment = () => {
         metalPurity: selectedProduct.metalPurity,
         stoneType: selectedProduct.stoneType,
         weightGrams: selectedProduct.weightGrams,
-        dimensions: selectedProduct.dimensions,
+        dimensions: dimensionsStr,
         tags: selectedProduct.tags,
         status: selectedProduct.status || "DRAFT",
         featured: selectedProduct.featured || false,
         stockQuantity: selectedProduct.stockQuantity || 0,
         minStockLevel: selectedProduct.minStockLevel || 1,
         certificateCodes: certificateCodes,
+        // If user selected "No certificates needed", set this flag to true
+        certificatesNotRequired: fulfillmentData.hasCertificates === false,
+        // 3D Model fields
+        model3dId: fulfillmentData.model3dId || null,
+        // If user selected "No 3D model needed", set this flag to true
+        model3dNotRequired: fulfillmentData.hasModel3d === false,
       };
 
       // Use the regular update endpoint instead of fulfill
@@ -318,12 +343,26 @@ const ProductFulfillment = () => {
     const checks = {
       hasImages: (product.imageUrls?.length || 0) > 0 || product.imageUrl,
       hasDescription: product.description && product.description.length > 0,
-      hasCertificates: (product.certificateCodes?.length || 0) > 0
+      // Certificate is valid if: has certificates OR certificatesNotRequired is true
+      hasCertificates: (product.certificateCodes?.length || 0) > 0 || product.certificatesNotRequired === true,
+      // 3D Model is valid if: has model3dId OR model3dNotRequired is true
+      hasModel3d: (product.model3dId && product.model3dId.trim().length > 0) || product.model3dNotRequired === true
     };
     const completed = Object.values(checks).filter(Boolean).length;
     const total = Object.values(checks).length;
     return { completed, total, checks };
   };
+
+  // Filter products based on search query
+  const filteredProducts = products.filter((product) => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      (product.name && product.name.toLowerCase().includes(query)) ||
+      (product.skuCode && product.skuCode.toLowerCase().includes(query)) ||
+      (product.id && product.id.toLowerCase().includes(query))
+    );
+  });
 
   return (
     <div className="fulfillment-container">
@@ -380,10 +419,71 @@ const ProductFulfillment = () => {
         <div className="products-panel">
           <div className="panel-header">
             <h2>Products Queue</h2>
-            <span className="queue-count">{products.length}</span>
+            <span className="queue-count">{filteredProducts.length}</span>
+          </div>
+          {/* Search Input */}
+          <div style={{ padding: "0 1rem 1rem 1rem" }}>
+            <div style={{ position: "relative" }}>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                style={{
+                  position: "absolute",
+                  left: "12px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "#94a3b8",
+                }}
+              >
+                <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5"/>
+                <path d="M11 11L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Search by name or SKU..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "0.625rem 0.75rem 0.625rem 2.25rem",
+                  border: "1px solid #e2e8f0",
+                  borderRadius: "6px",
+                  fontSize: "0.875rem",
+                  outline: "none",
+                  transition: "border-color 0.2s ease",
+                }}
+                onFocus={(e) => e.target.style.borderColor = "#3b82f6"}
+                onBlur={(e) => e.target.style.borderColor = "#e2e8f0"}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  style={{
+                    position: "absolute",
+                    right: "8px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: "4px",
+                    color: "#94a3b8",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M10.5 3.5L3.5 10.5M3.5 3.5L10.5 10.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              )}
+            </div>
           </div>
           <div className="products-list">
-            {products.map((product) => {
+            {filteredProducts.map((product) => {
               const status = getCompletionStatus(product);
               const progressPercent = (status.completed / status.total) * 100;
 
@@ -424,17 +524,25 @@ const ProductFulfillment = () => {
                       <span className="check-icon">{status.checks.hasCertificates ? '✓' : '○'}</span>
                       Certificates
                     </div>
+                    <div className={`check-item ${status.checks.hasModel3d ? 'complete' : ''}`}>
+                      <span className="check-icon">{status.checks.hasModel3d ? '✓' : '○'}</span>
+                      3D Model
+                    </div>
                   </div>
                 </div>
               );
             })}
-            {products.length === 0 && !loading && (
+            {filteredProducts.length === 0 && !loading && (
               <div className="empty-state">
                 <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
                   <circle cx="32" cy="32" r="30" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" opacity="0.3"/>
                   <path d="M32 20V44M20 32H44" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.3"/>
                 </svg>
-                <p>No products pending fulfillment</p>
+                <p>
+                  {searchQuery
+                    ? `No products found for "${searchQuery}"`
+                    : "No products pending fulfillment"}
+                </p>
               </div>
             )}
           </div>
@@ -664,63 +772,126 @@ const ProductFulfillment = () => {
                 {/* 3D Model */}
                 <div className="form-section">
                   <div className="section-header">
-                    <h3>3D Model & AR</h3>
-                    <span className="section-optional">Optional</span>
+                    <h3>3D Model (iJewel Drive)</h3>
+                    <span className="section-required">Required</span>
                   </div>
-                  <p className="section-description">Enable 3D visualization and AR try-on features for enhanced customer experience.</p>
+                  <p className="section-description">Does this product have a 3D model for visualization?</p>
 
-                  <div className="checkbox-group">
-                    <label className="checkbox-label">
-                      <input
-                        type="checkbox"
-                        checked={fulfillmentData.has3DModel}
-                        onChange={(e) =>
-                          setFulfillmentData({
-                            ...fulfillmentData,
-                            has3DModel: e.target.checked,
-                            hasARTryOn: e.target.checked ? fulfillmentData.hasARTryOn : false,
-                            iJewel3DUrl: e.target.checked ? fulfillmentData.iJewel3DUrl : ""
-                          })
-                        }
-                      />
-                      <span className="checkbox-text">3D Model Available</span>
-                    </label>
-                  </div>
-
-                  {fulfillmentData.has3DModel && (
-                    <div className="conditional-fields">
-                      <div className="form-group">
-                        <label className="form-label">iJewel3D URL</label>
+                  {/* 3D Model Choice Radio Buttons */}
+                  <div style={{ marginBottom: "1rem" }}>
+                    <div className="checkbox-group" style={{ marginBottom: "0.5rem" }}>
+                      <label className="checkbox-label" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                         <input
-                          type="url"
-                          value={fulfillmentData.iJewel3DUrl}
+                          type="radio"
+                          name="hasModel3d"
+                          checked={fulfillmentData.hasModel3d === false}
+                          onChange={() => {
+                            setFulfillmentData({
+                              ...fulfillmentData,
+                              hasModel3d: false,
+                              model3dId: "", // Clear model ID
+                            });
+                          }}
+                          style={{ width: "16px", height: "16px" }}
+                        />
+                        <span className="checkbox-text">No 3D model needed for this product</span>
+                      </label>
+                    </div>
+                    <div className="checkbox-group">
+                      <label className="checkbox-label" style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <input
+                          type="radio"
+                          name="hasModel3d"
+                          checked={fulfillmentData.hasModel3d === true}
+                          onChange={() =>
+                            setFulfillmentData({
+                              ...fulfillmentData,
+                              hasModel3d: true,
+                            })
+                          }
+                          style={{ width: "16px", height: "16px" }}
+                        />
+                        <span className="checkbox-text">This product has a 3D model</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Show model ID input only when "has 3D model" is selected */}
+                  {fulfillmentData.hasModel3d === true && (
+                    <>
+                      {/* Validation message if no model ID entered */}
+                      {(!fulfillmentData.model3dId || !fulfillmentData.model3dId.trim()) && (
+                        <div
+                          style={{
+                            padding: "0.75rem",
+                            marginBottom: "0.75rem",
+                            backgroundColor: "#fef3c7",
+                            border: "1px solid #f59e0b",
+                            borderRadius: "6px",
+                            color: "#92400e",
+                            fontSize: "0.875rem",
+                          }}
+                        >
+                          Please enter the iJewel Drive model ID to complete this step.
+                        </div>
+                      )}
+
+                      <div className="form-group">
+                        <label className="form-label">iJewel Drive Model ID <span style={{ color: "#dc2626" }}>*</span></label>
+                        <input
+                          type="text"
+                          value={fulfillmentData.model3dId}
                           onChange={(e) =>
                             setFulfillmentData({
                               ...fulfillmentData,
-                              iJewel3DUrl: e.target.value
+                              model3dId: e.target.value
                             })
                           }
                           className="form-input"
-                          placeholder="https://drive.ijewel3d.com/..."
-                          required={fulfillmentData.has3DModel}
+                          placeholder="e.g., RUsrBi-vQey2vExitZOYig"
+                          required
                         />
+                        <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.75rem", color: "#64748b" }}>
+                          Find model ID from iJewel Drive URL: drive.ijewel3d.com/drive/files/<strong>[MODEL_ID]</strong>/...
+                        </p>
                       </div>
 
-                      <div className="checkbox-group">
-                        <label className="checkbox-label">
-                          <input
-                            type="checkbox"
-                            checked={fulfillmentData.hasARTryOn}
-                            onChange={(e) =>
-                              setFulfillmentData({
-                                ...fulfillmentData,
-                                hasARTryOn: e.target.checked
-                              })
-                            }
-                          />
-                          <span className="checkbox-text">AR Try-On Enabled</span>
-                        </label>
-                      </div>
+                    </>
+                  )}
+
+                  {/* Show completion message when "no 3D model" is selected */}
+                  {fulfillmentData.hasModel3d === false && (
+                    <div
+                      style={{
+                        padding: "0.75rem",
+                        backgroundColor: "#dcfce7",
+                        border: "1px solid #22c55e",
+                        borderRadius: "6px",
+                        color: "#166534",
+                        fontSize: "0.875rem",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                      }}
+                    >
+                      <span>✓</span>
+                      <span>3D Model step completed - no 3D model needed.</span>
+                    </div>
+                  )}
+
+                  {/* Show prompt when no choice made yet */}
+                  {fulfillmentData.hasModel3d === null && (
+                    <div
+                      style={{
+                        padding: "0.75rem",
+                        backgroundColor: "#f1f5f9",
+                        border: "1px solid #cbd5e1",
+                        borderRadius: "6px",
+                        color: "#64748b",
+                        fontSize: "0.875rem",
+                      }}
+                    >
+                      Please select an option above to complete this step.
                     </div>
                   )}
                 </div>

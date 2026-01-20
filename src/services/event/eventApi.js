@@ -5,7 +5,7 @@
  */
 import { getSupabaseClient, isSupabaseConfigured } from './supabase';
 import { v4 as uuidv4 } from 'uuid';
-import { calculateNotePositionByOrder } from '../../constants/eventConstants';
+import { calculateNotePositionByOrder } from '@/constants/eventConstants';
 
 // Database table/view names (matching mirror-dmm-mvp)
 const TABLES = {
@@ -85,7 +85,281 @@ function handleDemoTicketValidation(code) {
 // ============================================================
 
 /**
- * Register a new user for the event
+ * Register an OAuth user for the event (Google, Facebook, etc.)
+ * @param {Object} userData - OAuth user data
+ * @param {string} userData.authId - Auth user ID
+ * @param {string} userData.email - User's email
+ * @param {string} userData.displayName - User's display name
+ * @param {string} userData.provider - Auth provider ('google', 'facebook', etc.)
+ * @returns {Object} { success: boolean, user?: object, error?: string }
+ */
+export async function registerOAuthUser(userData) {
+  const { authId, email, displayName, provider } = userData;
+  // Support legacy googleId parameter
+  const finalAuthId = authId || userData.googleId;
+  const isGoogle = provider === 'google' || !provider;
+  const isFacebook = provider === 'facebook';
+
+  // Demo mode
+  if (!isSupabaseConfigured()) {
+    return handleDemoOAuthRegistration(userData);
+  }
+
+  try {
+    const supabase = getSupabaseClient();
+
+    // Check if user already exists based on provider
+    const idColumn = isFacebook ? 'facebook_id' : 'google_id';
+    const { data: existingUser, error: checkError } = await supabase
+      .from(TABLES.users)
+      .select('id, display_name, light_number, email, google_id, facebook_id')
+      .eq(idColumn, finalAuthId)
+      .single();
+
+    if (existingUser && !checkError) {
+      // User already exists, return existing data
+      return {
+        success: true,
+        user: {
+          id: existingUser.id,
+          authId: isFacebook ? existingUser.facebook_id : existingUser.google_id,
+          googleId: existingUser.google_id,
+          facebookId: existingUser.facebook_id,
+          email: existingUser.email,
+          displayName: existingUser.display_name,
+          lightNumber: existingUser.light_number,
+          provider: provider || 'google',
+          createdAt: new Date(),
+        },
+      };
+    }
+
+    // Get next light number
+    const { count } = await supabase
+      .from(TABLES.users)
+      .select('*', { count: 'exact', head: true });
+
+    const lightNumber = (count || 0) + 1;
+
+    // Insert new user with correct ID column based on provider
+    const insertData = {
+      email: email,
+      display_name: displayName.trim(),
+      light_number: lightNumber,
+    };
+
+    // Set the correct ID column based on provider
+    if (isFacebook) {
+      insertData.facebook_id = finalAuthId;
+    } else {
+      insertData.google_id = finalAuthId;
+    }
+
+    const { data: newUser, error: insertError } = await supabase
+      .from(TABLES.users)
+      .insert(insertData)
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error('Insert user error:', insertError);
+      return { success: false, error: 'Không thể đăng ký. Vui lòng thử lại.' };
+    }
+
+    return {
+      success: true,
+      user: {
+        id: newUser.id,
+        authId: isFacebook ? newUser.facebook_id : newUser.google_id,
+        googleId: newUser.google_id,
+        facebookId: newUser.facebook_id,
+        email: newUser.email,
+        displayName: newUser.display_name,
+        lightNumber: newUser.light_number,
+        provider: provider || 'google',
+        createdAt: new Date(newUser.created_at),
+      },
+    };
+  } catch (error) {
+    console.error('OAuth registration error:', error);
+    return { success: false, error: 'Lỗi kết nối. Vui lòng thử lại.' };
+  }
+}
+
+// Legacy alias for backward compatibility
+export const registerGoogleUser = registerOAuthUser;
+
+/**
+ * Update user's display name and mark name as confirmed
+ * @param {string} authId - Auth user ID (google_id or facebook_id)
+ * @param {string} displayName - New display name
+ * @param {string} provider - Auth provider ('google' or 'facebook')
+ * @returns {Object} { success: boolean, error?: string }
+ */
+export async function updateUserDisplayName(authId, displayName, provider = 'google') {
+  // Demo mode
+  if (!isSupabaseConfigured()) {
+    return { success: true, isDemo: true };
+  }
+
+  try {
+    const supabase = getSupabaseClient();
+
+    // Use correct column based on provider
+    const idColumn = provider === 'facebook' ? 'facebook_id' : 'google_id';
+
+    const { data, error } = await supabase
+      .from(TABLES.users)
+      .update({
+        display_name: displayName.trim(),
+        name_confirmed: true,
+      })
+      .eq(idColumn, authId)
+      .select();
+
+    if (error) {
+      console.error('Update display name error:', error);
+      return { success: false, error: 'Không thể cập nhật tên. Vui lòng thử lại.' };
+    }
+
+    // Check if any row was updated
+    if (!data || data.length === 0) {
+      console.error('No rows updated - user not found');
+      return { success: false, error: 'Không tìm thấy user. Vui lòng thử lại.' };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Update display name error:', error);
+    return { success: false, error: 'Lỗi kết nối. Vui lòng thử lại.' };
+  }
+}
+
+/**
+ * Demo mode OAuth registration
+ */
+function handleDemoOAuthRegistration(userData) {
+  const lightNumber = Math.floor(Math.random() * 1000) + 1;
+  const authId = userData.authId || userData.googleId;
+  return {
+    success: true,
+    user: {
+      id: uuidv4(),
+      authId: authId,
+      googleId: authId, // Legacy support
+      email: userData.email,
+      displayName: userData.displayName.trim(),
+      lightNumber,
+      provider: userData.provider || 'google',
+      createdAt: new Date(),
+    },
+    isDemo: true,
+  };
+}
+
+/**
+ * Get user's existing note from Supabase
+ * Used to restore state when user logs in again
+ * @param {string} userId - User ID (from users table)
+ * @returns {Object} { hasNote: boolean, note?: object, user?: object }
+ */
+export async function getUserExistingNote(userId) {
+  if (!isSupabaseConfigured()) {
+    return { hasNote: false };
+  }
+
+  try {
+    const supabase = getSupabaseClient();
+
+    // Get user's note from notes_with_users view
+    const { data: note, error } = await supabase
+      .from(VIEWS.notesWithUsers)
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (error || !note) {
+      return { hasNote: false };
+    }
+
+    return {
+      hasNote: true,
+      note: {
+        id: note.id,
+        diamondShape: note.diamond_shape,
+        pitch: note.pitch,
+        positionX: note.position_x,
+        positionY: note.position_y,
+        createdAt: new Date(note.created_at),
+      },
+      user: {
+        displayName: note.display_name,
+        lightNumber: note.light_number,
+      },
+    };
+  } catch (error) {
+    console.error('Get existing note error:', error);
+    return { hasNote: false };
+  }
+}
+
+/**
+ * Get user by auth ID to check if already registered
+ * @param {string} authId - Auth user ID (google_id or facebook_id)
+ * @param {string} provider - Auth provider ('google' or 'facebook')
+ * @returns {Object} { exists: boolean, user?: object, nameConfirmed?: boolean, hasNote?: boolean, note?: object }
+ */
+export async function checkExistingUser(authId, provider = 'google') {
+  if (!isSupabaseConfigured()) {
+    return { exists: false };
+  }
+
+  try {
+    const supabase = getSupabaseClient();
+
+    // Use correct column based on provider
+    const idColumn = provider === 'facebook' ? 'facebook_id' : 'google_id';
+
+    const { data: user, error } = await supabase
+      .from(TABLES.users)
+      .select('id, display_name, light_number, email, google_id, facebook_id, name_confirmed')
+      .eq(idColumn, authId)
+      .single();
+
+    if (error || !user) {
+      return { exists: false };
+    }
+
+    // Check if user has a note
+    const noteResult = await getUserExistingNote(user.id);
+
+    return {
+      exists: true,
+      user: {
+        id: user.id,
+        authId: provider === 'facebook' ? user.facebook_id : user.google_id,
+        googleId: user.google_id,
+        facebookId: user.facebook_id,
+        email: user.email,
+        displayName: user.display_name,
+        lightNumber: user.light_number,
+        provider: provider,
+      },
+      nameConfirmed: user.name_confirmed || false,
+      hasNote: noteResult.hasNote,
+      note: noteResult.note,
+    };
+  } catch (error) {
+    console.error('Check existing user error:', error);
+    return { exists: false };
+  }
+}
+
+// Legacy alias for backward compatibility
+export const checkExistingGoogleUser = checkExistingUser;
+
+/**
+ * Register a new user for the event (legacy - ticket-based)
  * Uses the claim_ticket RPC function (matching mirror-dmm-mvp)
  * @param {string} ticketCode - The validated ticket code
  * @param {string} displayName - User's display name
@@ -346,6 +620,190 @@ export async function fetchStats() {
     };
   } catch (error) {
     console.error('Fetch stats error:', error);
+    return null;
+  }
+}
+
+/**
+ * Fetch user statistics by auth provider
+ * @returns {Object} { totalUsers, googleUsers, facebookUsers, appleUsers }
+ */
+export async function fetchUserStats() {
+  // Demo mode
+  if (!isSupabaseConfigured()) {
+    return {
+      totalUsers: 150,
+      googleUsers: 80,
+      facebookUsers: 50,
+      appleUsers: 20,
+      isDemo: true,
+    };
+  }
+
+  try {
+    const supabase = getSupabaseClient();
+
+    // Get total users count
+    const { count: totalUsers, error: totalError } = await supabase
+      .from(TABLES.users)
+      .select('*', { count: 'exact', head: true });
+
+    if (totalError) {
+      console.error('Fetch total users error:', totalError);
+      return null;
+    }
+
+    // Get Google users count (users with google_id)
+    const { count: googleUsers, error: googleError } = await supabase
+      .from(TABLES.users)
+      .select('*', { count: 'exact', head: true })
+      .not('google_id', 'is', null);
+
+    // Get Facebook users count (users with facebook_id)
+    const { count: facebookUsers, error: facebookError } = await supabase
+      .from(TABLES.users)
+      .select('*', { count: 'exact', head: true })
+      .not('facebook_id', 'is', null);
+
+    // TODO: Uncomment when apple_id column is added to users table
+    // const { count: appleUsers } = await supabase
+    //   .from(TABLES.users)
+    //   .select('*', { count: 'exact', head: true })
+    //   .not('apple_id', 'is', null);
+
+    return {
+      totalUsers: totalUsers || 0,
+      googleUsers: googleUsers || 0,
+      facebookUsers: facebookUsers || 0,
+      appleUsers: 0, // TODO: Change to appleUsers || 0 when apple_id column exists
+    };
+  } catch (error) {
+    console.error('Fetch user stats error:', error);
+    return null;
+  }
+}
+
+/**
+ * Fetch all users with their details (for admin export)
+ * Query users table and notes table separately, then merge
+ * @returns {Array} Array of user objects with email, provider, displayName, shape
+ */
+export async function fetchAllUsers() {
+  // Demo mode
+  if (!isSupabaseConfigured()) {
+    return {
+      users: [
+        { email: 'user1@gmail.com', provider: 'Google', displayName: 'User 1', shape: 'Heart Shape' },
+        { email: 'user2@facebook.com', provider: 'Facebook', displayName: 'User 2', shape: 'Round Shape' },
+        { email: 'user3@icloud.com', provider: 'Apple', displayName: 'User 3', shape: 'Oval Shape' },
+      ],
+      isDemo: true,
+    };
+  }
+
+  try {
+    const supabase = getSupabaseClient();
+
+    // Query 1: Get all users
+    const { data: users, error: usersError } = await supabase
+      .from(TABLES.users)
+      .select('id, email, display_name, google_id, facebook_id, created_at')
+      .order('created_at', { ascending: true });
+
+    if (usersError) {
+      console.error('Fetch users error:', usersError);
+      return null;
+    }
+
+    // Query 2: Get all notes
+    const { data: notes, error: notesError } = await supabase
+      .from(TABLES.notes)
+      .select('user_id, diamond_shape');
+
+    if (notesError) {
+      console.error('Fetch notes error:', notesError);
+    }
+
+    // Create a map of user_id to shape
+    const userShapeMap = {};
+    if (notes) {
+      notes.forEach((note) => {
+        userShapeMap[note.user_id] = note.diamond_shape;
+      });
+    }
+
+    // Map data to user list format
+    const userList = (users || []).map((user) => {
+      // Determine provider based on available IDs
+      let provider = '';
+      if (user.google_id) provider = 'Google';
+      else if (user.facebook_id) provider = 'Facebook';
+
+      return {
+        email: user.email || '',
+        provider,
+        displayName: user.display_name || '',
+        shape: userShapeMap[user.id] || '',
+      };
+    });
+
+    return { users: userList };
+  } catch (error) {
+    console.error('Fetch all users error:', error);
+    return null;
+  }
+}
+
+/**
+ * Fetch shape selection statistics
+ * @returns {Object} { shapes: { round: count, oval: count, ... }, totalSelections: number }
+ */
+export async function fetchShapeStats() {
+  // Demo mode
+  if (!isSupabaseConfigured()) {
+    return {
+      shapes: {
+        heart: 25,
+        oval: 20,
+        round: 30,
+        pear: 15,
+        asscher: 10,
+        emerald: 12,
+        marquise: 18,
+      },
+      totalSelections: 130,
+      isDemo: true,
+    };
+  }
+
+  try {
+    const supabase = getSupabaseClient();
+
+    // Get all notes to count shapes
+    const { data: notes, error } = await supabase
+      .from(TABLES.notes)
+      .select('diamond_shape');
+
+    if (error) {
+      console.error('Fetch shape stats error:', error);
+      return null;
+    }
+
+    // Count shapes
+    const shapeCounts = {};
+    (notes || []).forEach((note) => {
+      const shape = note.diamond_shape;
+      if (shape) {
+        shapeCounts[shape] = (shapeCounts[shape] || 0) + 1;
+      }
+    });
+
+    return {
+      shapes: shapeCounts,
+      totalSelections: notes?.length || 0,
+    };
+  } catch (error) {
+    console.error('Fetch shape stats error:', error);
     return null;
   }
 }

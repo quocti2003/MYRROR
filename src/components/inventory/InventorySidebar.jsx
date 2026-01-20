@@ -11,6 +11,7 @@ import {
   X,
   Gem,
   ShoppingCart,
+  FileText,
 } from "lucide-react";
 import "./InventorySidebar.css";
 
@@ -28,7 +29,6 @@ const InventorySidebar = () => {
       path: ROUTES.INVENTORY_CREATE_ORDER,
       icon: ShoppingCart,
       label: "Tao don hang",
-      highlight: true,
     },
     {
       path: ROUTES.INVENTORY_SCANNER,
@@ -49,6 +49,11 @@ const InventorySidebar = () => {
       path: ROUTES.INVENTORY_PRINT,
       icon: Printer,
       label: "In label",
+    },
+    {
+      path: ROUTES.INVENTORY_INVOICE,
+      icon: FileText,
+      label: "Hoa don",
     },
   ];
 
@@ -78,9 +83,7 @@ const InventorySidebar = () => {
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `inventory-sidebar-link ${isActive ? "active" : ""} ${
-                  item.highlight ? "highlight" : ""
-                }`
+                `inventory-sidebar-link ${isActive ? "active" : ""}`
               }
               onClick={() => setIsOpen(false)}
             >

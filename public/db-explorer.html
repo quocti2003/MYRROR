@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DB Explorer - Export CSV/XLSX</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+      color: #fff;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .section {
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .section h2 {
+      font-size: 1rem;
+      color: #888;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; }
+    .form-group { flex: 1; min-width: 200px; }
+    label { display: block; margin-bottom: 0.5rem; color: #aaa; font-size: 0.9rem; }
+    select, input, button {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #0a0a0a;
+      color: #fff;
+      font-size: 1rem;
+    }
+    select:focus, input:focus { outline: none; border-color: #667eea; }
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    button:hover { transform: translateY(-2px); opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid #667eea;
+      color: #667eea;
+    }
+    .columns-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.5rem;
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 0.5rem;
+      background: #0a0a0a;
+      border-radius: 8px;
+    }
+    .column-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem;
+      background: #1a1a1a;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .column-item:hover { background: #252525; }
+    .column-item input[type="checkbox"] { width: auto; }
+    .column-item .type { font-size: 0.75rem; color: #666; margin-left: auto; }
+    .computed-list { margin-top: 1rem; }
+    .computed-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      background: #0a0a0a;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+    .computed-item span { flex: 1; font-family: monospace; color: #4ade80; }
+    .btn-remove {
+      background: #ff4444;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.8rem;
+    }
+    .preview-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .preview-table th, .preview-table td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+    .preview-table th { background: #252525; color: #667eea; font-weight: 600; }
+    .preview-table tr:hover td { background: #1f1f1f; }
+    .table-wrapper { overflow-x: auto; max-height: 400px; overflow-y: auto; }
+    .export-buttons { display: flex; gap: 1rem; margin-top: 1rem; }
+    .export-buttons button { flex: 1; }
+    .status { padding: 1rem; border-radius: 8px; margin-top: 1rem; }
+    .status.loading { background: rgba(102, 126, 234, 0.2); color: #667eea; }
+    .status.error { background: rgba(255, 68, 68, 0.2); color: #ff6b6b; }
+    .status.success { background: rgba(74, 222, 128, 0.2); color: #4ade80; }
+    .info { font-size: 0.85rem; color: #666; margin-top: 0.5rem; }
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background: rgba(102, 126, 234, 0.2);
+      color: #667eea;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-left: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>DB Explorer - Export CSV/XLSX</h1>
+
+    <!-- Step 1: Select Database -->
+    <div class="section">
+      <h2>Step 1: Chọn Database</h2>
+      <div class="row">
+        <div class="form-group">
+          <label>Database</label>
+          <select id="dbSelect" onchange="loadTables()">
+            <option value="">-- Chọn database --</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex: 0 0 auto;">
+          <label>&nbsp;</label>
+          <button onclick="loadDatabases()" class="btn-secondary">Refresh</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Select Table -->
+    <div class="section">
+      <h2>Step 2: Chọn Table</h2>
+      <div class="row">
+        <div class="form-group">
+          <label>Table</label>
+          <select id="tableSelect" onchange="loadColumns()" disabled>
+            <option value="">-- Chọn table --</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Select Columns -->
+    <div class="section">
+      <h2>Step 3: Chọn Columns</h2>
+      <div class="row" style="margin-bottom: 1rem;">
+        <button onclick="selectAllColumns()" class="btn-secondary" style="width: auto; padding: 0.5rem 1rem;">Chọn tất cả</button>
+        <button onclick="deselectAllColumns()" class="btn-secondary" style="width: auto; padding: 0.5rem 1rem;">Bỏ chọn tất cả</button>
+      </div>
+      <div class="columns-grid" id="columnsGrid">
+        <p style="color: #666; padding: 1rem;">Chọn database và table trước</p>
+      </div>
+    </div>
+
+    <!-- Step 4: Computed Columns -->
+    <div class="section">
+      <h2>Step 4: Computed Columns (Tùy chọn)</h2>
+      <p class="info">Thêm cột tính toán, ví dụ: qr_url = "https://test-beryl-five-56.vercel.app/p/" + sku</p>
+      <div class="row" style="margin-top: 1rem;">
+        <div class="form-group">
+          <label>Tên cột mới</label>
+          <input type="text" id="computedName" placeholder="vd: qr_url">
+        </div>
+        <div class="form-group">
+          <label>Prefix (chuỗi đầu)</label>
+          <input type="text" id="computedPrefix" placeholder="vd: https://test-beryl-five-56.vercel.app/p/">
+        </div>
+        <div class="form-group">
+          <label>Cột nguồn</label>
+          <select id="computedSource">
+            <option value="">-- Chọn cột --</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex: 0 0 auto;">
+          <label>&nbsp;</label>
+          <button onclick="addComputedColumn()">+ Thêm</button>
+        </div>
+      </div>
+      <div class="computed-list" id="computedList"></div>
+    </div>
+
+    <!-- Step 5: Preview & Export -->
+    <div class="section">
+      <h2>Step 5: Preview & Export</h2>
+      <div class="row">
+        <div class="form-group">
+          <label>Giới hạn dòng preview</label>
+          <input type="number" id="limitInput" value="10" min="1" max="1000">
+        </div>
+        <div class="form-group" style="flex: 0 0 auto;">
+          <label>&nbsp;</label>
+          <button onclick="loadPreview()">Load Preview</button>
+        </div>
+      </div>
+
+      <div id="status"></div>
+
+      <div class="table-wrapper" id="previewWrapper" style="margin-top: 1rem; display: none;">
+        <table class="preview-table" id="previewTable">
+          <thead id="previewHead"></thead>
+          <tbody id="previewBody"></tbody>
+        </table>
+      </div>
+
+      <div class="export-buttons">
+        <button onclick="exportData('csv')" id="btnExportCSV" disabled>Export CSV</button>
+        <button onclick="exportData('xlsx')" id="btnExportXLSX" disabled>Export XLSX</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let currentData = [];
+    let computedColumns = [];
+    let allColumns = [];
+
+    // Load databases on page load
+    document.addEventListener('DOMContentLoaded', loadDatabases);
+
+    async function loadDatabases() {
+      showStatus('loading', 'Đang tải danh sách databases...');
+      try {
+        const res = await fetch('/api/db/databases');
+        const data = await res.json();
+        if (data.success) {
+          const select = document.getElementById('dbSelect');
+          select.innerHTML = '<option value="">-- Chọn database --</option>';
+          data.data.forEach(db => {
+            select.innerHTML += `<option value="${db.name}">${db.name}</option>`;
+          });
+          showStatus('success', `Tìm thấy ${data.data.length} databases`);
+        } else {
+          showStatus('error', data.error);
+        }
+      } catch (err) {
+        showStatus('error', 'Lỗi kết nối: ' + err.message);
+      }
+    }
+
+    async function loadTables() {
+      const db = document.getElementById('dbSelect').value;
+      const tableSelect = document.getElementById('tableSelect');
+
+      if (!db) {
+        tableSelect.disabled = true;
+        tableSelect.innerHTML = '<option value="">-- Chọn table --</option>';
+        return;
+      }
+
+      showStatus('loading', 'Đang tải danh sách tables...');
+      try {
+        const res = await fetch(`/api/db/tables?db=${encodeURIComponent(db)}`);
+        const data = await res.json();
+        if (data.success) {
+          tableSelect.disabled = false;
+          tableSelect.innerHTML = '<option value="">-- Chọn table --</option>';
+          data.data.forEach(t => {
+            tableSelect.innerHTML += `<option value="${t.name}">${t.name}</option>`;
+          });
+          showStatus('success', `Tìm thấy ${data.data.length} tables trong ${db}`);
+        } else {
+          showStatus('error', data.error);
+        }
+      } catch (err) {
+        showStatus('error', 'Lỗi kết nối: ' + err.message);
+      }
+    }
+
+    async function loadColumns() {
+      const db = document.getElementById('dbSelect').value;
+      const table = document.getElementById('tableSelect').value;
+      const grid = document.getElementById('columnsGrid');
+      const sourceSelect = document.getElementById('computedSource');
+
+      if (!db || !table) {
+        grid.innerHTML = '<p style="color: #666; padding: 1rem;">Chọn database và table trước</p>';
+        return;
+      }
+
+      showStatus('loading', 'Đang tải danh sách columns...');
+      try {
+        const res = await fetch(`/api/db/columns?db=${encodeURIComponent(db)}&table=${encodeURIComponent(table)}`);
+        const data = await res.json();
+        if (data.success) {
+          allColumns = data.data;
+          grid.innerHTML = '';
+          sourceSelect.innerHTML = '<option value="">-- Chọn cột --</option>';
+
+          data.data.forEach(col => {
+            grid.innerHTML += `
+              <label class="column-item">
+                <input type="checkbox" value="${col.name}" checked>
+                <span>${col.name}</span>
+                <span class="type">${col.type}</span>
+              </label>
+            `;
+            sourceSelect.innerHTML += `<option value="${col.name}">${col.name}</option>`;
+          });
+          showStatus('success', `Tìm thấy ${data.data.length} columns trong ${table}`);
+        } else {
+          showStatus('error', data.error);
+        }
+      } catch (err) {
+        showStatus('error', 'Lỗi kết nối: ' + err.message);
+      }
+    }
+
+    function selectAllColumns() {
+      document.querySelectorAll('#columnsGrid input[type="checkbox"]').forEach(cb => cb.checked = true);
+    }
+
+    function deselectAllColumns() {
+      document.querySelectorAll('#columnsGrid input[type="checkbox"]').forEach(cb => cb.checked = false);
+    }
+
+    function addComputedColumn() {
+      const name = document.getElementById('computedName').value.trim();
+      const prefix = document.getElementById('computedPrefix').value;
+      const source = document.getElementById('computedSource').value;
+
+      if (!name || !source) {
+        alert('Vui lòng nhập tên cột và chọn cột nguồn');
+        return;
+      }
+
+      computedColumns.push({ name, prefix, source });
+      renderComputedColumns();
+
+      // Clear inputs
+      document.getElementById('computedName').value = '';
+      document.getElementById('computedPrefix').value = '';
+      document.getElementById('computedSource').value = '';
+    }
+
+    function removeComputedColumn(index) {
+      computedColumns.splice(index, 1);
+      renderComputedColumns();
+    }
+
+    function renderComputedColumns() {
+      const list = document.getElementById('computedList');
+      if (computedColumns.length === 0) {
+        list.innerHTML = '';
+        return;
+      }
+      list.innerHTML = computedColumns.map((col, i) => `
+        <div class="computed-item">
+          <span>${col.name} = "${col.prefix}" + ${col.source}</span>
+          <button class="btn-remove" onclick="removeComputedColumn(${i})">Xóa</button>
+        </div>
+      `).join('');
+    }
+
+    async function loadPreview() {
+      const db = document.getElementById('dbSelect').value;
+      const table = document.getElementById('tableSelect').value;
+      const limit = document.getElementById('limitInput').value || 10;
+
+      if (!db || !table) {
+        showStatus('error', 'Vui lòng chọn database và table');
+        return;
+      }
+
+      const selectedColumns = Array.from(document.querySelectorAll('#columnsGrid input[type="checkbox"]:checked'))
+        .map(cb => cb.value);
+
+      if (selectedColumns.length === 0) {
+        showStatus('error', 'Vui lòng chọn ít nhất 1 column');
+        return;
+      }
+
+      showStatus('loading', 'Đang tải dữ liệu...');
+      try {
+        const url = `/api/db/data?db=${encodeURIComponent(db)}&table=${encodeURIComponent(table)}&columns=${selectedColumns.join(',')}&limit=${limit}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.success) {
+          currentData = data.data;
+
+          // Apply computed columns
+          currentData = currentData.map(row => {
+            const newRow = { ...row };
+            computedColumns.forEach(comp => {
+              newRow[comp.name] = (comp.prefix || '') + (row[comp.source] || '');
+            });
+            return newRow;
+          });
+
+          renderPreview(selectedColumns);
+          showStatus('success', `Đã tải ${currentData.length} dòng dữ liệu`);
+          document.getElementById('btnExportCSV').disabled = false;
+          document.getElementById('btnExportXLSX').disabled = false;
+        } else {
+          showStatus('error', data.error);
+        }
+      } catch (err) {
+        showStatus('error', 'Lỗi kết nối: ' + err.message);
+      }
+    }
+
+    function renderPreview(selectedColumns) {
+      const wrapper = document.getElementById('previewWrapper');
+      const head = document.getElementById('previewHead');
+      const body = document.getElementById('previewBody');
+
+      // Get all column names including computed
+      const allCols = [...selectedColumns, ...computedColumns.map(c => c.name)];
+
+      head.innerHTML = '<tr>' + allCols.map(col => `<th>${col}</th>`).join('') + '</tr>';
+      body.innerHTML = currentData.map(row =>
+        '<tr>' + allCols.map(col => `<td>${row[col] ?? ''}</td>`).join('') + '</tr>'
+      ).join('');
+
+      wrapper.style.display = 'block';
+    }
+
+    function exportData(format) {
+      if (currentData.length === 0) {
+        alert('Không có dữ liệu để export');
+        return;
+      }
+
+      const table = document.getElementById('tableSelect').value;
+      const filename = `${table}_export_${new Date().toISOString().slice(0,10)}`;
+
+      if (format === 'csv') {
+        exportCSV(filename);
+      } else {
+        exportXLSX(filename);
+      }
+    }
+
+    function exportCSV(filename) {
+      const selectedColumns = Array.from(document.querySelectorAll('#columnsGrid input[type="checkbox"]:checked'))
+        .map(cb => cb.value);
+      const allCols = [...selectedColumns, ...computedColumns.map(c => c.name)];
+
+      let csv = allCols.join(',') + '\n';
+      currentData.forEach(row => {
+        csv += allCols.map(col => {
+          let val = row[col] ?? '';
+          if (typeof val === 'string' && (val.includes(',') || val.includes('"') || val.includes('\n'))) {
+            val = '"' + val.replace(/"/g, '""') + '"';
+          }
+          return val;
+        }).join(',') + '\n';
+      });
+
+      downloadFile(csv, filename + '.csv', 'text/csv;charset=utf-8;');
+    }
+
+    function exportXLSX(filename) {
+      const selectedColumns = Array.from(document.querySelectorAll('#columnsGrid input[type="checkbox"]:checked'))
+        .map(cb => cb.value);
+      const allCols = [...selectedColumns, ...computedColumns.map(c => c.name)];
+
+      const ws = XLSX.utils.json_to_sheet(currentData, { header: allCols });
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Data');
+      XLSX.writeFile(wb, filename + '.xlsx');
+    }
+
+    function downloadFile(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function showStatus(type, message) {
+      const status = document.getElementById('status');
+      status.className = 'status ' + type;
+      status.textContent = message;
+      status.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

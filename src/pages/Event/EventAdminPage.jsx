@@ -2,32 +2,62 @@
  * EventAdminPage - Admin control panel for event management
  */
 import React, { useEffect, useState } from 'react';
-import {
-  fetchStats,
-  getRecentNotes,
-  importTickets,
-  pickLuckyWinner,
-} from '../../services/event/eventApi';
-import {
-  broadcastLuckyDrawStart,
-  broadcastWinner,
-  broadcastStatsUpdate,
-} from '../../services/event/ably';
-import { ADMIN_PASSWORD, getDiamondConfig } from '../../constants/eventConstants';
-import Logo from '../../components/event/ui/Logo';
-import Diamond from '../../components/event/ui/Diamond';
+import ExcelJS from 'exceljs';
+import { fetchUserStats, fetchShapeStats, fetchAllUsers } from '@services/event/eventApi';
+import { broadcastStatsUpdate } from '@services/event/ably';
+import { ADMIN_PASSWORD } from '@/constants/eventConstants';
+import { getMediaUrl } from '@/utils/cloudflareMediaUtil';
+import Logo from '@components/event/ui/Logo';
 
-import '../../styles/event.css';
+import '@styles/event.css';
+
+// Shape display names (supports both legacy names and h1-h7 IDs)
+const SHAPE_NAMES = {
+  // Legacy names
+  heart: 'Heart Shape',
+  oval: 'Oval Shape',
+  round: 'Round Shape',
+  pear: 'Pear Shape',
+  asscher: 'Asscher Shape',
+  emerald: 'Emerald Shape',
+  marquise: 'Marquise Shape',
+  // New IDs (h1-h7)
+  h1: 'Heart Shape',
+  h2: 'Oval Shape',
+  h3: 'Round Shape',
+  h4: 'Pear Shape',
+  h5: 'Asscher Shape',
+  h6: 'Emerald Shape',
+  h7: 'Marquise Shape',
+};
+
+// Shape images mapping (supports both legacy names and h1-h7 IDs)
+const SHAPE_IMAGES = {
+  // Legacy names
+  heart: 'mirror_DMM/HEART-01.webp',
+  oval: 'mirror_DMM/HEART-02.webp',
+  round: 'mirror_DMM/HEART-03.webp',
+  pear: 'mirror_DMM/HEART-04.webp',
+  asscher: 'mirror_DMM/HEART-05.webp',
+  emerald: 'mirror_DMM/HEART-06.webp',
+  marquise: 'mirror_DMM/HEART-07.webp',
+  // New IDs (h1-h7)
+  h1: 'mirror_DMM/HEART-01.webp',
+  h2: 'mirror_DMM/HEART-02.webp',
+  h3: 'mirror_DMM/HEART-03.webp',
+  h4: 'mirror_DMM/HEART-04.webp',
+  h5: 'mirror_DMM/HEART-05.webp',
+  h6: 'mirror_DMM/HEART-06.webp',
+  h7: 'mirror_DMM/HEART-07.webp',
+};
 
 const EventAdminPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [stats, setStats] = useState(null);
-  const [recentNotes, setRecentNotes] = useState([]);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [lastWinner, setLastWinner] = useState(null);
-  const [csvInput, setCsvInput] = useState('');
-  const [importResult, setImportResult] = useState(null);
+  const [shapeStats, setShapeStats] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [isExporting, setIsExporting] = useState(false);
 
   // Load data on auth
   useEffect(() => {
@@ -40,15 +70,19 @@ const EventAdminPage = () => {
   }, [isAuthenticated]);
 
   const loadData = async () => {
-    const [statsData, notesData] = await Promise.all([fetchStats(), getRecentNotes(50)]);
+    const [statsData, shapeData, usersData] = await Promise.all([
+      fetchUserStats(),
+      fetchShapeStats(),
+      fetchAllUsers(),
+    ]);
     setStats(statsData);
-    setRecentNotes(notesData);
+    setShapeStats(shapeData);
+    setUsers(usersData?.users || []);
 
     // Broadcast stats update
     if (statsData) {
       broadcastStatsUpdate({
-        totalParticipants: statsData.totalParticipants,
-        totalNotes: statsData.totalNotes,
+        totalUsers: statsData.totalUsers,
       });
     }
   };
@@ -62,48 +96,221 @@ const EventAdminPage = () => {
     }
   };
 
-  const handleImportTickets = async () => {
-    if (!csvInput.trim()) return;
-
-    const codes = csvInput
-      .split(/[\n,]/)
-      .map((code) => code.trim())
-      .filter((code) => code.length > 0);
-
-    if (codes.length === 0) {
-      alert('Không có mã vé hợp lệ');
+  const exportToExcel = async () => {
+    if (!stats || !shapeStats) {
+      alert('Chưa có dữ liệu để xuất');
       return;
     }
 
-    const result = await importTickets(codes);
-    setImportResult(result);
-    setCsvInput('');
+    setIsExporting(true);
 
-    if (result.success) {
-      loadData();
-    }
-  };
+    try {
+      // Fetch all users for export
+      const usersData = await fetchAllUsers();
 
-  const handleLuckyDraw = async () => {
-    setIsDrawing(true);
-    setLastWinner(null);
+      // Create workbook
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = 'DMM Event Admin';
+      workbook.created = new Date();
 
-    // Broadcast draw start
-    broadcastLuckyDrawStart();
+      // Style constants
+      const headerFill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF4472C4' },
+      };
+      const headerFont = {
+        bold: true,
+        color: { argb: 'FFFFFFFF' },
+        size: 12,
+      };
+      const titleFont = {
+        bold: true,
+        size: 14,
+        color: { argb: 'FF4472C4' },
+      };
+      const borderStyle = {
+        top: { style: 'thin', color: { argb: 'FF000000' } },
+        left: { style: 'thin', color: { argb: 'FF000000' } },
+        bottom: { style: 'thin', color: { argb: 'FF000000' } },
+        right: { style: 'thin', color: { argb: 'FF000000' } },
+      };
 
-    // Simulate animation delay
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+      // ========== Sheet 1: User Statistics ==========
+      const wsUserStats = workbook.addWorksheet('User Stats');
 
-    // Pick winner
-    const result = await pickLuckyWinner();
+      // Title
+      wsUserStats.mergeCells('A1:B1');
+      wsUserStats.getCell('A1').value = 'THỐNG KÊ NGƯỜI DÙNG';
+      wsUserStats.getCell('A1').font = titleFont;
+      wsUserStats.getCell('A1').alignment = { horizontal: 'center' };
 
-    setIsDrawing(false);
+      // Headers
+      wsUserStats.getCell('A3').value = 'STT';
+      wsUserStats.getCell('B3').value = 'Loại';
+      wsUserStats.getCell('C3').value = 'Số lượng';
+      ['A3', 'B3', 'C3'].forEach((cell) => {
+        wsUserStats.getCell(cell).fill = headerFill;
+        wsUserStats.getCell(cell).font = headerFont;
+        wsUserStats.getCell(cell).border = borderStyle;
+        wsUserStats.getCell(cell).alignment = { horizontal: 'center' };
+      });
 
-    if (result.success) {
-      setLastWinner(result.winner);
-      broadcastWinner(result.winner);
-    } else {
-      alert(result.error || 'Không thể chọn người thắng');
+      // Data
+      const userStatsRows = [
+        ['Tổng người truy cập', stats.totalUsers],
+        ['Đăng nhập Google', stats.googleUsers],
+        ['Đăng nhập Facebook', stats.facebookUsers],
+        ['Đăng nhập Apple', stats.appleUsers],
+      ];
+      userStatsRows.forEach((row, index) => {
+        const rowNum = index + 4;
+        wsUserStats.getCell(`A${rowNum}`).value = index + 1;
+        wsUserStats.getCell(`B${rowNum}`).value = row[0];
+        wsUserStats.getCell(`C${rowNum}`).value = row[1];
+        ['A', 'B', 'C'].forEach((col) => {
+          wsUserStats.getCell(`${col}${rowNum}`).border = borderStyle;
+          wsUserStats.getCell(`${col}${rowNum}`).alignment = { horizontal: 'center' };
+        });
+      });
+
+      wsUserStats.columns = [
+        { width: 8 },
+        { width: 25 },
+        { width: 15 },
+      ];
+
+      // ========== Sheet 2: Shape Statistics ==========
+      const wsShapes = workbook.addWorksheet('Shape Stats');
+
+      // Title
+      wsShapes.mergeCells('A1:C1');
+      wsShapes.getCell('A1').value = 'THỐNG KÊ LƯỢT CHỌN SHAPE';
+      wsShapes.getCell('A1').font = titleFont;
+      wsShapes.getCell('A1').alignment = { horizontal: 'center' };
+
+      // Headers
+      wsShapes.getCell('A3').value = 'STT';
+      wsShapes.getCell('B3').value = 'Shape';
+      wsShapes.getCell('C3').value = 'Số lượt chọn';
+      ['A3', 'B3', 'C3'].forEach((cell) => {
+        wsShapes.getCell(cell).fill = headerFill;
+        wsShapes.getCell(cell).font = headerFont;
+        wsShapes.getCell(cell).border = borderStyle;
+        wsShapes.getCell(cell).alignment = { horizontal: 'center' };
+      });
+
+      // Data
+      const shapeEntries = Object.entries(shapeStats.shapes);
+      shapeEntries.forEach(([shape, count], index) => {
+        const rowNum = index + 4;
+        wsShapes.getCell(`A${rowNum}`).value = index + 1;
+        wsShapes.getCell(`B${rowNum}`).value = SHAPE_NAMES[shape] || shape;
+        wsShapes.getCell(`C${rowNum}`).value = count;
+        ['A', 'B', 'C'].forEach((col) => {
+          wsShapes.getCell(`${col}${rowNum}`).border = borderStyle;
+          wsShapes.getCell(`${col}${rowNum}`).alignment = { horizontal: 'center' };
+        });
+      });
+
+      // Total row
+      const totalRowNum = shapeEntries.length + 4;
+      wsShapes.getCell(`A${totalRowNum}`).value = '';
+      wsShapes.getCell(`B${totalRowNum}`).value = 'TỔNG CỘNG';
+      wsShapes.getCell(`C${totalRowNum}`).value = shapeStats.totalSelections;
+      ['A', 'B', 'C'].forEach((col) => {
+        wsShapes.getCell(`${col}${totalRowNum}`).border = borderStyle;
+        wsShapes.getCell(`${col}${totalRowNum}`).font = { bold: true };
+        wsShapes.getCell(`${col}${totalRowNum}`).fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFFFF2CC' },
+        };
+        wsShapes.getCell(`${col}${totalRowNum}`).alignment = { horizontal: 'center' };
+      });
+
+      wsShapes.columns = [
+        { width: 8 },
+        { width: 20 },
+        { width: 15 },
+      ];
+
+      // ========== Sheet 3: User Details ==========
+      const wsUserDetails = workbook.addWorksheet('User Details');
+      const users = usersData?.users || [];
+
+      // Title
+      wsUserDetails.mergeCells('A1:E1');
+      wsUserDetails.getCell('A1').value = 'DANH SÁCH NGƯỜI DÙNG';
+      wsUserDetails.getCell('A1').font = titleFont;
+      wsUserDetails.getCell('A1').alignment = { horizontal: 'center' };
+
+      // Headers
+      const userHeaders = ['STT', 'Email', 'Phương thức đăng nhập', 'Tên', 'Shape đã chọn'];
+      userHeaders.forEach((header, index) => {
+        const col = String.fromCharCode(65 + index);
+        wsUserDetails.getCell(`${col}3`).value = header;
+        wsUserDetails.getCell(`${col}3`).fill = headerFill;
+        wsUserDetails.getCell(`${col}3`).font = headerFont;
+        wsUserDetails.getCell(`${col}3`).border = borderStyle;
+        wsUserDetails.getCell(`${col}3`).alignment = { horizontal: 'center' };
+      });
+
+      // Data
+      users.forEach((user, index) => {
+        const rowNum = index + 4;
+        wsUserDetails.getCell(`A${rowNum}`).value = index + 1;
+        wsUserDetails.getCell(`B${rowNum}`).value = user.email;
+        wsUserDetails.getCell(`C${rowNum}`).value = user.provider;
+        wsUserDetails.getCell(`D${rowNum}`).value = user.displayName;
+        wsUserDetails.getCell(`E${rowNum}`).value = SHAPE_NAMES[user.shape] || user.shape || 'Chưa chọn';
+
+        ['A', 'B', 'C', 'D', 'E'].forEach((col) => {
+          wsUserDetails.getCell(`${col}${rowNum}`).border = borderStyle;
+          if (col === 'A') {
+            wsUserDetails.getCell(`${col}${rowNum}`).alignment = { horizontal: 'center' };
+          }
+        });
+
+        // Alternate row color
+        if (index % 2 === 1) {
+          ['A', 'B', 'C', 'D', 'E'].forEach((col) => {
+            wsUserDetails.getCell(`${col}${rowNum}`).fill = {
+              type: 'pattern',
+              pattern: 'solid',
+              fgColor: { argb: 'FFF2F2F2' },
+            };
+          });
+        }
+      });
+
+      wsUserDetails.columns = [
+        { width: 8 },
+        { width: 35 },
+        { width: 22 },
+        { width: 25 },
+        { width: 18 },
+      ];
+
+      // Generate filename with timestamp
+      const now = new Date();
+      const timestamp = now.toISOString().slice(0, 10).replace(/-/g, '');
+      const filename = `DMM_Event_Stats_${timestamp}.xlsx`;
+
+      // Download file
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Lỗi khi xuất file Excel');
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -144,139 +351,130 @@ const EventAdminPage = () => {
       </div>
 
       <div className="admin-content">
-        {/* Stats Section */}
+        {/* User Stats Section */}
         <section className="admin-section">
-          <h2>Thống kê</h2>
+          <h2>Thống kê người dùng</h2>
           {stats ? (
             <div className="admin-stats">
               <div className="event-stat-card">
-                <span className="event-stat-value">{stats.totalTickets}</span>
-                <span className="event-stat-label">Tổng vé</span>
+                <span className="event-stat-value">{stats.totalUsers}</span>
+                <span className="event-stat-label">Tổng người truy cập</span>
               </div>
               <div className="event-stat-card">
-                <span className="event-stat-value">{stats.usedTickets}</span>
-                <span className="event-stat-label">Đã sử dụng</span>
+                <span className="event-stat-value">{stats.googleUsers}</span>
+                <span className="event-stat-label">Đăng nhập Google</span>
               </div>
               <div className="event-stat-card">
-                <span className="event-stat-value">{stats.totalParticipants}</span>
-                <span className="event-stat-label">Người tham gia</span>
+                <span className="event-stat-value">{stats.facebookUsers}</span>
+                <span className="event-stat-label">Đăng nhập Facebook</span>
               </div>
               <div className="event-stat-card">
-                <span className="event-stat-value">{stats.totalNotes}</span>
-                <span className="event-stat-label">Nốt nhạc</span>
-              </div>
-              <div className="event-stat-card">
-                <span className="event-stat-value">
-                  {stats.totalTickets > 0
-                    ? Math.round((stats.usedTickets / stats.totalTickets) * 100)
-                    : 0}
-                  %
-                </span>
-                <span className="event-stat-label">Tỷ lệ tham gia</span>
+                <span className="event-stat-value">{stats.appleUsers}</span>
+                <span className="event-stat-label">Đăng nhập Apple</span>
               </div>
             </div>
           ) : (
             <p>Đang tải...</p>
           )}
+        </section>
+
+        {/* Shape Stats Section */}
+        <section className="admin-section">
+          <h2>Thống kê lượt chọn Shape</h2>
+          {shapeStats ? (
+            <>
+              <div className="admin-stats">
+                <div className="event-stat-card">
+                  <span className="event-stat-value">{shapeStats.totalSelections}</span>
+                  <span className="event-stat-label">Tổng lượt chọn</span>
+                </div>
+              </div>
+              <div className="admin-stats shape-stats">
+                {Object.entries(shapeStats.shapes).map(([shape, count]) => (
+                  <div key={shape} className="event-stat-card shape-stat-card">
+                    {SHAPE_IMAGES[shape] && (
+                      <img
+                        src={getMediaUrl(SHAPE_IMAGES[shape])}
+                        alt={SHAPE_NAMES[shape] || shape}
+                        className="admin-shape-img"
+                      />
+                    )}
+                    <span className="event-stat-value">{count}</span>
+                    <span className="event-stat-label">
+                      {SHAPE_NAMES[shape] || shape}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <p>Đang tải...</p>
+          )}
+        </section>
+
+        {/* User Details Section */}
+        <section className="admin-section">
+          <h2>Danh sách người dùng ({users.length})</h2>
+          {users.length > 0 ? (
+            <div className="admin-table-container">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    <th>Email</th>
+                    <th>Phương thức</th>
+                    <th>Tên</th>
+                    <th>Shape đã chọn</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{user.email}</td>
+                      <td>
+                        <span className={`provider-badge provider-${user.provider.toLowerCase()}`}>
+                          {user.provider || '-'}
+                        </span>
+                      </td>
+                      <td>{user.displayName || '-'}</td>
+                      <td>
+                        {user.shape ? (
+                          <div className="shape-cell">
+                            {SHAPE_IMAGES[user.shape] && (
+                              <img
+                                src={getMediaUrl(SHAPE_IMAGES[user.shape])}
+                                alt={SHAPE_NAMES[user.shape] || user.shape}
+                                className="admin-shape-img-small"
+                              />
+                            )}
+                            <span>{SHAPE_NAMES[user.shape] || user.shape}</span>
+                          </div>
+                        ) : (
+                          <span className="no-shape">Chưa chọn</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p>Không có dữ liệu người dùng</p>
+          )}
+        </section>
+
+        <div className="admin-actions">
           <button className="event-btn event-btn--secondary" onClick={loadData}>
             Làm mới
           </button>
-        </section>
-
-        {/* Import Tickets Section */}
-        <section className="admin-section">
-          <h2>Import Vé</h2>
-          <textarea
-            value={csvInput}
-            onChange={(e) => setCsvInput(e.target.value)}
-            placeholder="Nhập mã vé (mỗi dòng một mã hoặc phân cách bằng dấu phẩy)"
-            className="admin-textarea"
-            rows={5}
-          />
-          <button className="event-btn event-btn--primary" onClick={handleImportTickets}>
-            Import
-          </button>
-          {importResult && (
-            <div
-              className={`import-result ${importResult.success ? 'success' : 'error'}`}
-            >
-              {importResult.success
-                ? `Đã import ${importResult.imported} vé (${importResult.duplicates} trùng)`
-                : importResult.error}
-            </div>
-          )}
-        </section>
-
-        {/* Lucky Draw Section */}
-        <section className="admin-section">
-          <h2>Quay Số May Mắn</h2>
           <button
-            className="event-btn event-btn--primary lucky-draw-btn"
-            onClick={handleLuckyDraw}
-            disabled={isDrawing}
+            className="event-btn event-btn--primary"
+            onClick={exportToExcel}
+            disabled={isExporting}
           >
-            {isDrawing ? 'Đang quay...' : 'Bắt đầu quay số'}
+            {isExporting ? 'Đang xuất...' : 'Xuất Excel'}
           </button>
-          {lastWinner && (
-            <div className="last-winner">
-              <h3>Người thắng cuộc:</h3>
-              <div className="winner-display">
-                <Diamond
-                  shape={lastWinner.diamondShape || 'heart'}
-                  size={60}
-                  showGlow
-                />
-                <div className="winner-details">
-                  <p className="winner-light">Ánh sáng #{lastWinner.lightNumber}</p>
-                  <p className="winner-name">{lastWinner.displayName}</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {/* Recent Notes Section */}
-        <section className="admin-section">
-          <h2>Nốt nhạc gần đây</h2>
-          <div className="notes-table-container">
-            <table className="notes-table">
-              <thead>
-                <tr>
-                  <th>Light #</th>
-                  <th>Tên</th>
-                  <th>Kim cương</th>
-                  <th>Nốt</th>
-                  <th>Thời gian</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentNotes.map((note) => (
-                  <tr key={note.id}>
-                    <td>#{note.lightNumber || '-'}</td>
-                    <td>{note.userDisplayName}</td>
-                    <td>
-                      <Diamond shape={note.diamondShape} size={24} />
-                      <span>{getDiamondConfig(note.diamondShape)?.displayNameVi}</span>
-                    </td>
-                    <td>{note.pitch}</td>
-                    <td>{new Date(note.createdAt).toLocaleTimeString('vi-VN')}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Display Screen Link */}
-        <div className="admin-display-link">
-          <a
-            href="/event/display"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="event-btn event-btn--outline"
-          >
-            Mở màn hình lớn →
-          </a>
         </div>
       </div>
     </div>

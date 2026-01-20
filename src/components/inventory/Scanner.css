@@ -171,7 +171,14 @@
 .product-card-sku {
   font-size: 14px;
   color: #666;
+  margin: 0 0 4px 0;
+}
+
+.product-card-barcode {
+  font-size: 13px;
+  color: #888;
   margin: 0 0 16px 0;
+  font-family: monospace;
 }
 
 .product-card-details {
@@ -198,6 +205,12 @@
   color: #1a1a2e;
 }
 
+.detail-value.price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #bc224c;
+}
+
 .status-badge {
   display: inline-block;
   padding: 4px 12px;
@@ -205,6 +218,131 @@
   font-size: 12px;
   font-weight: 500;
   color: #fff;
+}
+
+/* Stock Status Section - MISA */
+.stock-status-section {
+  padding: 16px 20px;
+  border-radius: 12px;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.stock-status-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.stock-status-badge {
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.stock-numbers {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.stock-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stock-label {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.stock-value {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.toggle-branch-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.toggle-branch-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Branch Stocks Table */
+.branch-stocks-table {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.branch-stocks-table h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin: 0 0 12px 0;
+}
+
+.branch-stocks-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.branch-stocks-table th,
+.branch-stocks-table td {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.branch-stocks-table th {
+  background: #fff;
+  font-weight: 600;
+  color: #374151;
+}
+
+.branch-stocks-table td {
+  color: #1a1a2e;
+}
+
+.branch-stocks-table tr:last-child td {
+  border-bottom: none;
+}
+
+.branch-stocks-table td.out-of-stock {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+/* Stock Warning */
+.stock-warning {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  color: #92400e;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
 }
 
 /* Action Buttons */
@@ -383,5 +521,18 @@
 
   .action-btn {
     justify-content: center;
+  }
+
+  .stock-numbers {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .branch-stocks-table {
+    overflow-x: auto;
+  }
+
+  .branch-stocks-table table {
+    min-width: 300px;
   }
 }

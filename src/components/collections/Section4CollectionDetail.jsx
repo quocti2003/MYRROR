@@ -42,7 +42,7 @@ const Section4CollectionDetail = ({
     .map(() => ({
       label: "Lumina",
       images: [
-        "products/allGems/product_card_1.webp",
+        "products/allGems/Product_card_2.webp",
         "products/allGems/model_4.webp",
         "products/allGems/toietmoi-product.webp",
       ],
@@ -226,10 +226,7 @@ const Section4CollectionDetail = ({
           OUR GEMS
         </h1>
         <p className="section4-collection-subtitle bodytext-4--no-margin">
-          Mirror invites you to step into the era of personalized luxury. Each
-          piece is a reflection of your unique style and a signpost to endless
-          possibilities. Every gem has a story, and that story awaits your
-          personal touch to shine.
+          Mirror’s curation of visionary designs - where each piece embodies the essence of future luxury. From bold signatures to refined silhouettes, these are the diamonds reimagined for a new era.
         </p>
       </div>
 

@@ -229,7 +229,7 @@ const Profile = () => {
       setIsLoading(true);
       try {
         // Use local API through gateway
-        const response = await api.get("/api/users/me");
+        const response = await api.get("/api/v1/users/me");
         let userData = response.data;
         if (userData.dateOfBirth) {
           // Convert string to Date object for DatePicker
@@ -279,7 +279,7 @@ const Profile = () => {
     };
 
     try {
-      await api.put("/api/users/me", payload);
+      await api.put("/api/v1/users/me", payload);
       setToast({
         show: true,
         message: "Your changes have been saved successfully!",

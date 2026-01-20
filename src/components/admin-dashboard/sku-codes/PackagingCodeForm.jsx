@@ -15,6 +15,9 @@ const PackagingCodeForm = ({ onCodeGenerated }) => {
     countryOfOrigin: "",
     itemName: "",
     notes: "",
+    // Non-serialized inventory fields (packaging uses shared barcode, quantity-based)
+    stockQuantity: 0,
+    stockLocation: "",
   });
 
   const [result, setResult] = useState(null);
@@ -76,6 +79,8 @@ const PackagingCodeForm = ({ onCodeGenerated }) => {
       countryOfOrigin: "",
       itemName: "",
       notes: "",
+      stockQuantity: 0,
+      stockLocation: "",
     });
     setResult(null);
     setError(null);
@@ -134,14 +139,15 @@ const PackagingCodeForm = ({ onCodeGenerated }) => {
     {
       heading: "What happens after generation",
       items: [
-        "Every successful result is saved with a unique barcode for MISA export.",
-        "You can copy the SKU and barcode from the confirmation card or from the catalog history tab.",
+        "Each product gets a unique barcode that serves as its SKU code.",
+        "The descriptive code (e.g., BOX-MF-LG-NVY) is stored for easy identification.",
+        "Products are saved to the catalog and ready for MISA export.",
       ],
     },
     {
       heading: "Length management",
       items: [
-        "Codes cannot exceed 30 characters. The generator trims trailing segments if needed.",
+        "Descriptive codes cannot exceed 30 characters. The generator trims trailing segments if needed.",
         "If trimming is required, you will see the \"Truncated\" warning in the result card.",
       ],
     },
@@ -327,6 +333,42 @@ const PackagingCodeForm = ({ onCodeGenerated }) => {
           </div>
         </div>
 
+        <div className="form-section">
+          <h3>Product Details (Optional)</h3>
+          <p className="section-description" style={{ fontSize: "0.875rem", color: "#666", marginBottom: "1rem" }}>
+            Set initial stock quantity and storage location for this product.
+          </p>
+          <div className="form-grid">
+            <div className="form-group">
+              <label htmlFor="stockQuantity">Initial Stock Quantity</label>
+              <input
+                type="number"
+                id="stockQuantity"
+                name="stockQuantity"
+                value={formData.stockQuantity}
+                onChange={(e) => setFormData((prev) => ({ ...prev, stockQuantity: parseInt(e.target.value) || 0 }))}
+                min="0"
+                max="100000"
+                placeholder="0"
+              />
+              <span className="hint">Number of units in stock</span>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="stockLocation">Storage Location</label>
+              <input
+                type="text"
+                id="stockLocation"
+                name="stockLocation"
+                value={formData.stockLocation}
+                onChange={handleInputChange}
+                placeholder="e.g., Warehouse A, Shelf B3"
+              />
+              <span className="hint">Where items are stored</span>
+            </div>
+          </div>
+        </div>
+
         <div className="form-actions">
           <button type="submit" className="btn-primary" disabled={loading}>
             {loading ? "Generating..." : "Generate SKU"}
@@ -351,45 +393,61 @@ const PackagingCodeForm = ({ onCodeGenerated }) => {
         <div className="code-result success">
           <div className="result-header">
             <span className="result-icon">✅</span>
-            <h4>Generated SKU</h4>
+            <h4>Product Created</h4>
           </div>
+
+          {/* Descriptive Code (human-readable specs) */}
           <div className="result-code-display">
+            <div style={{ fontSize: "0.75rem", color: "#64748b", marginBottom: "4px" }}>Descriptive Code:</div>
             <code className="generated-code">{result.code}</code>
             <button
               className="btn-copy"
               onClick={() => navigator.clipboard.writeText(result.code)}
             >
-              📋 Copy
+              Copy
             </button>
           </div>
+
+          {/* SKU/Barcode (unique identifier) */}
           {result.barcode && (
-            <div className="result-code-display">
+            <div className="result-code-display" style={{ marginTop: "0.5rem" }}>
+              <div style={{ fontSize: "0.75rem", color: "#64748b", marginBottom: "4px" }}>SKU Code (Barcode):</div>
               <code className="generated-barcode">{result.barcode}</code>
               <button
                 className="btn-copy"
                 onClick={() => navigator.clipboard.writeText(result.barcode)}
               >
-                📋 Copy Barcode
+                Copy
               </button>
             </div>
           )}
+
           <div className="result-details">
             <div className="result-detail-item">
-              <span className="detail-label">Length:</span>
+              <span className="detail-label">Code Length:</span>
               <span className="detail-value">
                 {result.length} / 30 characters
               </span>
             </div>
-            <div className="result-detail-item">
-              <span className="detail-label">Truncated:</span>
-              <span className={`detail-value ${result.truncated ? "warning" : ""}`}>
-                {result.truncated ? "Yes ⚠️" : "No"}
-              </span>
-            </div>
-            <div className="result-detail-item">
-              <span className="detail-label">Description:</span>
-              <span className="detail-value">{result.description}</span>
-            </div>
+            {result.truncated && (
+              <div className="result-detail-item">
+                <span className="detail-label">Truncated:</span>
+                <span className="detail-value warning">Yes</span>
+              </div>
+            )}
+          </div>
+
+          {/* Product saved info */}
+          <div style={{ marginTop: "1rem", padding: "1rem", background: "#f0fdf4", borderRadius: "8px", border: "1px solid #bbf7d0" }}>
+            <p style={{ fontSize: "0.875rem", color: "#16a34a", margin: 0, fontWeight: "500" }}>
+              Product saved with unique barcode identifier.
+              {formData.stockQuantity > 0 && (
+                <span style={{ display: "block", marginTop: "0.5rem", color: "#666", fontWeight: "400" }}>
+                  Initial stock: {formData.stockQuantity} unit(s)
+                  {formData.stockLocation && ` at ${formData.stockLocation}`}
+                </span>
+              )}
+            </p>
           </div>
         </div>
       )}
@@ -409,7 +467,7 @@ const PackagingCodeForm = ({ onCodeGenerated }) => {
             <p>
               Upload a CSV file with required columns: prefix, country_of_origin, <strong>item_name</strong>, and optional columns: material, size, color, type, finish, notes.{" "}
               <a
-                href="/api/sku-codes/templates/packaging"
+                href="/api/skus/templates/packaging"
                 download="packaging_items_template.csv"
                 style={{color: '#007bff', textDecoration: 'underline'}}
               >
@@ -462,7 +520,7 @@ const PackagingCodeForm = ({ onCodeGenerated }) => {
                     </p>
                   )}
                   <p className="bulk-upload-note">
-                    All generated SKUs with unique barcodes are saved in the Generated SKUs tab.
+                    All products with unique barcodes are saved in the Generated SKUs tab.
                   </p>
                 </div>
               )}

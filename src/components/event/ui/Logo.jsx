@@ -2,7 +2,7 @@
  * Event Logo Component
  */
 import React from 'react';
-import { TEXT } from '../../../constants/eventConstants';
+import { TEXT } from '@/constants/eventConstants';
 
 const Logo = ({ size = 'md', className = '' }) => {
   const sizes = {

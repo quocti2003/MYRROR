@@ -209,7 +209,7 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
-      await api.post("/api/auth/forgot-password", { email });
+      await api.post("/api/v1/auth/forgot-password", { email });
       // Don't show message, just proceed to step 2
       setStep(2);
       setResendCountdown(60); // Start countdown
@@ -245,7 +245,7 @@ const ForgotPassword = () => {
     const otpString = otp.join("");
 
     try {
-      const response = await api.post("/api/auth/verify-otp", { email, otp: otpString });
+      const response = await api.post("/api/v1/auth/verify-otp", { email, otp: otpString });
       setResetToken(response.data.resetToken);
       setMessage(response.data.message || "OTP verified successfully");
       setStep(3);
@@ -284,7 +284,7 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
-      const response = await api.post("/api/auth/reset-password", {
+      const response = await api.post("/api/v1/auth/reset-password", {
         resetToken,
         newPassword,
       });
@@ -318,7 +318,7 @@ const ForgotPassword = () => {
     setErrors({});
 
     try {
-      await api.post("/api/auth/resend-password-reset-otp", {
+      await api.post("/api/v1/auth/resend-password-reset-otp", {
         email,
       });
       // Don't show message, just reset countdown

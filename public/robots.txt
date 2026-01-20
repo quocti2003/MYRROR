@@ -1,6 +1,7 @@
+# Temporarily disabled robots.txt
 # robots.txt for mirrorfuturediamond.com
-User-agent: *
-Allow: /
+# User-agent: *
+# Allow: /
 
 # Sitemap location
-Sitemap: https://www.mirrorfuturediamond.com/sitemap.xml
+# Sitemap: https://www.mirrorfuturediamond.com/sitemap.xml

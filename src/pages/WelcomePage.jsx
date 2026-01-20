@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getImageUrl } from "@utils/cloudflareMediaUtil";
 import ScrollDownArrow from "@components/common/button/ScrollDownArrow";
 import ScrollToTopArrow from "@components/common/button/ScrollToTopArrow";
@@ -34,6 +34,9 @@ const WelcomePage = () => {
   }, []);
 
   useEffect(() => {
+    // Set page title
+    document.title = "MIRROR FUTURE DIAMOND | Premium Diamond Jewelry";
+
     // Trigger animation after component mounts
     setTimeout(() => setIsLoaded(true), 100);
   }, []);
@@ -45,21 +48,11 @@ const WelcomePage = () => {
 
       {/* Logo */}
       <div className="welcome-logo">
-        <img src={getImageUrl("welcome/welcome_logo.svg")} alt="Welcome Logo" />
+        <img
+          src={getImageUrl("welcome/welcome_logo.svg")}
+          alt="MIRROR FUTURE DIAMOND"
+        />
       </div>
-
-      {/* Main content */}
-      {/* <div className="welcome-content">
-        <div className="welcome-title-section">
-          <h1 className="welcome-title heading-1--no-margin">Future Diamond</h1>
-        </div>
-
-        <div className="welcome-subtitle-section">
-          <h2 className="welcome-subtitle bodytext-1--no-margin">
-            Is Coming Soon
-          </h2>
-        </div>
-      </div> */}
 
       {/* Bottom text content */}
       <div className="welcome-bottom-text">

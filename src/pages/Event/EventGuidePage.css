@@ -1,0 +1,1620 @@
+/**
+ * EventGuidePage Styles
+ * Landing page for Mirror Diamond Symphony Event
+ */
+
+.event-guide {
+  width: 100%;
+  min-height: 100vh;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow-x: clip;
+}
+
+/* ============================================
+   Hero + Music Combined Section (Sticky Scroll)
+   ============================================ */
+.event-guide__hero-music-wrapper {
+  height: 200vh;
+  position: relative;
+  background: #F6F6F6;
+}
+
+/* Background layers */
+.event-guide__bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height - accounts for mobile address bar */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.event-guide__bg--hero {
+  background-image: url("__CDN_URL__/mirror_DMM/Artboard-6.webp");
+  z-index: 0;
+  opacity: var(--hero-opacity, 1);
+  animation: heroEntranceBg 1.2s ease-out both;
+}
+
+.event-guide__bg--music {
+  background: #F6F6F6;
+  z-index: 1;
+  opacity: var(--music-opacity, 0);
+}
+
+/* Sticky container */
+.event-guide__sticky-container {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height - accounts for mobile address bar */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  overflow: hidden; /* Prevent child elements from causing scroll */
+}
+
+/* Title image - always centered */
+.event-guide__title-wrapper {
+  position: absolute;
+  top: 47%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30vw;
+  z-index: 10;
+}
+
+.event-guide__title-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  animation: heroEntranceSlideUp 0.6s ease-out 0.3s both;
+}
+
+/* Hero content - fades out */
+.event-guide__hero-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  opacity: var(--hero-opacity, 1);
+  transition: opacity 0.3s ease;
+  pointer-events: var(--hero-pointer, auto);
+}
+
+.event-guide__hero-cta {
+  position: absolute;
+  top: 47%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: calc(15vw - 12px);
+  animation: heroEntranceCta 0.6s ease-out 0.5s both;
+}
+
+.event-guide__hero-bottom {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: heroEntranceBottom 0.6s ease-out 0.7s both;
+  pointer-events: none; /* Disable click */
+}
+
+.event-guide__hero-bottom .glass-theme-button {
+  pointer-events: none;
+  cursor: default;
+  animation: heroBottomBounce 2.5s ease-in-out infinite 3s; /* Start bouncing after 3s */
+}
+
+.event-guide__hero-bottom .glass-theme-button:hover {
+  transform: none; /* Disable hover effect */
+}
+
+.event-guide__hero-bottom .glass-theme-btn-icon svg {
+  color: #000;
+}
+
+/* Bounce animation for hero bottom button */
+@keyframes heroBottomBounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Hero entrance animations */
+@keyframes heroEntranceBg {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: var(--hero-opacity, 1);
+  }
+}
+
+@keyframes heroEntranceSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroEntranceCta {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes heroEntranceBottom {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+
+/* Sparkles - Bright star */
+.event-guide__sparkle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0;
+  animation: sparkle-twinkle 2s ease-in-out infinite;
+  box-shadow:
+    0 0 4px 2px rgba(255, 255, 255, 1),
+    0 0 10px 5px rgba(255, 255, 255, 0.9),
+    0 0 20px 10px rgba(255, 255, 255, 0.6),
+    0 0 40px 20px rgba(255, 255, 255, 0.3);
+}
+
+.event-guide__sparkle--1 {
+  top: 55%;
+  left: 25%;
+  animation-delay: 0s;
+}
+
+.event-guide__sparkle--2 {
+  top: 70%;
+  right: 20%;
+  animation-delay: 0.4s;
+}
+
+.event-guide__sparkle--3 {
+  bottom: -5%;
+  left: 40%;
+  animation-delay: 0.8s;
+}
+
+.event-guide__sparkle--4 {
+  top: 80%;
+  left: 15%;
+  animation-delay: 1.2s;
+}
+
+.event-guide__sparkle--5 {
+  bottom: 0%;
+  right: 30%;
+  animation-delay: 1.6s;
+}
+
+@keyframes sparkle-twinkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.event-guide__hero-bottom .glass-theme-btn-icon svg {
+  width: 16px;
+  height: 14px;
+}
+
+.event-guide__hero-left {
+  grid-column: 2 / span 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.event-guide__collab {
+  color: #fff;
+  margin: 0;
+}
+
+.event-guide__collab-sub {
+  color: #fff;
+  margin: 0;
+}
+
+.event-guide__hero-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #F6F6F6;
+}
+
+
+.event-guide__hero-description {
+  grid-column: 9 / span 3;
+  color: #fff;
+  margin: 0;
+  text-align: center;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.event-guide__btn {
+  padding: 0.875rem 2rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.event-guide__btn--outline {
+  background: transparent;
+  border: 1px solid #333;
+  color: #333;
+}
+
+.event-guide__btn--outline:hover {
+  background: #333;
+  color: #fff;
+}
+
+.event-guide__btn--filled {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+}
+
+.event-guide__btn--filled:hover {
+  background: #fff;
+  color: #4A0020;
+}
+
+/* ============================================
+   Music Content (inside sticky container)
+   ============================================ */
+.event-guide__music-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: var(--music-opacity, 0);
+  transition: opacity 0.3s ease;
+  pointer-events: var(--music-pointer, none);
+  z-index: 5;
+}
+
+.event-guide__music-content::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 3468px;
+  height: 3468px;
+  border-radius: 50%;
+  background: radial-gradient(69.15% 50% at 50% 50%, #BC224C 0%, rgba(255, 255, 255, 0.50) 56.25%, rgba(246, 246, 246, 0.00) 100%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.event-guide__music-content .ripple-effect-area {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: visible;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.event-guide__music-label {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.event-guide__music-label--left {
+  left: calc(50% - 15vw - 80px);
+  transform: translate(-100%, -50%);
+  line-height: 1.5 !important;
+}
+
+.event-guide__music-label--right {
+  right: calc(50% - 15vw - 80px);
+  transform: translate(100%, -50%);
+  line-height: 1.5 !important;
+}
+
+.event-guide__music-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: min(calc(15vw + 60px), 20vh);
+  color: #fff;
+  text-align: center;
+}
+
+/* Transition animation - text fades out */
+.event-guide__music-content--transitioning .event-guide__music-label,
+.event-guide__music-content--transitioning .event-guide__music-text {
+  animation: textFadeOut 0.6s ease-out forwards;
+}
+
+@keyframes textFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* ============================================
+   Crossfade Transition
+   ============================================ */
+.event-guide__step1 {
+  position: relative;
+  z-index: 2;
+}
+
+.event-guide__step1--fading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 10;
+  animation: step1FadeOut 0.6s ease-out forwards;
+  /* Solid background to prevent hero flash - music section covers this */
+  background: #F6F6F6;
+  overflow: hidden;
+}
+
+/* Add solid layer IMMEDIATELY to cover hero background */
+.event-guide__step1--fading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  background: #F6F6F6;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* When fading to step 2, hide hero content and show music content */
+.event-guide__step1--fading .event-guide__hero-content {
+  display: none !important;
+}
+
+.event-guide__step1--fading .event-guide__bg--hero {
+  opacity: 0 !important;
+}
+
+.event-guide__step1--fading .event-guide__bg--music {
+  opacity: 1 !important;
+}
+
+.event-guide__step1--fading .event-guide__music-content {
+  opacity: 1 !important;
+}
+
+/* During transition - step 2 stays in normal flow, step 1 covers it */
+.event-guide--transitioning .event-guide__step2 {
+  visibility: visible;
+}
+
+.event-guide__step2--animated {
+  position: relative;
+  z-index: 1;
+}
+
+.event-guide__step2--animated .event-guide__staff-section {
+  animation: step2FadeIn 1.2s ease-out forwards;
+}
+
+.event-guide__step2--animated .event-guide__staff-title {
+  animation: titleFadeIn 1.2s ease-out 0.3s both;
+}
+
+.event-guide__step2--animated .event-guide__staff-line {
+  animation: staffLinesAppear 1s ease-out both;
+}
+
+.event-guide__step2--animated .event-guide__staff-line:nth-child(1) { animation-delay: 0.1s; }
+.event-guide__step2--animated .event-guide__staff-line:nth-child(2) { animation-delay: 0.2s; }
+.event-guide__step2--animated .event-guide__staff-line:nth-child(3) { animation-delay: 0.3s; }
+.event-guide__step2--animated .event-guide__staff-line:nth-child(4) { animation-delay: 0.4s; }
+.event-guide__step2--animated .event-guide__staff-line:nth-child(5) { animation-delay: 0.5s; }
+
+.event-guide__step2--animated .event-guide__staff-note {
+  /* Initial state matches animation 0% to prevent flash before animation applies */
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0);
+  animation: heartGrow 1.2s ease-out 0.4s both;
+}
+
+.event-guide__step2--animated .event-guide__staff-description {
+  animation: titleFadeIn 1s ease-out 0.8s both;
+}
+
+/* Safari fallback: force show elements after animation should complete */
+.event-guide__step2--animation-complete .event-guide__staff-line,
+.event-guide__step2--animation-complete .event-guide__staff-title,
+.event-guide__step2--animation-complete .event-guide__staff-note,
+.event-guide__step2--animation-complete .event-guide__staff-description {
+  opacity: 1 !important;
+  transform: scaleX(1) !important;
+}
+
+.event-guide__step2--animation-complete .event-guide__staff-note {
+  transform: translate(-50%, -50%) scale(1) !important;
+}
+
+@keyframes step1FadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeOutOverlay {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes step2FadeIn {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Step 2 fade out when going back to step 1 */
+.event-guide__step2--fading-out {
+  animation: step2FadeOut 0.6s ease-out forwards !important;
+  pointer-events: none;
+}
+
+@keyframes step2FadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Step 1 fade in when going back from step 2 */
+.event-guide__step1--fading-in {
+  position: relative;
+  z-index: 10;
+  animation: step1FadeIn 0.6s ease-out forwards;
+}
+
+@keyframes step1FadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   Step 2 Styles
+   ============================================ */
+.event-guide__step2 {
+  animation: fadeIn 0.5s ease-out;
+  background: linear-gradient(180deg, #FADEE6 0%, #FFF5F7 30%, #F6F6F6 60%, #FFF 100%);
+  position: relative;
+  overflow: hidden;
+  scroll-margin-top: 0;
+  scroll-snap-align: start;
+}
+
+.event-guide__step2::before {
+  content: '';
+  position: absolute;
+  top: 50vh;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120vmax;
+  height: 150vmax;
+  border-radius: 50%;
+  background: radial-gradient(50% 50% at 50% 50%, #FF87A8 0%, rgba(246, 246, 246, 0.50) 99.99%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Staff lines appearing animation */
+@keyframes staffLinesAppear {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* Heart note grow animation - scale up from center */
+@keyframes heartGrow {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Text fade in */
+@keyframes titleFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Staff Section */
+.event-guide__staff-section {
+  min-height: 100vh;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0rem 2rem 4rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* White gradient overlay on both sides - covers full section */
+/* Fades out from 70% to bottom to blend with avatar section */
+.event-guide__staff-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(270deg, #FFF 0%, rgba(255, 255, 255, 0.00) 15%, rgba(255, 255, 255, 0.00) 85%, #FFF 100%);
+  z-index: 5;
+  pointer-events: none;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  mask:
+    linear-gradient(180deg, black 0%, black 70%, transparent 100%),
+    linear-gradient(90deg, black 0%, transparent 15%, transparent 85%, black 100%);
+  mask-composite: intersect;
+  -webkit-mask:
+    linear-gradient(180deg, black 0%, black 70%, transparent 100%),
+    linear-gradient(90deg, black 0%, transparent 15%, transparent 85%, black 100%);
+  -webkit-mask-composite: source-in;
+}
+
+.event-guide__staff-title {
+  color: #000;
+  text-align: center;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 2;
+}
+
+.event-guide__staff {
+  --staff-gap: 80px;
+  --staff-line-height: 8px;
+  /* height = 5 lines + 4 gaps */
+  --staff-height: calc(5 * var(--staff-line-height) + 4 * var(--staff-gap));
+
+  position: relative;
+  width: 100vw;
+  height: var(--staff-height);
+  z-index: 2;
+}
+
+.event-guide__staff-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--staff-gap);
+  padding: 0;
+}
+
+.event-guide__staff-line {
+  width: 100%;
+  height: 8px;
+  object-fit: cover;
+}
+
+.event-guide__staff-note {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.event-guide__staff-note .ripple-effect-area {
+  overflow: visible;
+}
+
+/* Override ripple size for staff note */
+.event-guide__staff-note .ripple-effect-continuous {
+  animation-name: staffNoteRipple !important;
+  animation-duration: 7000ms !important;
+  animation-timing-function: ease-out !important;
+}
+
+@keyframes staffNoteRipple {
+  0% {
+    width: 80px;
+    height: 80px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.65;
+  }
+  50% {
+    opacity: 0.45;
+  }
+  80% {
+    opacity: 0.2;
+  }
+  100% {
+    width: 750px;
+    height: 750px;
+    opacity: 0;
+  }
+}
+
+.event-guide__staff-heart {
+  width: 120px;
+  height: auto;
+  position: relative;
+  z-index: 2;
+}
+
+.event-guide__staff-description {
+  color: #000;
+  text-align: center;
+  margin-top: 60px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Avatar + Lucky Wrapper for smooth fade transition */
+.event-guide__avatar-lucky-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Dark overlay for fade effect */
+.event-guide__avatar-lucky-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #860710 0%, #250000 100%);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Light phase - overlay hidden */
+.event-guide__avatar-lucky-wrapper--light::before {
+  opacity: 0;
+}
+
+/* Dark phase - overlay visible */
+.event-guide__avatar-lucky-wrapper--dark::before {
+  opacity: 1;
+}
+
+/* Avatar Section with Scattered Cards */
+.event-guide__avatar-section {
+  min-height: 2000px;
+  height: 100vh;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.event-guide__cards-scattered {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.event-guide__card {
+  position: absolute;
+  width: 200px;
+  height: 354px;
+  background: linear-gradient(180deg, #F8A4BB 0%, #F6F6F6 100%);
+  pointer-events: auto;
+  cursor: pointer;
+  overflow: hidden;
+  --rotation: 0deg;
+  transform: rotate(var(--rotation));
+  scale: 1;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+  transition: transform 0.4s ease, scale 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Card hover image overlay - unique image per card */
+.event-guide__card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1;
+}
+
+/* Hover images for each card */
+.event-guide__card--1::before { background-image: url("__CDN_URL__/mirror_DMM/card-01-heart-pose1.webp"); }
+.event-guide__card--2::before { background-image: url("__CDN_URL__/mirror_DMM/card-02-heart-pose2.webp"); }
+.event-guide__card--3::before { background-image: url("__CDN_URL__/mirror_DMM/card-03-heart-pose3.webp"); }
+.event-guide__card--4::before { background-image: url("__CDN_URL__/mirror_DMM/card-04-round-pose1.webp"); }
+.event-guide__card--5::before { background-image: url("__CDN_URL__/mirror_DMM/card-05-round-pose2.webp"); }
+.event-guide__card--6::before { background-image: url("__CDN_URL__/mirror_DMM/card-06-round-pose3.webp"); }
+.event-guide__card--7::before { background-image: url("__CDN_URL__/mirror_DMM/card-07-emerald-pose1.webp"); }
+.event-guide__card--8::before { background-image: url("__CDN_URL__/mirror_DMM/card-08-emerald-pose2.webp"); }
+.event-guide__card--9::before { background-image: url("__CDN_URL__/mirror_DMM/card-09-emerald-pose3.webp"); }
+.event-guide__card--10::before { background-image: url("__CDN_URL__/mirror_DMM/card-10-marquise-pose1.webp"); }
+.event-guide__card--11::before { background-image: url("__CDN_URL__/mirror_DMM/card-11-marquise-pose2.webp"); }
+.event-guide__card--12::before { background-image: url("__CDN_URL__/mirror_DMM/card-12-marquise-pose3.webp"); }
+.event-guide__card--13::before { background-image: url("__CDN_URL__/mirror_DMM/card-13-oval-pose1.webp"); }
+.event-guide__card--14::before { background-image: url("__CDN_URL__/mirror_DMM/card-14-oval-pose2.webp"); }
+.event-guide__card--15::before { background-image: url("__CDN_URL__/mirror_DMM/card-15-oval-pose3.webp"); }
+.event-guide__card--16::before { background-image: url("__CDN_URL__/mirror_DMM/card-16-pear-pose1.webp"); }
+
+
+.event-guide__card:hover,
+.event-guide__card--flipped {
+  transform: rotate(calc(var(--rotation) + 3deg));
+  scale: 1.08;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+  z-index: 10;
+}
+
+.event-guide__card:hover::before,
+.event-guide__card--flipped::before {
+  opacity: 1;
+}
+
+/* Smooth flip animation for mobile auto-flip */
+.event-guide__card--flipped {
+  transition: transform 0.6s ease, scale 0.6s ease, box-shadow 0.6s ease;
+}
+
+.event-guide__card--flipped::before {
+  transition: opacity 0.6s ease;
+}
+
+/* ===== TOP ROW (6 cards) - positioned from center ===== */
+/* Desktop: px values based on 2000px container height */
+.event-guide__card--1 {
+  top: 300px;
+  left: calc(50% - 880px);
+  --rotation: -16deg;
+}
+
+.event-guide__card--2 {
+  top: 100px;
+  left: calc(50% - 550px);
+  --rotation: 3deg;
+}
+
+.event-guide__card--3 {
+  top: 300px;
+  left: calc(50% - 200px);
+  --rotation: -15deg;
+}
+
+.event-guide__card--4 {
+  top: 0px;
+  left: calc(50% + 150px);
+  --rotation: 10deg;
+}
+
+.event-guide__card--5 {
+  top: 300px;
+  left: calc(50% + 650px);
+  --rotation: 3deg;
+}
+
+.event-guide__card--6 {
+  top: 440px;
+  left: calc(50% + 300px);
+  --rotation: 12deg;
+}
+
+/* ===== LEFT SIDE (2 cards) ===== */
+.event-guide__card--7 {
+  top: 860px;
+  left: calc(50% - 820px);
+  --rotation: -4deg;
+}
+
+.event-guide__card--8 {
+  top: 520px;
+  left: calc(50% - 580px);
+  --rotation: 12deg;
+}
+
+/* ===== RIGHT SIDE (2 cards) ===== */
+.event-guide__card--9 {
+  top: 760px;
+  left: calc(50% + 600px);
+  --rotation: -2deg;
+}
+
+.event-guide__card--10 {
+  top: 1200px;
+  left: calc(50% + 300px);
+  --rotation: 15deg;
+}
+
+/* ===== BOTTOM ROW (6 cards) ===== */
+.event-guide__card--11 {
+  top: 1300px;
+  left: calc(50% - 800px);
+  --rotation: -16deg;
+}
+
+.event-guide__card--12 {
+  top: 1100px;
+  left: calc(50% - 520px);
+  --rotation: -15deg;
+}
+
+.event-guide__card--13 {
+  top: 1500px;
+  left: calc(50% - 420px);
+  --rotation: 10deg;
+}
+
+.event-guide__card--14 {
+  top: 1240px;
+  left: calc(50% - 50px);
+  --rotation: -1deg;
+}
+
+.event-guide__card--15 {
+  top: 1600px;
+  left: calc(50% + 200px);
+  --rotation: -8deg;
+}
+
+.event-guide__card--16 {
+  top: 1300px;
+  left: calc(50% + 700px);
+  --rotation: 20deg;
+}
+
+.event-guide__avatar-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  text-align: center;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.event-guide__avatar-title {
+  color: #000;
+  margin-bottom: 2rem;
+}
+
+.event-guide__avatar-text {
+  color: #666;
+  max-width: 460px;
+  margin-bottom: 2rem;
+}
+
+/* Lucky Moment Section */
+.event-guide__lucky-section {
+  height: 100vh;
+  min-height: 900px;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Lucky section content - hidden by default, fade in when dark phase */
+.event-guide__lucky-title,
+.event-guide__lucky-text,
+.event-guide__lucky-btn,
+.event-guide__lucky-stats,
+.event-guide__lucky-ring {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+
+/* Content visible when wrapper is in dark phase */
+.event-guide__avatar-lucky-wrapper--dark .event-guide__lucky-title,
+.event-guide__avatar-lucky-wrapper--dark .event-guide__lucky-text,
+.event-guide__avatar-lucky-wrapper--dark .event-guide__lucky-btn,
+.event-guide__avatar-lucky-wrapper--dark .event-guide__lucky-stats,
+.event-guide__avatar-lucky-wrapper--dark .event-guide__lucky-ring {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger animation delays */
+.event-guide__avatar-lucky-wrapper--dark .event-guide__lucky-title {
+  transition-delay: 0.1s;
+}
+.event-guide__avatar-lucky-wrapper--dark .event-guide__lucky-text {
+  transition-delay: 0.2s;
+}
+.event-guide__avatar-lucky-wrapper--dark .event-guide__lucky-btn {
+  transition-delay: 0.3s;
+}
+.event-guide__avatar-lucky-wrapper--dark .event-guide__lucky-stats {
+  transition-delay: 0.4s;
+}
+.event-guide__avatar-lucky-wrapper--dark .event-guide__lucky-ring {
+  transition-delay: 0.5s;
+}
+
+.event-guide__lucky-title {
+  margin-top: 160px;
+  color: #fff;
+  margin-bottom: 36px;
+  max-width: 638px;
+}
+
+.event-guide__lucky-text {
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 460px;
+  margin-bottom: 36px;
+}
+
+.event-guide__lucky-btn {
+  position: relative;
+  z-index: 100;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+.event-guide__lucky-btn .glass-theme-button {
+  min-width: 180px;
+  justify-content: center;
+}
+
+/* Desktop: show GlassThemeButton, hide UnderlineButtonOpposite */
+.event-guide__lucky-btn-ticket--desktop {
+  display: inline-flex;
+}
+
+.event-guide__lucky-btn-ticket--mobile {
+  display: none;
+}
+
+/* Mobile: hide GlassThemeButton, show UnderlineButtonOpposite */
+@media (max-width: 480px) {
+  .event-guide__lucky-btn {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .event-guide__lucky-btn-ticket--desktop {
+    display: none;
+  }
+
+  .event-guide__lucky-btn-ticket--mobile {
+    display: inline-flex;
+  }
+}
+
+/* Stats row - positioned absolute on sides of ring (desktop) */
+.event-guide__lucky-stats {
+  position: absolute;
+  bottom: 200px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 15%;
+  pointer-events: none;
+}
+
+.event-guide__lucky-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.event-guide__lucky-number {
+  font-family: "Saol Display";
+  font-size: 80px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 100%;
+  color: #fff;
+}
+
+.event-guide__lucky-label {
+  color: #fff;
+  margin-top: 0.5rem;
+}
+
+/* Diamond Ring - at bottom */
+.event-guide__lucky-ring {
+  margin-top: -60px;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.event-guide__lucky-ring-img {
+  width: 943px;
+  height: 1179px;
+  object-fit: contain;
+  display: block;
+  margin-bottom: -50%;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+/* Medium screens - reduce card overlap */
+
+
+
+/* Tablet responsive */
+@media (max-width: 1024px) {
+  .event-guide__bg--hero {
+    background-image: url("__CDN_URL__/mirror_DMM/KV-tablet.webp");
+  }
+
+  .event-guide__title-wrapper {
+    width: 50vw;
+  }
+
+  .event-guide__hero-cta {
+    top: 58%;
+  }
+
+  .event-guide__music-label--left {
+    left: calc(50% - 25vw - 60px);
+  }
+
+  .event-guide__music-label--right {
+    right: calc(50% - 25vw - 60px);
+  }
+
+  .event-guide__music-text {
+    margin-top: min(calc(20vw + 10px), 22vh);
+  }
+
+  .event-guide__staff-note {
+    top: 50% !important; /* Center of dynamic height */
+  }
+
+  .event-guide__avatar-section {
+    min-height: 800px;
+    padding: 0;
+  }
+
+  .event-guide__card {
+    width: 107px;
+    height: 190px;
+  }
+
+  /* Card positions responsive - tablet (use % for top to scale with 800px container) */
+  .event-guide__card--1 { left: calc(50% - 437px); top: 15%; }
+  .event-guide__card--2 { left: calc(50% - 280px); top: 5%; }
+  .event-guide__card--3 { left: calc(50% - 114px); top: 15%; }
+  .event-guide__card--4 { left: calc(50% + 65px); top: 4%; }
+  .event-guide__card--5 { left: calc(50% + 300px); top: 15%; }
+  .event-guide__card--6 { left: calc(50% + 100px); top: 22%; }
+  .event-guide__card--7 { left: calc(50% - 450px); top: 43%; }
+  .event-guide__card--8 { left: calc(50% - 295px); top: 26%; }
+  .event-guide__card--9 { left: calc(50% + 290px); top: 38%; }
+  .event-guide__card--10 { left: calc(50% + 152px); top: 60%; }
+  .event-guide__card--11 { left: calc(50% - 409px); top: 65%; }
+  .event-guide__card--12 { left: calc(50% - 290px); top: 55%; }
+  .event-guide__card--13 { left: calc(50% - 214px); top: 75%; }
+  .event-guide__card--14 { top: 62%; }
+  .event-guide__card--15 { left: calc(50% + 95px); top: 80%; }
+  .event-guide__card--16 { left: calc(50% + 352px); top: 65%; }
+
+  /* Lucky section - use space-between to distribute content */
+  .event-guide__lucky-section {
+    min-height: 800px;
+    justify-content: space-between;
+    padding: 0;
+    position: relative;
+  }
+
+  .event-guide__lucky-title {
+    margin-bottom: 24px;
+    margin-top : 72px;
+  }
+  .event-guide__lucky-text{
+    margin-bottom: 24px;
+  }
+
+  /* Stats row - at top on tablet */
+  .event-guide__lucky-stats {
+    position: static;
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    order: -1; /* Move stats to top */
+    margin-top: 0;
+    margin-bottom: 40px;
+    padding: 0;
+  }
+
+  .event-guide__avatar-lucky-wrapper--dark .event-guide__lucky-stats {
+    transform: none;
+    margin-top: 120px;
+    margin-bottom: 0;
+  }
+
+  /* Ring - flows naturally at bottom with space-between */
+  .event-guide__lucky-ring {
+    position: static;
+    transform: none;
+    margin-top: 0;
+  }
+
+  .event-guide__lucky-ring-img {
+    width: calc(100vw - 180px);
+    height: auto;
+    margin-bottom: -50%;
+  }
+
+  .event-guide__lucky-number {
+    font-size: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .event-guide__bg--hero {
+    background-image: url("__CDN_URL__/mirror_DMM/KV-mobile.webp");
+  }
+   .event-guide__lucky-text{
+    max-width:78%;
+    margin-bottom: 36px;
+  }
+
+  .event-guide__title-wrapper {
+    width: 62vw;
+  }
+
+  .event-guide__lucky-title {
+    margin-bottom: 36px;
+    margin-top : 50px;
+  }
+
+  /* Stack labels above title on mobile */
+  .event-guide__music-label {
+    top: 27%;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    white-space: normal;
+    text-align: center;
+  }
+
+  .event-guide__music-label--left {
+    transform: translateX(-50%);
+  }
+
+  .event-guide__music-label--right {
+    display: none; /* Hide right label, keep only left */
+  }
+
+  .event-guide__music-text {
+    margin-top: min(calc(21vw + 40px), 18vh);
+  }
+
+  .event-guide__avatar-content {
+    width: 78%;
+    max-width: none;
+  }
+
+  .event-guide__card {
+    width: 68px;
+    height: 120px;
+  }
+
+  /* Card positions responsive - mobile (explicit top values for all cards) */
+  .event-guide__card--1 { left: calc(50% - 230px); top: 8%; }
+  .event-guide__card--2 { left: calc(50% - 120px); top: 3%; }
+  .event-guide__card--3 { left: calc(50% - 20px); top: 8%; }
+  .event-guide__card--4 { left: calc(50% + 78px); top: 4%; }
+  .event-guide__card--5 { left: calc(50% + 175px); top: 12%; }
+  .event-guide__card--6 { left: calc(50% - 140px); top: 20%; }
+  .event-guide__card--7 { left: calc(50% + 80px); top: 20%; rotate: 13deg; }
+  .event-guide__card--8 { left: calc(50% + 170px); top: 68%; rotate: 10deg; }
+  .event-guide__card--9 { left: calc(50% + 150px); top: 38%; }
+  .event-guide__card--10 { left: calc(50% - 250px); top: 45%; rotate: -20deg; }
+  .event-guide__card--11 { left: calc(50% - 234px); top: 65%; }
+  .event-guide__card--12 { left: calc(50% - 156px); top: 55%; }
+  .event-guide__card--13 { left: calc(50% + 59px); top: 75%; rotate: -15deg; }
+  .event-guide__card--14 { left: calc(50% - 39px); top: 65%; }
+  .event-guide__card--15 { left: calc(50% + 98px); top: 55%; rotate: 20deg; }
+  .event-guide__card--16 { left: calc(50% - 118px); top: 80%; rotate: -15deg; }
+
+  .event-guide__hero-top {
+    text-align: center;
+  }
+
+  .event-guide__hero-left {
+    grid-column: 1 / span 12;
+  }
+
+  .event-guide__hero-description {
+    grid-column: 1 / span 12;
+  }
+
+  .event-guide__hero-bottom {
+    gap: 24px;
+  }
+
+  .event-guide__hero-right {
+    flex-direction: column;
+  }
+
+  /* Step 2 Responsive */
+  .event-guide__cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .event-guide__staff {
+    --staff-gap: 60px;
+    /* height auto-calculated: 5×8px + 4×60px = 280px */
+  }
+
+  .event-guide__staff-note {
+    top: 50% !important; /* Center of dynamic height */
+  }
+
+  .event-guide__staff-heart {
+    width: 80px;
+  }
+
+  .event-guide__lucky-section {
+    min-height: 700px;
+    justify-content: space-between;
+    padding: 0;
+    position: relative;
+  }
+
+  .event-guide__lucky-stats {
+    gap: 40px;
+    margin-bottom: 24px;
+  }
+
+  .event-guide__lucky-ring {
+    position: static;
+    transform: none;
+  }
+
+  .event-guide__avatar-lucky-wrapper--dark .event-guide__lucky-stats {
+    transform: none;
+    margin-top: 80px;
+  }
+
+  .event-guide__lucky-number {
+    font-size: 2.5rem;
+  }
+
+  /* Ring - zoom video 20% while container stays same size */
+  .event-guide__lucky-ring-img {
+    width: calc(100vw - 48px);
+    height: auto;
+    transform: scale(1.2);
+    margin-bottom: -50%;
+  }
+
+  /* Hide br tags on mobile - let text wrap naturally */
+  .event-guide__lucky-text br,
+  .event-guide__avatar-title br,
+  .event-guide__avatar-text br {
+    display: none;
+  }
+}
+
+/* ============================================
+   Fixed Bottom Arrow (Scroll Down Indicator)
+   ============================================ */
+.event-guide__fixed-bottom {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.event-guide__fixed-bottom-text {
+  color: #000;
+}
+
+.event-guide__fixed-bottom--hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.event-guide__fixed-bottom .glass-theme-button {
+  animation: fixedBottomBounce 2.5s ease-in-out infinite;
+}
+
+.event-guide__fixed-bottom .glass-theme-btn-icon svg {
+  width: 16px;
+  height: 14px;
+  color: #000;
+}
+
+.event-guide__fixed-bottom .glass-theme-button:hover .glass-theme-btn-icon svg {
+  color: #fff;
+}
+
+@keyframes fixedBottomBounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-8px);
+  }
+  60% {
+    transform: translateY(-4px);
+  }
+}
+
+/* ============================================
+   Fixed Scroll Top Container
+   ============================================ */
+.fixed-scroll-top-container {
+  position: fixed;
+  bottom: 24px;
+  right: 2.5%;
+  z-index: 1000;
+  pointer-events: auto;
+  display: flex;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.fixed-scroll-top-container.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.fixed-scroll-top-container .glass-theme-btn-icon svg {
+  width: 16px;
+  height: 13px;
+}
+
+/* Override icon color to black in step 1 (hero section) */
+.event-guide:not(.event-guide--step2) .fixed-scroll-top-container .glass-theme-btn-icon svg {
+  color: #000;
+}
+
+.fixed-scroll-top-container .glass-theme-button:hover .glass-theme-btn-icon svg {
+  color: #fff;
+}
+
+/* ============================================
+   Fixed Sound Button Container
+   Same position as ImmersiveButton
+   ============================================ */
+.fixed-sound-container {
+  position: fixed;
+  bottom: 24px;
+  right: 2.5%;
+  z-index: 1000;
+  pointer-events: auto;
+  display: flex;
+}
+
+/* Sound Wave Icon Styles - Override GlassThemeButton sizing */
+.glass-theme-btn-icon .sound-wave-container {
+  width: 16px;
+  height: 24px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.glass-theme-btn-icon .sound-wave-svg {
+  width: 80px !important;
+  height: 24px !important;
+  display: block;
+  flex-shrink: 0;
+}
+
+.sound-wave-svg.active {
+  animation: wave-flow 2s linear infinite;
+  will-change: transform;
+}
+
+.wave-path-straight {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.wave-path-straight.visible {
+  opacity: 1;
+}
+
+.wave-group {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.wave-group.visible {
+  opacity: 1;
+}
+
+@keyframes wave-flow {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-16.67%);
+  }
+}
+
+@media (max-width: 1024px) {
+  .event-guide__fixed-bottom {
+    bottom: 24px;
+  }
+
+  .fixed-scroll-top-container {
+    bottom: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .fixed-sound-container {
+    bottom: 24px;
+  }
+
+  .glass-theme-btn-icon .sound-wave-container {
+    width: 14px;
+    height: 20px;
+  }
+
+  .glass-theme-btn-icon .sound-wave-svg {
+    width: 70px !important;
+    height: 20px !important;
+  }
+}

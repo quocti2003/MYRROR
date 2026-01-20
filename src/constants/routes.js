@@ -37,6 +37,7 @@ export const ROUTES = {
   PREMIUM: "/premium", // Premium AR Try-On
   PREMIUM_DEV: "/premium-dev", // Premium AR Development
   MESH_INSPECTOR: "/mesh-inspector", // 3D Mesh Inspector Tool
+  DB_EXPLORER: "/db-explorer", // DB Explorer - Export CSV/XLSX
   PRODUCTS_V2: "/7b8e9f0a-3c4d-5e6f-7a8b-9c0d1e2f3a4b",
   PRODUCTS_LEFT: "/4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
   UNIVERSE_FINAL: "/1f2e3d4c-5b6a-7c8d-9e0f-1a2b3c4d5e6f",
@@ -48,10 +49,25 @@ export const ROUTES = {
   DASHBOARD_VENDOR: "/dashboard/vendor",
   DASHBOARD_DESIGNER: "/dashboard/designer",
 
-  // Event routes
-  EVENT: "/event",
-  EVENT_DISPLAY: "/event/display",
-  EVENT_ADMIN: "/event/admin",
+  // Event routes - The Muse of Love
+  EVENT: "/event", // Keep original event route
+  EVENT_GUIDE: "/the-muse-of-love-grown", // Main landing page
+  EVENT_LOGIN: "/the-muse-of-love-grown/login",
+  EVENT_NAME: "/the-muse-of-love-grown/name",
+  EVENT_CHOOSE_SHAPE: "/the-muse-of-love-grown/choose-shape",
+  EVENT_DISPLAY: "/the-muse-of-love-grown/display",
+  EVENT_ADMIN: "/the-muse-of-love-grown/admin",
+  EVENT_CHRISTMAS: "/the-muse-of-love-grown/christmas",
+  EVENT_PLACE_NOTE: "/the-muse-of-love-grown/your-note", // New place note screen (step 1)
+  EVENT_WRITE_MESSAGE: "/the-muse-of-love-grown/your-melody", // Write message screen (step 2)
+  EVENT_CHOOSE_NOTE: "/the-muse-of-love-grown/your-wallpaper", // Your wallpaper screen (step 3)
+  EVENT_CHOOSE_NOTE_V2: "/the-muse-of-love-grown/your-wallpaper-2", // Your wallpaper screen v2 (simplified)
+  EVENT_THANKYOU: "/the-muse-of-love-grown/mirror-thankyou", // Thank you screen (final)
+  EVENT_RING_VIEWER: "/the-muse-of-love-grown/ring-viewer", // Fullscreen 3D ring viewer
+
+  // Interactive experiences
+  BIRTHDAY_CAKE: "/birthday-cake",
+  TEST_NOTES: "/test-notes", // Test page for music notes
 
   // Inventory Management routes
   INVENTORY: "/inventory",
@@ -63,6 +79,7 @@ export const ROUTES = {
   INVENTORY_PRODUCT_EDIT: "/inventory/products/:id/edit",
   INVENTORY_PRINT: "/inventory/print",
   INVENTORY_CREATE_ORDER: "/inventory/create-order",
+  INVENTORY_INVOICE: "/inventory/invoice",
 };
 
 // Helper to get collection detail route with ID

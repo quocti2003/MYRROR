@@ -1,7 +1,7 @@
 .news-hero {
-  height: 56vh;
+  height: 40vh;
   width: 100%;
-  background: linear-gradient(180deg, #bc224c 0%, #f6f6f6 50%);
+  background: radial-gradient(114.53% 100% at 50% 0%, #0B0B0B 0%, #1B0008 10%, #780A28 30%, #BC224C 50%, #F69AB3 70%, #F6F6F6 85%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,19 +14,19 @@
 }
 
 .news-hero-explore {
-  color: rgba(121, 121, 121, 1);
+  color: #ffffff;
   margin-bottom: 12px;
   text-transform: uppercase;
 }
 
 .news-hero-title {
-  color: #000000;
+  color: #ffffff;
   margin: 0 0 5px 0;
   text-transform: uppercase;
 }
 
 .news-hero-subtitle {
-  color: #797979;
+  color: #ffffff;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;

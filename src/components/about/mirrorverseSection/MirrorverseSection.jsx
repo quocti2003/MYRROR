@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import ShineGlassButton from "@components/common/button/ShineGlassButton";
 import GlassThemeButton from "@components/common/button/GlassThemeButton";
 import { MediaVideo } from "@components/common/media";
 import "./MirrorverseSection.css";
@@ -189,7 +190,7 @@ const MirrorverseSection = () => {
 
           {/* Buttons */}
           <div className="mirrorverse-buttons" ref={buttonsRef}>
-            <GlassThemeButton theme="dark">AR Try on</GlassThemeButton>
+            <ShineGlassButton theme="footer">AR Try on</ShineGlassButton>
             <GlassThemeButton theme="spec_dark">
               Immersive Showroom
             </GlassThemeButton>

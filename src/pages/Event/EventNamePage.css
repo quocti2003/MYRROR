@@ -1,0 +1,199 @@
+/**
+ * EventNamePage Styles
+ * Name input page for Mirror Diamond Event
+ */
+
+.event-name {
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* iOS Safari: prevent rubber band scrolling on mobile */
+@media (max-width: 480px) {
+  .event-name {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    min-height: unset;
+    height: 100%;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
+    touch-action: pan-x pan-y;
+  }
+}
+
+/* Background */
+.event-name__bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+}
+
+.event-name__bg::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200%;
+  height: 200%;
+  border-radius: 3468px;
+  background: radial-gradient(69.15% 50% at 50% 50%, #BC224C 0%, rgba(255, 255, 255, 0.50) 56.25%, rgba(246, 246, 246, 0.00) 100%);
+}
+
+/* Main Container - Vertical layout */
+.event-name__main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
+  padding: 0 48px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+}
+
+/* Main Content */
+.event-name__content {
+  text-align: center;
+}
+
+.event-name__greeting {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+}
+
+.event-name__hi,
+.event-name__comma {
+  color: #fff;
+}
+
+.event-name__input-row {
+  display: flex;
+  align-items: baseline;
+}
+
+.event-name__input-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.event-name__input-measure {
+  position: absolute;
+  visibility: hidden;
+  white-space: pre;
+}
+
+.event-name__input {
+  color: #fff;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  padding-bottom: 0.25rem;
+  width: 100%;
+  text-align: center;
+}
+
+.event-name__input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Underline - default mờ */
+.event-name__input-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.25);
+  transition: background 0.2s ease;
+}
+
+/* Underline trắng khi có text */
+.event-name__input:not(:placeholder-shown) ~ .event-name__input-line {
+  background: #fff;
+}
+
+.event-name__subtitle {
+  color: #fff;
+  max-width: 627px;
+  margin: 0 auto;
+}
+
+/* Back Button - Fixed bottom left */
+.event-name__back {
+  position: fixed;
+  left: 2.5%;
+  bottom: 24px;
+  z-index: 1000;
+}
+
+.event-name__back .glass-theme-btn-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Navigation - centered below content */
+.event-name__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  /* Vertical layout for greeting on tablet/mobile */
+  .event-name__greeting {
+    flex-direction: column;
+    gap: 0;
+    align-items: center;
+  }
+
+  .event-name__input-row {
+    justify-content: center;
+  }
+
+  .event-name__input {
+    text-align: center;
+  }
+
+  .event-name__subtitle {
+    margin-top: 0rem;
+    max-width: 46%;
+  }
+}
+
+
+
+@media (max-width: 480px) {
+  .event-name {
+    padding: 0rem;
+  }
+
+  .event-name__main {
+    padding: 0;
+    max-width: 78%;
+  }
+
+  .event-name__subtitle {
+    max-width: 78%;
+  }
+}

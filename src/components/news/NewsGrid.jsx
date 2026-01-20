@@ -5,7 +5,7 @@ import { getNewsDetailRoute } from "@/constants/routes";
 import { MediaImage } from "@components/common/media";
 import "./NewsGrid.css";
 import GlassThemeButton from "@components/common/button/GlassThemeButton";
-import UnderlineButton from "@components/common/button/UnderlineButton";
+import UnderlineButtonOpposite from "@components/common/button/UnderlineButtonOpposite";
 
 const NewsGrid = () => {
   const [visibleItems, setVisibleItems] = useState(999); // Show all items
@@ -190,20 +190,20 @@ const NewsGrid = () => {
                       </h3>
                     </div>
                     {item.slug ? (
-                      <UnderlineButton
+                      <UnderlineButtonOpposite
                         className="news-item-button"
                         textClassName="bodytext-6--no-margin"
                       >
                         Discover
-                      </UnderlineButton>
+                      </UnderlineButtonOpposite>
                     ) : (
-                      <UnderlineButton
+                      <UnderlineButtonOpposite
                         className="news-item-button"
                         textClassName="bodytext-6--no-margin"
                         disabled
                       >
                         Discover
-                      </UnderlineButton>
+                      </UnderlineButtonOpposite>
                     )}
                   </div>
                 </div>

@@ -1,18 +1,47 @@
+/* Page wrapper for AllGemsPage */
+.all-gems-page-wrapper {
+  position: relative;
+  z-index: 100;
+  background: #f6f6f6;
+}
+
 .all-gems-page {
   min-height: 100vh;
   background: #f6f6f6;
-  padding-bottom: 120px;
+  position: relative;
 }
 
 .gems-header {
   text-align: center;
-  height: 56vh;
+  height: 40vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, #000 0%, #bc224c 54.81%, #f6f6f6 100%);
   padding: 0 20px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.gems-header::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  left: -50px;
+  right: -50px;
+  bottom: -50px;
+  background: radial-gradient(
+    114.53% 100% at 50% 0%,
+    #0b0b0b 0%,
+    #1b0008 10%,
+    #780a28 30%,
+    #bc224c 50%,
+    #f69ab3 70%,
+    #f6f6f6 85%
+  );
+  filter: blur(50px);
+  z-index: -1;
 }
 
 .gems-explore {
@@ -23,20 +52,64 @@
 
 .gems-title {
   color: #fff;
-  margin-bottom: 36px !important;
+  margin-bottom: 0px !important;
   margin-top: 0 !important;
 }
 
 .gems-subtitle {
   color: #e0e0e0;
   margin: 0 auto !important;
-  max-width: 600px;
+  max-width: 702px;
+}
+
+/* Layout toggle */
+.gems-layout-toggle {
+  position: absolute;
+  bottom: 24px;
+  right: 2.5%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 2;
+}
+
+.gems-layout-label {
+  color: #797979;
+}
+
+.gems-layout-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #797979;
+  transition: color 0.3s ease;
+  padding: 0;
+}
+
+.gems-layout-btn:hover {
+  color: #000;
+}
+
+.gems-layout-btn.active {
+  color: #000;
 }
 
 .gems-grid-container {
   /* 2.5% margin on each side = 48px at 1920px width */
   /* Gap between items - default for desktop */
-  --gap: 12px;
+  --gap: 0px;
+  background: #f6f6f6;
+  position: relative;
+}
+
+/* Border for product carousel items */
+.gems-grid-container .product-carousel-item {
+  border: 0.5px solid #fff;
+  transition: border 0.3s ease;
+}
+
+.gems-grid-container .product-carousel-item:hover {
+  border: 1px solid #e0e0e0;
 }
 
 .gems-row {
@@ -50,6 +123,40 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--gap);
+}
+
+/* 2 column row */
+.gems-row-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gap);
+}
+
+/* 6 column row */
+.gems-row-6 {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--gap);
+}
+
+/* 6 column row with 2x2 large item */
+.gems-row-6-special {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: 1fr;
+  gap: var(--gap);
+}
+
+/* Large item spanning 2 columns x 2 rows - at start */
+.gem-item-large.gem-item-2x2 {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+/* Large item at end position (columns 5-6, rows 1-2) */
+.gem-item-large.gem-item-2x2-end {
+  grid-column: 5 / 7;
+  grid-row: 1 / 3;
 }
 
 /* 3 column row with 2 regular + 1 large */
@@ -90,14 +197,27 @@
 
 .gem-item {
   position: relative;
-  background: white;
+  background: #f6f6f6;
   overflow: hidden;
   cursor: pointer;
+  border: 0.5px solid #fff;
+  transition: border 0.3s ease;
 }
+
+.gem-item:hover {
+  border: 1px solid #e0e0e0;
+}
+
 
 .gem-item-large {
   grid-column: span 1;
   --parallax-img-offset: 0%;
+  border: 0.5px solid #fff;
+  cursor: default;
+}
+
+.gem-item-large:hover {
+  border: 0.5px solid #fff;
 }
 
 /* Large model images - parallax effect */
@@ -108,7 +228,6 @@
   height: 120%;
   object-fit: cover;
   display: block;
-  will-change: transform;
   transform: translateY(var(--parallax-img-offset));
   transition: none;
 }
@@ -136,6 +255,12 @@
 
 /* Responsive adjustments */
 @media screen and (max-width: 1023px) {
+  .gems-layout-toggle {
+    bottom: 16px;
+    right: 16px;
+    gap: 12px;
+  }
+
   .gems-grid-container {
     --gap: 8px;
   }
@@ -143,6 +268,20 @@
   /* Convert to 2 columns on tablet */
   .gems-row-4 {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* 6 columns becomes 3 on tablet */
+  .gems-row-6 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .gems-row-6-special {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .gem-item-large.gem-item-2x2 {
+    grid-column: span 2;
+    grid-row: span 2;
   }
 
   .gems-row-3,
@@ -165,8 +304,9 @@
   .gem-item-large {
     grid-column: span 2;
   }
-  .gems-header {
+  .gems-header::before {
     background: #f6f6f6;
+    filter: none;
   }
   .gems-explore {
     color: #797979;
@@ -180,7 +320,124 @@
   }
 }
 @media screen and (max-width: 425px) {
+  .gems-layout-toggle {
+    bottom: 12px;
+    right: 12px;
+    gap: 10px;
+  }
+
+  /* 6 columns becomes 2 on mobile */
+  .gems-row-6 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .gems-row-6-special {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .gem-item-large.gem-item-2x2 {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+
   .gems-subtitle {
     max-width: 77%;
   }
+}
+
+/* Loading State */
+.gems-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.gems-loading p {
+  margin-top: 20px;
+  color: #797979;
+  font-size: 16px;
+}
+
+.gems-loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #bc224c;
+  border-radius: 50%;
+  animation: gems-spin 1s linear infinite;
+}
+
+@keyframes gems-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error State */
+.gems-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.gems-error p {
+  color: #dc2626;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.gems-error button {
+  background: #bc224c;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.gems-error button:hover {
+  background: #9a1c3e;
+}
+
+/* Empty State */
+.gems-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.gems-empty p {
+  color: #797979;
+  font-size: 18px;
+}
+
+/* Layout 6 cols - smaller thumbnails and label */
+.gems-grid-container.layout-6-cols .product-carousel-thumbnails {
+  right: 12px;
+  bottom: 12px;
+  gap: 6px;
+}
+
+.gems-grid-container.layout-6-cols .product-carousel-thumbnail {
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+}
+
+.gems-grid-container.layout-6-cols .product-carousel-label {
+  top: 12px;
+  left: 12px;
 }

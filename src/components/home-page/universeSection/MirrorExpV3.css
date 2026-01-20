@@ -1,0 +1,329 @@
+/* MirrorExpV3 - Three.js 3D Universe */
+
+.mirror-exp-v3 {
+  background-color: #000;
+  width: 100%;
+  min-height: 100vh;
+  padding: 80px 0 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Header */
+.mirror-exp-v3__header {
+  text-align: center;
+  color: #797979;
+  margin-bottom: 40px;
+}
+
+/* Slider Container */
+.mirror-exp-v3__slider {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  padding: 0 5%;
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Individual Slide */
+.mirror-exp-v3__slide {
+  text-align: center;
+  max-width: 400px;
+}
+
+.mirror-exp-v3__slide--current {
+  opacity: 1;
+}
+
+.mirror-exp-v3__slide--next {
+  opacity: 0.4;
+}
+
+/* Title - Elegant Serif */
+.mirror-exp-v3__title {
+  font-family: "Saol Display", serif;
+  font-size: clamp(48px, 6vw, 72px);
+  font-weight: 300;
+  font-style: italic;
+  color: #fff;
+  margin: 0 0 20px;
+  line-height: 1.1;
+}
+
+.mirror-exp-v3__title--faded {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Navigation */
+.mirror-exp-v3__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.mirror-exp-v3__nav-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mirror-exp-v3__nav-btn:hover {
+  opacity: 0.7;
+}
+
+.mirror-exp-v3__divider {
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(180deg, transparent, #bc224c, transparent);
+}
+
+.mirror-exp-v3__divider-vertical {
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(180deg, transparent, rgba(188, 34, 76, 0.4), transparent);
+  margin: 0 auto 20px;
+}
+
+/* Description Text */
+.mirror-exp-v3__description {
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.mirror-exp-v3__description--faded {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.mirror-exp-v3__details {
+  color: #797979;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.mirror-exp-v3__details--faded {
+  color: rgba(121, 121, 121, 0.4);
+}
+
+/* Three.js Universe Container */
+.mirror-exp-v3__universe {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  min-height: 500px;
+  margin-top: -40px;
+}
+
+.mirror-exp-v3__universe canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Planet Container - matching V2 structure */
+.mirror-exp-v3__planet {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+}
+
+/* Planet Orb SVG - matching V2 PlanetOrb */
+.mirror-exp-v3__planet-orb {
+  display: block;
+  width: 60px;
+  height: 60px;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.mirror-exp-v3__planet:hover .mirror-exp-v3__planet-orb {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 10px rgba(188, 34, 76, 0.6));
+}
+
+/* Icon Glow - matching V2 */
+.mirror-exp-v3__icon-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow:
+    10px 0 8px 0 #BC224C,
+    -10px 0 8px 0 #BC224C,
+    0 -10px 8px 0 #FFF,
+    0 10px 8px 0 #FFF;
+  pointer-events: none;
+}
+
+/* Planet Icons - overlay on top */
+.mirror-exp-v3__planet-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Icon variations - matching V2 */
+.mirror-exp-v3__planet-icon--heart {
+  background: url("__CDN_URL__/universeSection/heart-senses.webp") transparent 50% / cover no-repeat;
+}
+
+.mirror-exp-v3__planet-icon--circle {
+  background: url("__CDN_URL__/universeSection/circle-presence.webp") transparent 50% / cover no-repeat;
+}
+
+.mirror-exp-v3__planet-icon--droplet {
+  background: url("__CDN_URL__/universeSection/droplet-time.webp") transparent 50% / cover no-repeat;
+}
+
+.mirror-exp-v3__planet-icon--rect {
+  background: url("__CDN_URL__/universeSection/rect-space.webp") transparent 50% / cover no-repeat;
+}
+
+.mirror-exp-v3__planet-icon--diamond::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background: linear-gradient(135deg, #fff 0%, #bc224c 100%);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+.mirror-exp-v3__planet-icon--star::after {
+  content: "";
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  clip-path: polygon(
+    50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%,
+    50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
+  );
+}
+
+/* Center Diamond - matching V2 */
+.mirror-exp-v3__center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.mirror-exp-v3__center-diamond {
+  display: block;
+  width: 71px;
+  height: 70px;
+}
+
+/* Small Dots on Orbits - matching V2 */
+.mirror-exp-v3__small-dot-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.mirror-exp-v3__small-dot {
+  display: block;
+  width: 54px;
+  height: 52px;
+}
+
+/* Responsive - Tablet */
+@media screen and (max-width: 1023px) {
+  .mirror-exp-v3__slider {
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .mirror-exp-v3__slide--next {
+    display: none;
+  }
+
+  .mirror-exp-v3__universe {
+    height: 50vh;
+    min-height: 400px;
+  }
+}
+
+/* Responsive - Mobile */
+@media screen and (max-width: 425px) {
+  .mirror-exp-v3 {
+    padding: 60px 0 0;
+  }
+
+  .mirror-exp-v3__title {
+    font-size: 40px;
+  }
+
+  .mirror-exp-v3__universe {
+    height: 40vh;
+    min-height: 300px;
+  }
+
+  .mirror-exp-v3__center-diamond {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mirror-exp-v3__planet {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mirror-exp-v3__planet-orb {
+    width: 40px;
+    height: 40px;
+  }
+
+  .mirror-exp-v3__small-dot {
+    width: 36px;
+    height: 34px;
+  }
+
+  .mirror-exp-v3__planet-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .mirror-exp-v3__planet-icon--heart::after,
+  .mirror-exp-v3__planet-icon--circle::after,
+  .mirror-exp-v3__planet-icon--rect::after {
+    width: 14px;
+    height: 14px;
+  }
+
+  .mirror-exp-v3__planet-icon--droplet::after {
+    width: 12px;
+    height: 18px;
+  }
+
+  .mirror-exp-v3__planet-icon--diamond::after,
+  .mirror-exp-v3__planet-icon--star::after {
+    width: 12px;
+    height: 12px;
+  }
+}

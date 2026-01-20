@@ -2,17 +2,18 @@
  * EventDisplayPage - Large screen display for venue projection
  */
 import React, { useEffect, useState, useRef } from 'react';
-import { fetchAllNotes } from '../../services/event/eventApi';
+import { fetchAllNotes } from '@services/event/eventApi';
 import {
   subscribeToNotesChannel,
   subscribeToLuckyDrawChannel,
-} from '../../services/event/ably';
-import MusicStaff from '../../components/event/ui/MusicStaff';
-import Diamond from '../../components/event/ui/Diamond';
-import Logo from '../../components/event/ui/Logo';
-import { getDiamondConfig, TEXT } from '../../constants/eventConstants';
+} from '@services/event/ably';
+import MusicStaff from '@components/event/ui/MusicStaff';
+import Diamond from '@components/event/ui/Diamond';
+import Logo from '@components/event/ui/Logo';
+import ChristmasMusicSheet from '@components/event/ui/ChristmasMusicSheet';
+import { getDiamondConfig, TEXT } from '@/constants/eventConstants';
 
-import '../../styles/event.css';
+import '@styles/event.css';
 
 const EventDisplayPage = () => {
   const [notes, setNotes] = useState([]);
@@ -20,6 +21,7 @@ const EventDisplayPage = () => {
   const [showLuckyDraw, setShowLuckyDraw] = useState(false);
   const [winner, setWinner] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [christmasMode, setChristmasMode] = useState(false);
 
   const staffContainerRef = useRef(null);
 
@@ -74,6 +76,66 @@ const EventDisplayPage = () => {
     setWinner(null);
     setIsDrawing(false);
   };
+
+  // Toggle Christmas mode
+  const toggleChristmasMode = () => {
+    setChristmasMode((prev) => !prev);
+  };
+
+  // Christmas mode - full screen music sheet
+  if (christmasMode) {
+    return (
+      <div className="event-display event-display--christmas">
+        <ChristmasMusicSheet
+          autoPlay={false}
+          showTitle={true}
+          onComplete={() => {}}
+        />
+
+        {/* Toggle button */}
+        <button
+          className="christmas-mode-toggle"
+          onClick={toggleChristmasMode}
+        >
+          Quay lại
+        </button>
+
+        {/* Lucky draw overlay */}
+        {showLuckyDraw && (
+          <div className="lucky-draw-overlay" onClick={winner ? closeLuckyDraw : undefined}>
+            <div className="lucky-draw-content">
+              <h2>{TEXT.luckyDrawTitle}</h2>
+
+              {isDrawing && (
+                <div className="lucky-draw-animation">
+                  <div className="spinning-diamond">
+                    <Diamond shape="heart" size={100} showGlow isHighlighted />
+                  </div>
+                  <p>Đang quay số...</p>
+                </div>
+              )}
+
+              {winner && (
+                <div className="lucky-draw-winner">
+                  <h3>{TEXT.luckyDrawWinner}</h3>
+                  <div className="winner-info">
+                    <Diamond
+                      shape={winner.diamondShape || 'heart'}
+                      size={120}
+                      showGlow
+                      isHighlighted
+                    />
+                    <p className="winner-light">Ánh sáng #{winner.lightNumber}</p>
+                    <p className="winner-name">{winner.displayName}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="event-display">
@@ -152,6 +214,14 @@ const EventDisplayPage = () => {
       <div className="event-display__footer">
         <p>{TEXT.tagline}</p>
       </div>
+
+      {/* Christmas mode toggle button */}
+      <button
+        className="christmas-mode-toggle"
+        onClick={toggleChristmasMode}
+      >
+        Nhạc Giáng Sinh
+      </button>
     </div>
   );
 };

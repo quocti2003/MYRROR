@@ -1,19 +1,18 @@
 /**
  * EventPage - Main event page with flow management
- * Flow: ticket -> name -> diamond -> result
+ * Flow: login (Google) -> diamond -> result
  */
 import React, { useEffect } from 'react';
-import useEventStore from '../../store/useEventStore';
-import { isSupabaseConfigured } from '../../services/event/supabase';
-import { subscribeToNotesChannel } from '../../services/event/ably';
+import useEventStore from '@/store/useEventStore';
+import { isSupabaseConfigured } from '@services/event/supabase';
+import { subscribeToNotesChannel } from '@services/event/ably';
 
 // Screens
-import TicketScreen from '../../components/event/screens/TicketScreen';
-import NameScreen from '../../components/event/screens/NameScreen';
-import DiamondSelectionScreen from '../../components/event/screens/DiamondSelectionScreen';
-import ResultScreen from '../../components/event/screens/ResultScreen';
+import GoogleLoginScreen from '@components/event/screens/GoogleLoginScreen';
+import DiamondSelectionScreen from '@components/event/screens/DiamondSelectionScreen';
+import ResultScreen from '@components/event/screens/ResultScreen';
 
-import '../../styles/event.css';
+import '@styles/event.css';
 
 const EventPage = () => {
   const { currentStep, resumeFromPersistedState, setIsDemo, addNote } = useEventStore();
@@ -41,16 +40,14 @@ const EventPage = () => {
   // Render current screen based on step
   const renderScreen = () => {
     switch (currentStep) {
-      case 'ticket':
-        return <TicketScreen />;
-      case 'name':
-        return <NameScreen />;
+      case 'login':
+        return <GoogleLoginScreen />;
       case 'diamond':
         return <DiamondSelectionScreen />;
       case 'result':
         return <ResultScreen />;
       default:
-        return <TicketScreen />;
+        return <GoogleLoginScreen />;
     }
   };
 

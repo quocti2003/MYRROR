@@ -99,7 +99,8 @@ export const AuthProvider = ({ children }) => {
     }
 
     // Only fetch from API if no cache available and not throttled
-    const endpoint = "/api/users/me";
+    // Note: User profile endpoint uses /api/v1/users/* path (merged from user-service)
+    const endpoint = "/api/v1/users/me";
 
     if (!requestThrottle.canMakeRequest(endpoint)) {
       const waitTime = requestThrottle.getTimeUntilNext(endpoint);
@@ -130,7 +131,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await api.post("/api/auth/authenticate", {
+      const response = await api.post("/api/v1/auth/authenticate", {
         username,
         password,
       });

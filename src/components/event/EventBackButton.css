@@ -1,0 +1,37 @@
+/* EventBackButton - Fixed bottom left */
+.event-back-button {
+  position: fixed;
+  left: 2.5%;
+  bottom: 24px;
+  z-index: 1000;
+}
+
+.event-back-button .glass-theme-button {
+  flex-direction: row-reverse;
+  gap: 10px;
+}
+
+.event-back-button .glass-theme-btn-icon svg {
+  width: 20px;
+  height: 16px;
+}
+
+/* Mobile & Tablet */
+@media (max-width: 1024px) {
+  .event-back-button {
+    bottom: 24px;
+  }
+}
+
+/* Mobile - icon only, use padding instead of fixed size */
+@media (max-width: 480px) {
+  .event-back-button .glass-theme-button {
+    width: auto;
+    height: auto;
+    padding: 16px 20px;
+  }
+
+  .event-back-button .glass-theme-btn-icon {
+    padding: 0;
+  }
+}

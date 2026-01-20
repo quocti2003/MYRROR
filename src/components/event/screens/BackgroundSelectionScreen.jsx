@@ -2,9 +2,9 @@
  * BackgroundSelectionScreen - Step 4: Select avatar background and scenery
  */
 import React, { useState } from 'react';
-import { TEXT } from '../../../constants/eventConstants';
+import { TEXT } from '@/constants/eventConstants';
 import { AVATAR_BACKGROUNDS, AVATAR_SCENERIES } from '../ui/AvatarGenerator';
-import useEventStore from '../../../store/useEventStore';
+import useEventStore from '@/store/useEventStore';
 import Logo from '../ui/Logo';
 
 const BackgroundSelectionScreen = () => {
