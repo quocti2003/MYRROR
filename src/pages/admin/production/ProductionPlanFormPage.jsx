@@ -8,6 +8,7 @@ import {
   formatDate,
 } from '@services/productionPlanService';
 import { workflowTemplateAPI, WORKFLOW_TEMPLATE_STATUS } from '@services/workflowTemplateService';
+import api from '@services/api';
 import { PlanStatusBadge, TemplatePreview } from '@components/production';
 import { SkeletonTable } from '@components/admin-dashboard/Skeleton';
 import '@components/production/production.css';
@@ -50,9 +51,12 @@ const ProductionPlanFormPage = () => {
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        // Fetch collection plans
-        const collectionsResponse = await productionPlanAPI.getFilterOptions();
-        setCollections(collectionsResponse.data?.collections || []);
+        // Fetch collection plans (production collection plans, not website collections)
+        const collectionsResponse = await api.get('/api/v1/collection-plans', {
+          params: { size: 100 }
+        });
+        const collectionsData = collectionsResponse.data?.content || [];
+        setCollections(collectionsData);
 
         // Fetch active workflow templates
         const templatesResponse = await workflowTemplateAPI.getAll({ status: WORKFLOW_TEMPLATE_STATUS.ACTIVE });
@@ -315,7 +319,7 @@ const ProductionPlanFormPage = () => {
               <option value="">Select Collection Plan</option>
               {collections.map((col) => (
                 <option key={col.id} value={col.id}>
-                  {col.name} {col.season ? `(${col.season})` : ''}
+                  {col.name} {col.status ? `[${col.status}]` : ''}
                 </option>
               ))}
             </select>

@@ -44,10 +44,11 @@ import { JTRCListPage, JTRCFormPage } from "@pages/admin/jtrc";
 // Workflow Template Pages (Sprint 4)
 import { WorkflowTemplateListPage, WorkflowTemplateFormPage } from "@pages/admin/workflow";
 // Production Plan Pages (Sprint 4)
-import { ProductionPlanListPage, ProductionPlanFormPage } from "@pages/admin/production";
+import { CollectionPlanListPage, CollectionPlanFormPage, ProductionPlanListPage, ProductionPlanFormPage } from "@pages/admin/production";
 // Production Order & Partner Assignment Pages (Sprint 5)
 import ProductionOrderListPage from "@pages/admin/production/ProductionOrderListPage";
 import PartnerAssignmentPage from "@pages/admin/production/PartnerAssignmentPage";
+import ProductionOrderDetailPage from "@pages/admin/production/ProductionOrderDetailPage";
 // Sourcing Reports (Sprint 6)
 import SourcingReportPage from "./SourcingReportPage";
 // Component Tracking (Sprint 8)
@@ -188,6 +189,7 @@ const AdminDashboard = () => {
       children: [
         { id: "jtrc", label: "JTRC Management", type: "tab" },
         { id: "workflow-templates", label: "Workflow Templates", type: "tab" },
+        { id: "collection-plans", label: "Collection Plans", type: "tab" },
         { id: "production-plans", label: "Production Plans", type: "tab" },
         { id: "production-orders", label: "Production Orders", type: "tab" },
         { id: "component-tracking", label: "Component Tracking", type: "tab" },
@@ -297,6 +299,8 @@ const AdminDashboard = () => {
       "jtrc-form": ["PRODUCTION_OPS", "CREATIVE_DESIGN", "ADMIN", "IT_ADMIN"],
       "workflow-templates": ["PRODUCTION_OPS", "ADMIN", "IT_ADMIN"],
       "workflow-template-form": ["PRODUCTION_OPS", "ADMIN", "IT_ADMIN"],
+      "collection-plans": ["PRODUCTION_OPS", "CREATIVE_DESIGN", "CSO", "ADMIN", "IT_ADMIN"],
+      "collection-plan-form": ["PRODUCTION_OPS", "CREATIVE_DESIGN", "CSO", "ADMIN", "IT_ADMIN"],
       "production-plans": ["PRODUCTION_OPS", "CSO", "ADMIN", "IT_ADMIN"],
       "production-plan-form": ["PRODUCTION_OPS", "CSO", "ADMIN", "IT_ADMIN"],
       "production-orders": ["PRODUCTION_OPS", "CSO", "ADMIN", "IT_ADMIN"],
@@ -391,8 +395,10 @@ const AdminDashboard = () => {
   const hiddenTabs = [
     "jtrc-form",
     "workflow-template-form",
+    "collection-plan-form",
     "production-plan-form",
     "partner-assignment",
+    "production-order-detail",
     "label-template-form",
   ];
 
@@ -461,12 +467,18 @@ const AdminDashboard = () => {
         return <WorkflowTemplateListPage />;
       case "workflow-template-form":
         return <WorkflowTemplateFormPage />;
+      case "collection-plans":
+        return <CollectionPlanListPage />;
+      case "collection-plan-form":
+        return <CollectionPlanFormPage />;
       case "production-plans":
         return <ProductionPlanListPage />;
       case "production-plan-form":
         return <ProductionPlanFormPage />;
       case "production-orders":
         return <ProductionOrderListPage />;
+      case "production-order-detail":
+        return <ProductionOrderDetailPage />;
       case "partner-assignment":
         return <PartnerAssignmentPage />;
       case "sourcing-reports":
@@ -598,6 +610,14 @@ const AdminDashboard = () => {
         title: "Workflow Template Form",
         description: "Create or edit workflow template with production stages",
       },
+      "collection-plans": {
+        title: "Collection Plans",
+        description: "Plan jewelry collections with item details, quantities, and cost estimates for production",
+      },
+      "collection-plan-form": {
+        title: "Collection Plan Form",
+        description: "Create or edit a collection plan with production items",
+      },
       "production-plans": {
         title: "Production Plans",
         description: "Manage production plans linking collections to workflow templates",
@@ -609,6 +629,10 @@ const AdminDashboard = () => {
       "production-orders": {
         title: "Production Orders",
         description: "Manage production orders and assign partners to stages",
+      },
+      "production-order-detail": {
+        title: "Production Order Detail",
+        description: "View production order details, stages, and progress",
       },
       "partner-assignment": {
         title: "Partner Assignment",

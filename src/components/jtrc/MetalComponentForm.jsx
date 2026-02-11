@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 import {
-  METAL_TYPES,
-  METAL_PURITIES,
   calculateMetalCost,
   formatVND,
 } from '@services/jtrcService';
@@ -16,6 +14,8 @@ import './jtrc.css';
  * @param {number} props.goldPricePerGram - Current gold price per gram
  * @param {Object} props.errors - Validation errors
  * @param {boolean} props.disabled - Disable form inputs
+ * @param {Array} props.metalTypeOptions - Metal type options from API [{code, name}]
+ * @param {Array} props.metalPurityOptions - Metal purity options from API [{code, name}]
  */
 const MetalComponentForm = ({
   data = {},
@@ -23,6 +23,8 @@ const MetalComponentForm = ({
   goldPricePerGram = 0,
   errors = {},
   disabled = false,
+  metalTypeOptions = [],
+  metalPurityOptions = [],
 }) => {
   const {
     metalType = '',
@@ -76,9 +78,9 @@ const MetalComponentForm = ({
             disabled={disabled}
           >
             <option value="">Select Metal Type</option>
-            {METAL_TYPES.map((type) => (
-              <option key={type.value} value={type.value}>
-                {type.label}
+            {metalTypeOptions.map((type) => (
+              <option key={type.code} value={type.code}>
+                {type.name}
               </option>
             ))}
           </select>
@@ -99,9 +101,9 @@ const MetalComponentForm = ({
             disabled={disabled}
           >
             <option value="">Select Purity</option>
-            {METAL_PURITIES.map((purity) => (
-              <option key={purity.value} value={purity.value}>
-                {purity.label}
+            {metalPurityOptions.map((purity) => (
+              <option key={purity.code} value={purity.code}>
+                {purity.name}
               </option>
             ))}
           </select>

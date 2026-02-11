@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import {
-  STONE_ROLES,
-  STONE_TYPES,
-  STONE_SHAPES,
   COLOR_CATEGORIES,
-  COLOR_GRADES,
-  CLARITY_GRADES,
   calculateStonePrice,
   calculateTotalStoneCost,
   formatVND,
@@ -20,12 +15,22 @@ import './jtrc.css';
  * @param {Function} props.onChange - Handler for data changes
  * @param {Object} props.errors - Validation errors
  * @param {boolean} props.disabled - Disable form inputs
+ * @param {Array} props.stoneRoleOptions - Stone role options from API [{code, name}]
+ * @param {Array} props.stoneTypeOptions - Stone type options from API [{code, name}]
+ * @param {Array} props.stoneShapeOptions - Stone shape options from API [{code, name}]
+ * @param {Array} props.colorGradeOptions - Color grade options from API [{code, name}]
+ * @param {Array} props.clarityGradeOptions - Clarity grade options from API [{code, name}]
  */
 const StoneComponentForm = ({
   stones = [],
   onChange,
   errors = {},
   disabled = false,
+  stoneRoleOptions = [],
+  stoneTypeOptions = [],
+  stoneShapeOptions = [],
+  colorGradeOptions = [],
+  clarityGradeOptions = [],
 }) => {
   const [expandedStones, setExpandedStones] = useState({});
 
@@ -87,8 +92,8 @@ const StoneComponentForm = ({
   const totalStoneCost = calculateTotalStoneCost(stones);
 
   const getRoleLabel = (role) => {
-    const found = STONE_ROLES.find((r) => r.value === role);
-    return found?.label || role || 'Stone';
+    const found = stoneRoleOptions.find((r) => r.code === role);
+    return found?.name || role || 'Stone';
   };
 
   const getStoneError = (index, field) => {
@@ -129,7 +134,7 @@ const StoneComponentForm = ({
                   </span>
                   {stone.stoneType && (
                     <span className="stone-type-label">
-                      {STONE_TYPES.find((t) => t.value === stone.stoneType)?.label}
+                      {stoneTypeOptions.find((t) => t.code === stone.stoneType)?.name || stone.stoneType}
                     </span>
                   )}
                   {stone.caratWeight && (
@@ -171,9 +176,9 @@ const StoneComponentForm = ({
                         disabled={disabled}
                       >
                         <option value="">Select Role</option>
-                        {STONE_ROLES.map((role) => (
-                          <option key={role.value} value={role.value}>
-                            {role.label}
+                        {stoneRoleOptions.map((role) => (
+                          <option key={role.code} value={role.code}>
+                            {role.name}
                           </option>
                         ))}
                       </select>
@@ -191,9 +196,9 @@ const StoneComponentForm = ({
                         disabled={disabled}
                       >
                         <option value="">Select Type</option>
-                        {STONE_TYPES.map((type) => (
-                          <option key={type.value} value={type.value}>
-                            {type.label}
+                        {stoneTypeOptions.map((type) => (
+                          <option key={type.code} value={type.code}>
+                            {type.name}
                           </option>
                         ))}
                       </select>
@@ -224,9 +229,9 @@ const StoneComponentForm = ({
                         disabled={disabled}
                       >
                         <option value="">Select Shape</option>
-                        {STONE_SHAPES.map((shape) => (
-                          <option key={shape.value} value={shape.value}>
-                            {shape.label}
+                        {stoneShapeOptions.map((shape) => (
+                          <option key={shape.code} value={shape.code}>
+                            {shape.name}
                           </option>
                         ))}
                       </select>
@@ -261,9 +266,9 @@ const StoneComponentForm = ({
                           disabled={disabled}
                         >
                           <option value="">Select Grade</option>
-                          {COLOR_GRADES.map((grade) => (
-                            <option key={grade.value} value={grade.value}>
-                              {grade.label}
+                          {colorGradeOptions.map((grade) => (
+                            <option key={grade.code} value={grade.code}>
+                              {grade.name}
                             </option>
                           ))}
                         </select>
@@ -325,9 +330,9 @@ const StoneComponentForm = ({
                         disabled={disabled}
                       >
                         <option value="">Select Clarity</option>
-                        {CLARITY_GRADES.map((grade) => (
-                          <option key={grade.value} value={grade.value}>
-                            {grade.label}
+                        {clarityGradeOptions.map((grade) => (
+                          <option key={grade.code} value={grade.code}>
+                            {grade.name}
                           </option>
                         ))}
                       </select>

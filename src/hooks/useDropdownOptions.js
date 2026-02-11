@@ -3,7 +3,7 @@ import { dropdownConfigAPI } from "@/services/api";
 
 /**
  * Custom hook to fetch and manage dropdown configuration options
- * for SKU generation forms
+ * for SKU generation and JTRC forms
  */
 export const useDropdownOptions = () => {
   const [options, setOptions] = useState({
@@ -15,6 +15,13 @@ export const useDropdownOptions = () => {
     stoneWeights: [],
     sideStones: [],
     countries: [],
+    metalTypes: [],
+    metalPurities: [],
+    stoneTypes: [],
+    stoneRoles: [],
+    colorGrades: [],
+    clarityGrades: [],
+    laborTypes: [],
   });
 
   const [loading, setLoading] = useState(true);
@@ -36,6 +43,13 @@ export const useDropdownOptions = () => {
           stoneWeightsRes,
           sideStonesRes,
           countriesRes,
+          metalTypesRes,
+          metalPuritiesRes,
+          stoneTypesRes,
+          stoneRolesRes,
+          colorGradesRes,
+          clarityGradesRes,
+          laborTypesRes,
         ] = await Promise.all([
           dropdownConfigAPI.getPrefixes(),
           dropdownConfigAPI.getMaterials(),
@@ -45,6 +59,13 @@ export const useDropdownOptions = () => {
           dropdownConfigAPI.getStoneWeights(),
           dropdownConfigAPI.getSideStones(),
           dropdownConfigAPI.getCountries(),
+          dropdownConfigAPI.getMetalTypes(),
+          dropdownConfigAPI.getMetalPurities(),
+          dropdownConfigAPI.getStoneTypes(),
+          dropdownConfigAPI.getStoneRoles(),
+          dropdownConfigAPI.getColorGrades(),
+          dropdownConfigAPI.getClarityGrades(),
+          dropdownConfigAPI.getLaborTypes(),
         ]);
 
         setOptions({
@@ -56,6 +77,13 @@ export const useDropdownOptions = () => {
           stoneWeights: stoneWeightsRes.data || [],
           sideStones: sideStonesRes.data || [],
           countries: countriesRes.data || [],
+          metalTypes: metalTypesRes.data || [],
+          metalPurities: metalPuritiesRes.data || [],
+          stoneTypes: stoneTypesRes.data || [],
+          stoneRoles: stoneRolesRes.data || [],
+          colorGrades: colorGradesRes.data || [],
+          clarityGrades: clarityGradesRes.data || [],
+          laborTypes: laborTypesRes.data || [],
         });
       } catch (err) {
         console.error("Failed to fetch dropdown options:", err);

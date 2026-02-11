@@ -95,7 +95,16 @@ const LabelPrintingPage = () => {
         size: 20,
         search: productSearch,
       });
-      setProducts(response.data.content || response.data || []);
+      const productList = response.data.content || response.data || [];
+      // Debug: Log returned products
+      console.log('=== SEARCH DEBUG ===');
+      console.log('Search results:', productList.map(p => ({
+        id: p.id,
+        skuCode: p.skuCode,
+        barcode: p.barcode,
+        name: p.name || p.itemName
+      })));
+      setProducts(productList);
       setProductTotal(response.data.totalItems || response.data.length || 0);
     } catch (err) {
       console.error('Error searching products:', err);
@@ -105,6 +114,9 @@ const LabelPrintingPage = () => {
   };
 
   const handleProductSelect = (product) => {
+    // Debug: Log product being selected
+    console.log('=== SELECT DEBUG ===');
+    console.log('Product clicked:', { id: product.id, skuCode: product.skuCode, barcode: product.barcode });
     setSelectedProducts((prev) => {
       const exists = prev.find((p) => p.id === product.id);
       if (exists) {
@@ -152,12 +164,27 @@ const LabelPrintingPage = () => {
     setPrintResult(null);
 
     try {
+      // Debug: Log selected products before printing
+      console.log('=== PRINT DEBUG ===');
+      console.log('Selected products FULL:', JSON.stringify(selectedProducts.map(p => ({
+        id: p.id,
+        skuCode: p.skuCode,
+        barcode: p.barcode,
+        descriptiveCode: p.descriptiveCode,
+        name: p.name || p.itemName
+      })), null, 2));
+      console.log('Product IDs being sent:', selectedProducts.map(p => p.id));
+
       // First, render the labels
       const renderResponse = await labelAPI.renderBatch({
         templateId: selectedTemplate.id,
         productIds: selectedProducts.map((p) => p.id),
         quantityPerProduct,
       });
+
+      // Debug: Log the render response
+      console.log('Render response products:', JSON.stringify(renderResponse.data.products, null, 2));
+      console.log('Rendered ZPL:', renderResponse.data.renderedZpl);
 
       const renderedZpl = renderResponse.data.renderedZpl;
 

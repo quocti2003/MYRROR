@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import {
   jtrcAPI,
   JTRC_STATUS,
-  PRODUCT_CATEGORIES,
   formatVND,
 } from '@services/jtrcService';
+import { useDropdownOptions } from '@hooks/useDropdownOptions';
 import { JTRCStatusBadge } from '@components/jtrc';
 import AdminTable, { TableActions, ActionButton } from '@components/admin-dashboard/AdminTable';
 import { SkeletonStatsGrid } from '@components/admin-dashboard/Skeleton';
@@ -17,6 +17,7 @@ import '@components/jtrc/jtrc.css';
  */
 const JTRCListPage = () => {
   const navigate = useNavigate();
+  const { options: dropdownOptions } = useDropdownOptions();
 
   // State
   const [jtrcList, setJtrcList] = useState([]);
@@ -223,8 +224,8 @@ const JTRCListPage = () => {
         header: 'Category',
         sortable: true,
         render: (value) => {
-          const cat = PRODUCT_CATEGORIES.find((c) => c.value === value);
-          return cat?.label || value || '-';
+          const cat = dropdownOptions.prefixes?.find((c) => c.code === value);
+          return cat?.name || value || '-';
         },
       },
       {
@@ -277,7 +278,7 @@ const JTRCListPage = () => {
         ),
       },
     ],
-    []
+    [dropdownOptions.prefixes]
   );
 
   // Status options for filter
@@ -351,9 +352,9 @@ const JTRCListPage = () => {
             onChange={(e) => handleFilterChange('category', e.target.value)}
           >
             <option value="">All Categories</option>
-            {PRODUCT_CATEGORIES.map((cat) => (
-              <option key={cat.value} value={cat.value}>
-                {cat.label}
+            {(dropdownOptions.prefixes || []).map((cat) => (
+              <option key={cat.code} value={cat.code}>
+                {cat.name}
               </option>
             ))}
           </select>

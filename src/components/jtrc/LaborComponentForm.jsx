@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  LABOR_TYPES,
   calculateTotalLaborCost,
   formatVND,
 } from '@services/jtrcService';
@@ -14,12 +13,14 @@ import './jtrc.css';
  * @param {Function} props.onChange - Handler for data changes
  * @param {Object} props.errors - Validation errors
  * @param {boolean} props.disabled - Disable form inputs
+ * @param {Array} props.laborTypeOptions - Labor type options from API [{code, name}]
  */
 const LaborComponentForm = ({
   laborItems = [],
   onChange,
   errors = {},
   disabled = false,
+  laborTypeOptions = [],
 }) => {
   const addLaborItem = () => {
     const newItem = {
@@ -91,9 +92,9 @@ const LaborComponentForm = ({
                       disabled={disabled}
                     >
                       <option value="">Select Type</option>
-                      {LABOR_TYPES.map((type) => (
-                        <option key={type.value} value={type.value}>
-                          {type.label}
+                      {laborTypeOptions.map((type) => (
+                        <option key={type.code} value={type.code}>
+                          {type.name}
                         </option>
                       ))}
                     </select>

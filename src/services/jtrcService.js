@@ -132,93 +132,11 @@ export const JTRC_STATUS_CONFIG = {
   ARCHIVED: { bg: '#f1f5f9', color: '#475569', label: 'Archived' },
 };
 
-export const METAL_TYPES = [
-  { value: 'YELLOW_GOLD', label: 'Yellow Gold' },
-  { value: 'WHITE_GOLD', label: 'White Gold' },
-  { value: 'ROSE_GOLD', label: 'Rose Gold' },
-  { value: 'PLATINUM', label: 'Platinum' },
-  { value: 'SILVER', label: 'Silver' },
-];
-
-export const METAL_PURITIES = [
-  { value: '24K', label: '24K (99.9%)' },
-  { value: '22K', label: '22K (91.6%)' },
-  { value: '18K', label: '18K (75%)' },
-  { value: '14K', label: '14K (58.3%)' },
-  { value: '10K', label: '10K (41.7%)' },
-  { value: '950PT', label: '950 Platinum' },
-  { value: '900PT', label: '900 Platinum' },
-  { value: '925S', label: '925 Sterling Silver' },
-];
-
-export const STONE_ROLES = [
-  { value: 'MAIN', label: 'Main Stone' },
-  { value: 'SIDE', label: 'Side Stone' },
-  { value: 'ACCENT', label: 'Accent/Melee' },
-  { value: 'HALO', label: 'Halo' },
-  { value: 'PAVÉ', label: 'Pave' },
-];
-
-export const STONE_TYPES = [
-  { value: 'LAB_DIAMOND', label: 'Lab Diamond' },
-  { value: 'NATURAL_DIAMOND', label: 'Natural Diamond' },
-  { value: 'MOISSANITE', label: 'Moissanite' },
-  { value: 'RUBY', label: 'Ruby' },
-  { value: 'SAPPHIRE', label: 'Sapphire' },
-  { value: 'EMERALD', label: 'Emerald' },
-  { value: 'OTHER', label: 'Other' },
-];
-
-export const STONE_SHAPES = [
-  { value: 'ROUND', label: 'Round Brilliant' },
-  { value: 'PRINCESS', label: 'Princess' },
-  { value: 'CUSHION', label: 'Cushion' },
-  { value: 'OVAL', label: 'Oval' },
-  { value: 'EMERALD_CUT', label: 'Emerald Cut' },
-  { value: 'PEAR', label: 'Pear' },
-  { value: 'MARQUISE', label: 'Marquise' },
-  { value: 'RADIANT', label: 'Radiant' },
-  { value: 'ASSCHER', label: 'Asscher' },
-  { value: 'HEART', label: 'Heart' },
-];
-
+// Color categories: local constant (3 values, drives conditional UI rendering)
 export const COLOR_CATEGORIES = [
   { value: 'COLORLESS', label: 'Colorless' },
   { value: 'FANCY_COLOR', label: 'Fancy Color' },
   { value: 'COLOR_STONE', label: 'Color Stone' },
-];
-
-export const COLOR_GRADES = [
-  { value: 'D', label: 'D' },
-  { value: 'E', label: 'E' },
-  { value: 'F', label: 'F' },
-  { value: 'G', label: 'G' },
-  { value: 'H', label: 'H' },
-  { value: 'I', label: 'I' },
-  { value: 'J', label: 'J' },
-  { value: 'K', label: 'K' },
-];
-
-export const CLARITY_GRADES = [
-  { value: 'FL', label: 'FL (Flawless)' },
-  { value: 'IF', label: 'IF (Internally Flawless)' },
-  { value: 'VVS1', label: 'VVS1' },
-  { value: 'VVS2', label: 'VVS2' },
-  { value: 'VS1', label: 'VS1' },
-  { value: 'VS2', label: 'VS2' },
-  { value: 'SI1', label: 'SI1' },
-  { value: 'SI2', label: 'SI2' },
-];
-
-export const LABOR_TYPES = [
-  { value: 'CASTING', label: 'Casting' },
-  { value: 'SETTING', label: 'Setting' },
-  { value: 'POLISHING', label: 'Polishing' },
-  { value: 'FINISHING', label: 'Finishing' },
-  { value: 'ENGRAVING', label: 'Engraving' },
-  { value: 'PLATING', label: 'Plating' },
-  { value: 'ASSEMBLY', label: 'Assembly' },
-  { value: 'OTHER', label: 'Other' },
 ];
 
 export const ASSET_TYPES = {
@@ -227,16 +145,7 @@ export const ASSET_TYPES = {
   TECHNICAL_DRAWING: 'technical_drawing',
 };
 
-export const PRODUCT_CATEGORIES = [
-  { value: 'RING', label: 'Ring' },
-  { value: 'NECKLACE', label: 'Necklace' },
-  { value: 'BRACELET', label: 'Bracelet' },
-  { value: 'EARRINGS', label: 'Earrings' },
-  { value: 'PENDANT', label: 'Pendant' },
-  { value: 'BROOCH', label: 'Brooch' },
-  { value: 'CUFFLINKS', label: 'Cufflinks' },
-];
-
+// Sources: local constant (not a dropdown table, static list)
 export const SOURCES = [
   { value: 'FACTORY', label: 'Factory' },
   { value: 'DESIGNER', label: 'Designer' },

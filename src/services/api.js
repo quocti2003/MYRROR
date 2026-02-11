@@ -1015,6 +1015,15 @@ export const dropdownConfigAPI = {
 
   // Get all country of origin options
   getCountries: () => api.get("/api/dropdown-config/countries"),
+
+  // JTRC-specific dropdown options (shared with SKU generator)
+  getMetalTypes: () => api.get("/api/dropdown-config/metal-types"),
+  getMetalPurities: () => api.get("/api/dropdown-config/metal-purities"),
+  getStoneTypes: () => api.get("/api/dropdown-config/stone-types"),
+  getStoneRoles: () => api.get("/api/dropdown-config/stone-roles"),
+  getColorGrades: () => api.get("/api/dropdown-config/color-grades"),
+  getClarityGrades: () => api.get("/api/dropdown-config/clarity-grades"),
+  getLaborTypes: () => api.get("/api/dropdown-config/labor-types"),
 };
 
 // ===== PRODUCT FINDER API =====

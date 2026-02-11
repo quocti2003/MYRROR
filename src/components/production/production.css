@@ -926,3 +926,106 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ========================================
+   PRODUCTION ORDER DETAIL PAGE
+   ======================================== */
+.production-order-detail-page {
+  width: 100%;
+}
+
+.order-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.order-detail-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-detail-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.order-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.order-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b7280;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.order-progress-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.order-progress-bar {
+  flex: 1;
+  height: 12px;
+  background-color: #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.order-progress-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+.order-progress-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.order-progress-stats {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+@media (max-width: 768px) {
+  .order-detail-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .order-detail-header {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

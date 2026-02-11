@@ -162,7 +162,6 @@ const RFIDTags = lazyWithRetry(() => import("@pages/PodAdmin/RFIDTags"));
 
 // RFID Scanner (for PDA devices)
 const ScannerPage = lazyWithRetry(() => import("@pages/Scanner/ScannerPage"));
-
 export default function AppRoutes() {
   const location = useLocation();
   const { isOpen: isImmersiveModalOpen } = useImmersiveModal();

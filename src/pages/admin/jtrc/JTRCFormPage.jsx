@@ -3,14 +3,13 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   jtrcAPI,
   JTRC_STATUS,
-  PRODUCT_CATEGORIES,
   SOURCES,
   calculateTotalStoneCost,
   calculateTotalLaborCost,
   calculateTotalCOGS,
   formatVND,
 } from '@services/jtrcService';
-import { collectionsAPI } from '@services/api';
+import { collectionPlanAPI } from '@services/collectionPlanService';
 import {
   JTRCStatusBadge,
   CostSummaryPanel,
@@ -18,6 +17,7 @@ import {
   StoneComponentForm,
   LaborComponentForm,
 } from '@components/jtrc';
+import { useDropdownOptions } from '@hooks/useDropdownOptions';
 import { SkeletonTable } from '@components/admin-dashboard/Skeleton';
 import '@components/jtrc/jtrc.css';
 
@@ -32,6 +32,9 @@ const JTRCFormPage = () => {
   const jtrcId = searchParams.get('id');
   const isViewMode = mode === 'view';
   const isEditMode = mode === 'edit';
+
+  // Dropdown options from database
+  const { options: dropdownOptions, loading: dropdownLoading } = useDropdownOptions();
 
   // State
   const [activeTab, setActiveTab] = useState('header');
@@ -106,14 +109,14 @@ const JTRCFormPage = () => {
     reportNumber: '',
   });
 
-  // Fetch collections
+  // Fetch collection plans (production-side, not commercial collections)
   useEffect(() => {
     const fetchCollections = async () => {
       try {
-        const response = await collectionsAPI.getAll();
-        setCollections(response.data || []);
+        const response = await collectionPlanAPI.getAll({ size: 100 });
+        setCollections(response.data?.content || []);
       } catch (err) {
-        console.error('Error fetching collections:', err);
+        console.error('Error fetching collection plans:', err);
       }
     };
     fetchCollections();
@@ -275,12 +278,76 @@ const JTRCFormPage = () => {
 
   // Handle collection change
   const handleCollectionChange = (collectionId) => {
-    const collection = collections.find((c) => c.id === parseInt(collectionId));
+    const collection = collections.find((c) => String(c.id) === String(collectionId));
     setFormData((prev) => ({
       ...prev,
       collectionId,
       collectionName: collection?.name || '',
     }));
+  };
+
+  // Transform frontend formData to backend API payload format
+  const buildApiPayload = (data) => {
+    const payload = {
+      collection: data.collectionName,
+      season: data.season,
+      projectId: data.projectId,
+      category: data.category,
+      source: data.source,
+      entryDate: data.entryDate,
+      goldPricePerGram: data.goldPricePerGram,
+      exchangeRateUsd: data.exchangeRate,
+      productionDifficulty: data.productionDifficulty,
+      estimatedLeadTimeDays: data.estimatedLeadTimeDays,
+      castingStatus: data.castingStatus,
+      productionNotes: data.productionNotes,
+      render3dUrl: data.assets?.render3d,
+      stoneMapUrl: data.assets?.stoneMap,
+      technicalDrawingUrl: data.assets?.technicalDrawing,
+    };
+
+    // Metal component - map frontend field names to backend DTO
+    if (data.metalComponent?.metalType) {
+      payload.metalComponent = {
+        metalType: data.metalComponent.metalType,
+        metalPurity: data.metalComponent.metalPurity,
+        weightGrams: data.metalComponent.weight ? parseFloat(data.metalComponent.weight) : null,
+        lossRatePercent: data.metalComponent.lossRate != null ? parseFloat(data.metalComponent.lossRate) : null,
+        pricePerGram: data.metalComponent.pricePerGram,
+      };
+    }
+
+    // Stone components - map 'role' to 'stoneRole'
+    if (data.stoneComponents?.length > 0) {
+      payload.stoneComponents = data.stoneComponents.map((stone) => ({
+        stoneRole: stone.role || stone.stoneRole,
+        stoneType: stone.stoneType,
+        stoneDetail: stone.stoneDetail,
+        shape: stone.shape,
+        colorCategory: stone.colorCategory,
+        colorGrade: stone.colorGrade,
+        colorIntensity: stone.colorIntensity,
+        colorName: stone.colorName,
+        clarity: stone.clarity,
+        sizeMm: stone.sizeMm,
+        weightCarat: stone.weightCarat ? parseFloat(stone.weightCarat) : null,
+        quantity: stone.quantity || 1,
+        unitPrice: stone.unitPrice,
+        notes: stone.notes,
+      }));
+    }
+
+    // Labor components
+    if (data.laborComponents?.length > 0) {
+      payload.laborComponents = data.laborComponents.map((labor) => ({
+        laborType: labor.laborType,
+        description: labor.description,
+        cost: labor.cost,
+        notes: labor.notes,
+      }));
+    }
+
+    return payload;
   };
 
   // Handle save draft
@@ -290,10 +357,11 @@ const JTRCFormPage = () => {
 
     try {
       let response;
+      const apiPayload = buildApiPayload(formData);
       if (isEditMode && jtrcId) {
-        response = await jtrcAPI.saveDraft(jtrcId, formData);
+        response = await jtrcAPI.saveDraft(jtrcId, apiPayload);
       } else {
-        response = await jtrcAPI.create({ ...formData, status: JTRC_STATUS.DRAFT });
+        response = await jtrcAPI.create({ ...apiPayload, status: JTRC_STATUS.DRAFT });
       }
       alert('Draft saved successfully!');
       // Navigate to edit mode with new ID
@@ -322,11 +390,12 @@ const JTRCFormPage = () => {
       let jtrcIdToSubmit = jtrcId;
 
       // Save first if new
+      const apiPayload = buildApiPayload(formData);
       if (!isEditMode || !jtrcId) {
-        const createResponse = await jtrcAPI.create(formData);
+        const createResponse = await jtrcAPI.create(apiPayload);
         jtrcIdToSubmit = createResponse.data.id;
       } else {
-        await jtrcAPI.update(jtrcId, formData);
+        await jtrcAPI.update(jtrcId, apiPayload);
       }
 
       // Submit for approval
@@ -433,10 +502,10 @@ const JTRCFormPage = () => {
                   onChange={(e) => handleCollectionChange(e.target.value)}
                   disabled={isViewMode}
                 >
-                  <option value="">Select Collection</option>
+                  <option value="">Select Collection Plan</option>
                   {collections.map((col) => (
                     <option key={col.id} value={col.id}>
-                      {col.name}
+                      {col.name} {col.status ? `[${col.status}]` : ''}
                     </option>
                   ))}
                 </select>
@@ -492,9 +561,9 @@ const JTRCFormPage = () => {
                   disabled={isViewMode}
                 >
                   <option value="">Select Category</option>
-                  {PRODUCT_CATEGORIES.map((cat) => (
-                    <option key={cat.value} value={cat.value}>
-                      {cat.label}
+                  {dropdownOptions.prefixes.map((cat) => (
+                    <option key={cat.code} value={cat.code}>
+                      {cat.name}
                     </option>
                   ))}
                 </select>
@@ -585,6 +654,8 @@ const JTRCFormPage = () => {
               goldPricePerGram={goldPrice.pricePerGram}
               errors={validationErrors}
               disabled={isViewMode}
+              metalTypeOptions={dropdownOptions.metalTypes}
+              metalPurityOptions={dropdownOptions.metalPurities}
             />
           </div>
         )}
@@ -597,6 +668,11 @@ const JTRCFormPage = () => {
               onChange={(stones) => handleChange('stoneComponents', stones)}
               errors={validationErrors}
               disabled={isViewMode}
+              stoneRoleOptions={dropdownOptions.stoneRoles}
+              stoneTypeOptions={dropdownOptions.stoneTypes}
+              stoneShapeOptions={dropdownOptions.stoneShapes}
+              colorGradeOptions={dropdownOptions.colorGrades}
+              clarityGradeOptions={dropdownOptions.clarityGrades}
             />
           </div>
         )}
@@ -609,6 +685,7 @@ const JTRCFormPage = () => {
               onChange={(items) => handleChange('laborComponents', items)}
               errors={validationErrors}
               disabled={isViewMode}
+              laborTypeOptions={dropdownOptions.laborTypes}
             />
           </div>
         )}

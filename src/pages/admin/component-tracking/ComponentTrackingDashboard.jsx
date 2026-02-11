@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   componentOwnershipAPI,
   HANDOFF_STATUS,
+  HANDOFF_TYPE,
+  HANDOFF_TYPE_CONFIG,
   getHandoffStatusConfig,
   getHandoffTypeConfig,
   formatDateTime,
@@ -11,6 +13,8 @@ import {
   getHandoffStats,
 } from '@services/componentOwnershipService';
 import { productionOrderAPI } from '@services/productionOrderService';
+import { vendorsAPI } from '@services/api';
+import { FormModal, ConfirmDialog } from '@components/admin-dashboard/AdminModal';
 import { SkeletonTable } from '@components/admin-dashboard/Skeleton';
 import './component-tracking.css';
 
@@ -21,6 +25,7 @@ import './component-tracking.css';
  * - Filter by status, vendor
  * - Overdue items highlighted
  * - Drill-down to order details
+ * - Initiate, ship, confirm, reject, cancel handoffs
  */
 const ComponentTrackingDashboard = () => {
   const navigate = useNavigate();
@@ -41,6 +46,50 @@ const ComponentTrackingDashboard = () => {
     totalReceived: 0,
   });
 
+  // Reference data for dropdowns
+  const [vendors, setVendors] = useState([]);
+  const [productionOrders, setProductionOrders] = useState([]);
+
+  // Modal state
+  const [showInitiateModal, setShowInitiateModal] = useState(false);
+  const [showInTransitModal, setShowInTransitModal] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [selectedHandoff, setSelectedHandoff] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [actionError, setActionError] = useState(null);
+
+  // Form data for initiate handoff
+  const [initiateForm, setInitiateForm] = useState({
+    productionOrderId: '',
+    handoffType: '',
+    fromVendorId: '',
+    toVendorId: '',
+    expectedArrivalDate: '',
+    reason: '',
+    notes: '',
+  });
+
+  // Form data for mark in-transit
+  const [inTransitForm, setInTransitForm] = useState({
+    trackingNumber: '',
+    shippingCarrier: '',
+    expectedArrivalDate: '',
+    notes: '',
+  });
+
+  // Form data for reject
+  const [rejectForm, setRejectForm] = useState({
+    rejectionReason: '',
+    notes: '',
+  });
+
+  // Form data for confirm receipt
+  const [confirmForm, setConfirmForm] = useState({
+    notes: '',
+  });
+
   // Filters
   const [filters, setFilters] = useState({
     vendorId: searchParams.get('vendorId') || '',
@@ -50,6 +99,7 @@ const ComponentTrackingDashboard = () => {
   // Fetch data on load
   useEffect(() => {
     fetchDashboardData();
+    fetchReferenceData();
   }, []);
 
   const fetchDashboardData = async () => {
@@ -89,6 +139,19 @@ const ComponentTrackingDashboard = () => {
     }
   };
 
+  const fetchReferenceData = async () => {
+    try {
+      const [vendorsRes, ordersRes] = await Promise.all([
+        vendorsAPI.getAll(),
+        productionOrderAPI.getAll({ size: 200 }),
+      ]);
+      setVendors(vendorsRes.data || []);
+      setProductionOrders(ordersRes.data?.content || ordersRes.data || []);
+    } catch (err) {
+      console.error('Error fetching reference data:', err);
+    }
+  };
+
   const handleViewOrder = (orderId) => {
     navigate(`/dashboard/admin?tab=production-order-detail&id=${orderId}`);
   };
@@ -103,6 +166,179 @@ const ComponentTrackingDashboard = () => {
     newParams.set('view', tab);
     setSearchParams(newParams);
   };
+
+  // ===== ACTION HANDLERS =====
+
+  const handleInitiateHandoff = async () => {
+    setActionLoading(true);
+    setActionError(null);
+    try {
+      const payload = {
+        productionOrderId: initiateForm.productionOrderId,
+        handoffType: initiateForm.handoffType,
+        ...(initiateForm.fromVendorId && { fromVendorId: initiateForm.fromVendorId }),
+        ...(initiateForm.toVendorId && { toVendorId: initiateForm.toVendorId }),
+        ...(initiateForm.expectedArrivalDate && { expectedArrivalDate: initiateForm.expectedArrivalDate }),
+        ...(initiateForm.reason && { reason: initiateForm.reason }),
+        ...(initiateForm.notes && { notes: initiateForm.notes }),
+      };
+      await componentOwnershipAPI.initiateHandoff(payload);
+      setShowInitiateModal(false);
+      resetInitiateForm();
+      await fetchDashboardData();
+    } catch (err) {
+      const msg = err.response?.data?.message || err.response?.data?.error || 'Failed to initiate handoff';
+      setActionError(msg);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleMarkInTransit = async () => {
+    if (!selectedHandoff) return;
+    setActionLoading(true);
+    setActionError(null);
+    try {
+      const payload = {
+        ...(inTransitForm.trackingNumber && { trackingNumber: inTransitForm.trackingNumber }),
+        ...(inTransitForm.shippingCarrier && { shippingCarrier: inTransitForm.shippingCarrier }),
+        ...(inTransitForm.expectedArrivalDate && { expectedArrivalDate: inTransitForm.expectedArrivalDate }),
+        ...(inTransitForm.notes && { notes: inTransitForm.notes }),
+      };
+      await componentOwnershipAPI.markInTransit(selectedHandoff.id, payload);
+      setShowInTransitModal(false);
+      setSelectedHandoff(null);
+      resetInTransitForm();
+      await fetchDashboardData();
+    } catch (err) {
+      const msg = err.response?.data?.message || err.response?.data?.error || 'Failed to mark in transit';
+      setActionError(msg);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleConfirmReceipt = async () => {
+    if (!selectedHandoff) return;
+    setActionLoading(true);
+    setActionError(null);
+    try {
+      const payload = {
+        ...(confirmForm.notes && { notes: confirmForm.notes }),
+      };
+      await componentOwnershipAPI.confirmReceipt(selectedHandoff.id, payload);
+      setShowConfirmModal(false);
+      setSelectedHandoff(null);
+      setConfirmForm({ notes: '' });
+      await fetchDashboardData();
+    } catch (err) {
+      const msg = err.response?.data?.message || err.response?.data?.error || 'Failed to confirm receipt';
+      setActionError(msg);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleRejectHandoff = async () => {
+    if (!selectedHandoff) return;
+    setActionLoading(true);
+    setActionError(null);
+    try {
+      const payload = {
+        rejectionReason: rejectForm.rejectionReason,
+        ...(rejectForm.notes && { notes: rejectForm.notes }),
+      };
+      await componentOwnershipAPI.rejectHandoff(selectedHandoff.id, payload);
+      setShowRejectModal(false);
+      setSelectedHandoff(null);
+      setRejectForm({ rejectionReason: '', notes: '' });
+      await fetchDashboardData();
+    } catch (err) {
+      const msg = err.response?.data?.message || err.response?.data?.error || 'Failed to reject handoff';
+      setActionError(msg);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleCancelHandoff = async () => {
+    if (!selectedHandoff) return;
+    setActionLoading(true);
+    try {
+      await componentOwnershipAPI.cancelHandoff(selectedHandoff.id);
+      setShowCancelDialog(false);
+      setSelectedHandoff(null);
+      await fetchDashboardData();
+    } catch (err) {
+      console.error('Failed to cancel handoff:', err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  // ===== MODAL OPENERS =====
+
+  const openShipModal = (handoff) => {
+    setSelectedHandoff(handoff);
+    setInTransitForm({
+      trackingNumber: '',
+      shippingCarrier: '',
+      expectedArrivalDate: handoff.expectedArrivalDate ? handoff.expectedArrivalDate.split('T')[0] : '',
+      notes: '',
+    });
+    setActionError(null);
+    setShowInTransitModal(true);
+  };
+
+  const openConfirmModal = (handoff) => {
+    setSelectedHandoff(handoff);
+    setConfirmForm({ notes: '' });
+    setActionError(null);
+    setShowConfirmModal(true);
+  };
+
+  const openRejectModal = (handoff) => {
+    setSelectedHandoff(handoff);
+    setRejectForm({ rejectionReason: '', notes: '' });
+    setActionError(null);
+    setShowRejectModal(true);
+  };
+
+  const openCancelDialog = (handoff) => {
+    setSelectedHandoff(handoff);
+    setShowCancelDialog(true);
+  };
+
+  const openInitiateModal = () => {
+    resetInitiateForm();
+    setActionError(null);
+    setShowInitiateModal(true);
+  };
+
+  const resetInitiateForm = () => {
+    setInitiateForm({
+      productionOrderId: '',
+      handoffType: '',
+      fromVendorId: '',
+      toVendorId: '',
+      expectedArrivalDate: '',
+      reason: '',
+      notes: '',
+    });
+  };
+
+  const resetInTransitForm = () => {
+    setInTransitForm({
+      trackingNumber: '',
+      shippingCarrier: '',
+      expectedArrivalDate: '',
+      notes: '',
+    });
+  };
+
+  // Determine which vendor fields to show based on handoff type
+  const showFromVendor = initiateForm.handoffType && initiateForm.handoffType !== 'INITIAL_ASSIGNMENT';
+  const showToVendor = initiateForm.handoffType && initiateForm.handoffType !== 'RETURN_TO_MIRROR';
 
   // Status Badge Component
   const StatusBadge = ({ status }) => {
@@ -227,12 +463,46 @@ const ComponentTrackingDashboard = () => {
                     <OverdueBadge expectedArrivalDate={handoff.expectedArrivalDate} />
                   </td>
                   <td>
-                    <button
-                      className="action-btn small"
-                      onClick={() => handleViewHandoff(handoff.id)}
-                    >
-                      View
-                    </button>
+                    <div className="card-actions">
+                      <button
+                        className="action-btn small"
+                        onClick={() => handleViewHandoff(handoff.id)}
+                      >
+                        View
+                      </button>
+                      {handoff.status === HANDOFF_STATUS.IN_TRANSIT && (
+                        <>
+                          <button
+                            className="action-btn small primary"
+                            onClick={() => openConfirmModal(handoff)}
+                          >
+                            Confirm
+                          </button>
+                          <button
+                            className="action-btn small danger"
+                            onClick={() => openRejectModal(handoff)}
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
+                      {handoff.status === HANDOFF_STATUS.INITIATED && (
+                        <>
+                          <button
+                            className="action-btn small primary"
+                            onClick={() => openShipModal(handoff)}
+                          >
+                            Ship
+                          </button>
+                          <button
+                            className="action-btn small danger"
+                            onClick={() => openCancelDialog(handoff)}
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );
@@ -279,6 +549,41 @@ const ComponentTrackingDashboard = () => {
             </div>
             <div className="pending-item-time">
               Initiated: {formatDateTime(handoff.initiatedAt)}
+            </div>
+            {/* Action buttons based on status */}
+            <div className="card-actions">
+              {status === HANDOFF_STATUS.INITIATED && (
+                <>
+                  <button
+                    className="action-btn small primary"
+                    onClick={() => openShipModal(handoff)}
+                  >
+                    Ship
+                  </button>
+                  <button
+                    className="action-btn small danger"
+                    onClick={() => openCancelDialog(handoff)}
+                  >
+                    Cancel
+                  </button>
+                </>
+              )}
+              {status === HANDOFF_STATUS.IN_TRANSIT && (
+                <>
+                  <button
+                    className="action-btn small primary"
+                    onClick={() => openConfirmModal(handoff)}
+                  >
+                    Confirm Receipt
+                  </button>
+                  <button
+                    className="action-btn small danger"
+                    onClick={() => openRejectModal(handoff)}
+                  >
+                    Reject
+                  </button>
+                </>
+              )}
             </div>
           </div>
         ))}
@@ -364,6 +669,9 @@ const ComponentTrackingDashboard = () => {
           <p className="header-subtitle">Track component locations across production partners</p>
         </div>
         <div className="header-actions">
+          <button className="btn-primary" onClick={openInitiateModal}>
+            + New Handoff
+          </button>
           <button className="btn-secondary" onClick={fetchDashboardData}>
             Refresh
           </button>
@@ -405,6 +713,290 @@ const ComponentTrackingDashboard = () => {
           </div>
         )}
       </div>
+
+      {/* ===== MODALS ===== */}
+
+      {/* Initiate Handoff Modal */}
+      <FormModal
+        isOpen={showInitiateModal}
+        onClose={() => { setShowInitiateModal(false); setActionError(null); }}
+        onSubmit={handleInitiateHandoff}
+        title="New Handoff"
+        submitText="Initiate Handoff"
+        loading={actionLoading}
+        error={actionError}
+      >
+        <div className="admin-form-group">
+          <label className="admin-form-label">Production Order *</label>
+          <select
+            className="tracking-form-select"
+            value={initiateForm.productionOrderId}
+            onChange={(e) => setInitiateForm({ ...initiateForm, productionOrderId: e.target.value })}
+            required
+          >
+            <option value="">Select a production order...</option>
+            {productionOrders.map((order) => (
+              <option key={order.id} value={order.id}>
+                {order.orderNumber || order.id} {order.productName ? `- ${order.productName}` : ''}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="admin-form-group">
+          <label className="admin-form-label">Handoff Type *</label>
+          <select
+            className="tracking-form-select"
+            value={initiateForm.handoffType}
+            onChange={(e) => setInitiateForm({
+              ...initiateForm,
+              handoffType: e.target.value,
+              fromVendorId: e.target.value === 'INITIAL_ASSIGNMENT' ? '' : initiateForm.fromVendorId,
+              toVendorId: e.target.value === 'RETURN_TO_MIRROR' ? '' : initiateForm.toVendorId,
+            })}
+            required
+          >
+            <option value="">Select handoff type...</option>
+            {Object.entries(HANDOFF_TYPE_CONFIG).map(([key, config]) => (
+              <option key={key} value={key}>
+                {config.icon} {config.label}
+              </option>
+            ))}
+          </select>
+          {initiateForm.handoffType && HANDOFF_TYPE_CONFIG[initiateForm.handoffType] && (
+            <span className="tracking-form-hint">
+              {HANDOFF_TYPE_CONFIG[initiateForm.handoffType].description}
+            </span>
+          )}
+        </div>
+
+        {showFromVendor && (
+          <div className="admin-form-group">
+            <label className="admin-form-label">From Vendor</label>
+            <select
+              className="tracking-form-select"
+              value={initiateForm.fromVendorId}
+              onChange={(e) => setInitiateForm({ ...initiateForm, fromVendorId: e.target.value })}
+            >
+              <option value="">MIRROR (default)</option>
+              {vendors.map((vendor) => (
+                <option key={vendor.id} value={vendor.id}>
+                  {vendor.companyName || vendor.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {showToVendor && (
+          <div className="admin-form-group">
+            <label className="admin-form-label">To Vendor</label>
+            <select
+              className="tracking-form-select"
+              value={initiateForm.toVendorId}
+              onChange={(e) => setInitiateForm({ ...initiateForm, toVendorId: e.target.value })}
+            >
+              <option value="">MIRROR (default)</option>
+              {vendors.map((vendor) => (
+                <option key={vendor.id} value={vendor.id}>
+                  {vendor.companyName || vendor.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        <div className="admin-form-group">
+          <label className="admin-form-label">Expected Arrival Date</label>
+          <input
+            type="date"
+            className="tracking-form-input"
+            value={initiateForm.expectedArrivalDate}
+            onChange={(e) => setInitiateForm({ ...initiateForm, expectedArrivalDate: e.target.value })}
+          />
+        </div>
+
+        <div className="admin-form-group">
+          <label className="admin-form-label">Reason</label>
+          <input
+            type="text"
+            className="tracking-form-input"
+            value={initiateForm.reason}
+            onChange={(e) => setInitiateForm({ ...initiateForm, reason: e.target.value })}
+            placeholder="Reason for handoff"
+          />
+        </div>
+
+        <div className="admin-form-group">
+          <label className="admin-form-label">Notes</label>
+          <textarea
+            className="tracking-form-textarea"
+            value={initiateForm.notes}
+            onChange={(e) => setInitiateForm({ ...initiateForm, notes: e.target.value })}
+            placeholder="Additional notes..."
+            rows={3}
+          />
+        </div>
+      </FormModal>
+
+      {/* Mark In-Transit Modal */}
+      <FormModal
+        isOpen={showInTransitModal}
+        onClose={() => { setShowInTransitModal(false); setActionError(null); }}
+        onSubmit={handleMarkInTransit}
+        title="Mark as Shipped"
+        submitText="Mark In Transit"
+        loading={actionLoading}
+        error={actionError}
+      >
+        {selectedHandoff && (
+          <div className="tracking-modal-context">
+            <strong>{selectedHandoff.productionOrderNumber || 'Order'}</strong>
+            <span className="transfer-arrow">
+              {selectedHandoff.fromVendorName || 'MIRROR'} → {selectedHandoff.toVendorName || 'MIRROR'}
+            </span>
+          </div>
+        )}
+
+        <div className="admin-form-group">
+          <label className="admin-form-label">Tracking Number</label>
+          <input
+            type="text"
+            className="tracking-form-input"
+            value={inTransitForm.trackingNumber}
+            onChange={(e) => setInTransitForm({ ...inTransitForm, trackingNumber: e.target.value })}
+            placeholder="e.g. 1Z999AA10123456784"
+          />
+        </div>
+
+        <div className="admin-form-group">
+          <label className="admin-form-label">Shipping Carrier</label>
+          <input
+            type="text"
+            className="tracking-form-input"
+            value={inTransitForm.shippingCarrier}
+            onChange={(e) => setInTransitForm({ ...inTransitForm, shippingCarrier: e.target.value })}
+            placeholder="e.g. DHL, FedEx, VNPost"
+          />
+        </div>
+
+        <div className="admin-form-group">
+          <label className="admin-form-label">Expected Arrival Date</label>
+          <input
+            type="date"
+            className="tracking-form-input"
+            value={inTransitForm.expectedArrivalDate}
+            onChange={(e) => setInTransitForm({ ...inTransitForm, expectedArrivalDate: e.target.value })}
+          />
+        </div>
+
+        <div className="admin-form-group">
+          <label className="admin-form-label">Notes</label>
+          <textarea
+            className="tracking-form-textarea"
+            value={inTransitForm.notes}
+            onChange={(e) => setInTransitForm({ ...inTransitForm, notes: e.target.value })}
+            placeholder="Shipping notes..."
+            rows={2}
+          />
+        </div>
+      </FormModal>
+
+      {/* Confirm Receipt Modal */}
+      <FormModal
+        isOpen={showConfirmModal}
+        onClose={() => { setShowConfirmModal(false); setActionError(null); }}
+        onSubmit={handleConfirmReceipt}
+        title="Confirm Receipt"
+        submitText="Confirm Receipt"
+        loading={actionLoading}
+        error={actionError}
+        size="sm"
+      >
+        {selectedHandoff && (
+          <div className="tracking-modal-context">
+            <strong>{selectedHandoff.productionOrderNumber || 'Order'}</strong>
+            <span className="transfer-arrow">
+              {selectedHandoff.fromVendorName || 'MIRROR'} → {selectedHandoff.toVendorName || 'MIRROR'}
+            </span>
+          </div>
+        )}
+
+        <p className="tracking-modal-message">
+          Confirm that this component has been received?
+        </p>
+
+        <div className="admin-form-group">
+          <label className="admin-form-label">Notes</label>
+          <textarea
+            className="tracking-form-textarea"
+            value={confirmForm.notes}
+            onChange={(e) => setConfirmForm({ ...confirmForm, notes: e.target.value })}
+            placeholder="Optional notes..."
+            rows={2}
+          />
+        </div>
+      </FormModal>
+
+      {/* Reject Handoff Modal */}
+      <FormModal
+        isOpen={showRejectModal}
+        onClose={() => { setShowRejectModal(false); setActionError(null); }}
+        onSubmit={handleRejectHandoff}
+        title="Reject Handoff"
+        submitText="Reject Handoff"
+        loading={actionLoading}
+        error={actionError}
+        size="sm"
+      >
+        {selectedHandoff && (
+          <div className="tracking-modal-context">
+            <strong>{selectedHandoff.productionOrderNumber || 'Order'}</strong>
+            <span className="transfer-arrow">
+              {selectedHandoff.fromVendorName || 'MIRROR'} → {selectedHandoff.toVendorName || 'MIRROR'}
+            </span>
+          </div>
+        )}
+
+        <div className="admin-form-group">
+          <label className="admin-form-label">Rejection Reason *</label>
+          <input
+            type="text"
+            className="tracking-form-input"
+            value={rejectForm.rejectionReason}
+            onChange={(e) => setRejectForm({ ...rejectForm, rejectionReason: e.target.value })}
+            placeholder="Reason for rejection"
+            required
+          />
+        </div>
+
+        <div className="admin-form-group">
+          <label className="admin-form-label">Notes</label>
+          <textarea
+            className="tracking-form-textarea"
+            value={rejectForm.notes}
+            onChange={(e) => setRejectForm({ ...rejectForm, notes: e.target.value })}
+            placeholder="Additional details..."
+            rows={2}
+          />
+        </div>
+      </FormModal>
+
+      {/* Cancel Handoff Dialog */}
+      <ConfirmDialog
+        isOpen={showCancelDialog}
+        onClose={() => { setShowCancelDialog(false); setSelectedHandoff(null); }}
+        onConfirm={handleCancelHandoff}
+        title="Cancel Handoff"
+        message={
+          selectedHandoff
+            ? `Cancel the handoff for ${selectedHandoff.productionOrderNumber || 'this order'}? This action cannot be undone.`
+            : 'Cancel this handoff?'
+        }
+        confirmText="Cancel Handoff"
+        variant="danger"
+        loading={actionLoading}
+      />
     </div>
   );
 };
