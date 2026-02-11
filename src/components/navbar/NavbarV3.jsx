@@ -394,13 +394,13 @@ export default function NavbarV3() {
   };
 
   const handleBookAppointmentClick = async () => {
-    if (window.location.pathname === ROUTES.BOOK_APPOINTMENT) {
+    if (window.location.pathname === ROUTES.CONTACT) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
     sessionStorage.setItem("scrollToTop", "true");
-    await performTransition(ROUTES.BOOK_APPOINTMENT);
+    await performTransition(ROUTES.CONTACT);
   };
 
   const handleAccountMenuClick = async () => {

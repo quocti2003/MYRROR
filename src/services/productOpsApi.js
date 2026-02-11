@@ -1,9 +1,11 @@
 import axios from "axios";
 
 // Base URL for Product Ops API
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  "https://nsa4fef6um.ap-southeast-1.awsapprunner.com";
+// Use relative URLs through Vite proxy when running locally
+const isLocalDev = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+const API_BASE_URL = isLocalDev
+  ? '' // Use Vite proxy
+  : (import.meta.env.VITE_API_BASE_URL || "https://nsa4fef6um.ap-southeast-1.awsapprunner.com");
 
 // Create axios instance with default config
 const api = axios.create({

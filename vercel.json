@@ -42,6 +42,11 @@
       "source": "/index.html",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/book-an-appointment",
+      "destination": "/",
+      "statusCode": 308
     }
   ]
 }

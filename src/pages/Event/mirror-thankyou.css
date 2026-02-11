@@ -145,15 +145,14 @@
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* Lucky Ring Video */
+/* Lucky Ring Video - flex flow to prevent overlap */
 .mirror-thankyou__lucky-ring {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
+  margin-top: auto; /* Push to bottom, but after main content */
+  width: 100%;
   display: flex;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
   z-index: 5;
   pointer-events: none;
 }
@@ -163,7 +162,23 @@
   height: auto;
   object-fit: contain;
   display: block;
-  margin-bottom: -50%;
+  /* Base: mobile/tablet */
+  margin-bottom: -40%;
+}
+
+/* Desktop: base */
+@media (min-width: 1025px) {
+  .mirror-thankyou__lucky-ring-img {
+    margin-top: -10vh;
+  }
+}
+
+/* Desktop: màn cao hơn → âm nhiều hơn */
+
+@media (min-width: 1025px) and (min-height: 1100px) {
+  .mirror-thankyou__lucky-ring-img {
+    margin-top: -10vh;
+  }
 }
 
 /* ============================================
@@ -253,11 +268,11 @@
 @keyframes ringFadeIn {
   0% {
     opacity: 0;
-    transform: translateX(-50%) translateY(30px);
+    transform: translateY(30px);
   }
   100% {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
 }
 
@@ -323,15 +338,10 @@
     align-self: center;
   }
 
-  .mirror-thankyou__lucky-ring {
-    top: auto;
-    bottom: 0;
-  }
-
   .mirror-thankyou__lucky-ring-img {
     width: calc(1000 / 1512 * 100vw); /* ~66.14vw */
     height: auto;
-    margin-bottom: -70%;
+    /* Kế thừa clamp từ base, chỉ override width */
   }
 }
 
@@ -432,11 +442,11 @@
 
   /* Main content - positioned from top, centered horizontally */
   .mirror-thankyou__main {
-    position: absolute;
-    top: calc(169 / 844 * 100vh);
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 0;
+    position: relative; /* Change to relative for flex flow */
+    top: auto;
+    left: auto;
+    transform: none;
+    margin-top: calc(169 / 844 * 100vh);
     padding: 0;
     width: calc(304 / 390 * 100vw);
     box-sizing: border-box;
@@ -476,13 +486,9 @@
     justify-content: center;
   }
 
-  /* Lucky ring - centered at bottom */
-  .mirror-thankyou__lucky-ring {
-    bottom: 0;
-  }
-
   .mirror-thankyou__lucky-ring-img {
     width: 150vw;
-    margin-bottom: -60%;
+    /* Kế thừa clamp từ base */
+    margin-bottom: -80%;
   }
 }

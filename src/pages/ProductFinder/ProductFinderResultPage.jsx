@@ -211,7 +211,7 @@ const ProductFinderResultPage = () => {
   }, [product]);
 
   const handleBookAppointment = () => {
-    navigate(ROUTES.BOOK_APPOINTMENT);
+    navigate(ROUTES.CONTACT);
   };
 
   const handlePreOrder = async () => {

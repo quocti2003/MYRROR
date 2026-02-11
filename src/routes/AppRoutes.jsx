@@ -78,7 +78,6 @@ const ProductsLeft = lazyWithRetry(() =>
 const ScavengerHunt = lazyWithRetry(() =>
   import("@components/scavenger-hunt/ScavengerHunt")
 );
-const BookAppointmentPage = lazyWithRetry(() => import("@pages/BookAppointmentPage"));
 const PremiumPage = lazyWithRetry(() => import("@pages/PremiumPage"));
 const PremiumDevPage = lazyWithRetry(() => import("@pages/PremiumDevPage"));
 const SimpleMeshInspector = lazyWithRetry(() =>
@@ -154,6 +153,16 @@ const AdminWholesaleOrderDetail = lazyWithRetry(() => import("@pages/PodAdmin/Wh
 const AdminPhygitalPartners = lazyWithRetry(() => import("@pages/PodAdmin/PhygitalPartners"));
 const AdminPhygitalPartnerDetail = lazyWithRetry(() => import("@pages/PodAdmin/PhygitalPartnerDetail"));
 
+// RFID Label Printing System
+const LabelTemplates = lazyWithRetry(() => import("@pages/PodAdmin/LabelTemplates"));
+const LabelDesigner = lazyWithRetry(() => import("@pages/PodAdmin/LabelDesigner"));
+const PrintJobs = lazyWithRetry(() => import("@pages/PodAdmin/PrintJobs"));
+const PrintJobCreate = lazyWithRetry(() => import("@pages/PodAdmin/PrintJobCreate"));
+const RFIDTags = lazyWithRetry(() => import("@pages/PodAdmin/RFIDTags"));
+
+// RFID Scanner (for PDA devices)
+const ScannerPage = lazyWithRetry(() => import("@pages/Scanner/ScannerPage"));
+
 export default function AppRoutes() {
   const location = useLocation();
   const { isOpen: isImmersiveModalOpen } = useImmersiveModal();
@@ -180,7 +189,6 @@ export default function AppRoutes() {
       ROUTES.ABOUT,
       ROUTES.LOCATIONS,
       ROUTES.NEWS,
-      ROUTES.BOOK_APPOINTMENT,
       ROUTES.PRODUCTS_LEFT,
       ROUTES.USER_PROFILE,
       ROUTES.SCAVENGER_HUNT,
@@ -362,10 +370,6 @@ export default function AppRoutes() {
 
             <Route path={ROUTES.NEWS_DETAIL} element={<NewsDetailWrapper />} />
 
-            <Route
-              path={ROUTES.BOOK_APPOINTMENT}
-              element={<BookAppointmentPage />}
-            />
 
             {/* for observing UI universe-section final */}
             <Route path="/universe-section" element={<UniverseSection />} />
@@ -388,6 +392,9 @@ export default function AppRoutes() {
 
             {/* DB Explorer - Export CSV/XLSX */}
             <Route path={ROUTES.DB_EXPLORER} element={<DBExplorerPage />} />
+
+            {/* RFID Scanner - for PDA devices */}
+            <Route path={ROUTES.RFID_SCANNER} element={<ScannerPage />} />
 
             <Route path={ROUTES.SCAVENGER_HUNT} element={<ScavengerHunt />} />
 
@@ -452,6 +459,14 @@ export default function AppRoutes() {
               <Route path="pod/wholesale-orders/:orderId" element={<AdminWholesaleOrderDetail />} />
               <Route path="pod/phygital-partners" element={<AdminPhygitalPartners />} />
               <Route path="pod/phygital-partners/:partnerId" element={<AdminPhygitalPartnerDetail />} />
+
+              {/* RFID Label Printing System */}
+              <Route path="label-templates" element={<LabelTemplates />} />
+              <Route path="label-designer/new" element={<LabelDesigner />} />
+              <Route path="label-designer/:id" element={<LabelDesigner />} />
+              <Route path="print-jobs" element={<PrintJobs />} />
+              <Route path="print-jobs/new" element={<PrintJobCreate />} />
+              <Route path="rfid-tags" element={<RFIDTags />} />
             </Route>
 
             <Route

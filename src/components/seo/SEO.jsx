@@ -14,7 +14,7 @@ export default function SEO({
   type = "website",
   noindex = false,
 }) {
-  const fullTitle = title ? `${title} | ${DEFAULT_TITLE}` : DEFAULT_TITLE;
+  const fullTitle = title ? `${DEFAULT_TITLE} | ${title}` : DEFAULT_TITLE;
   const canonicalUrl = url ? `${SITE_URL}${url}` : SITE_URL;
 
   return (

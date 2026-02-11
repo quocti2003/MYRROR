@@ -1,0 +1,247 @@
+.label-designer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f9fafb;
+}
+
+.designer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.designer-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Left Sidebar */
+.designer-sidebar {
+  width: 280px;
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebar-tabs {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sidebar-tab {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #6b7280;
+  transition: all 0.2s;
+}
+
+.sidebar-tab:hover {
+  background: #f3f4f6;
+}
+
+.sidebar-tab.active {
+  color: #3b82f6;
+  border-bottom: 2px solid #3b82f6;
+  margin-bottom: -1px;
+}
+
+.sidebar-content {
+  padding: 1rem;
+}
+
+.sidebar-content h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin: 1rem 0 0.5rem;
+}
+
+.sidebar-content h4:first-child {
+  margin-top: 0;
+}
+
+.element-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.element-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  min-width: 80px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.element-btn:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.element-btn.small {
+  flex-direction: row;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  min-width: auto;
+  font-size: 0.75rem;
+}
+
+.element-icon {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #374151;
+}
+
+.element-btn span:last-child {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.element-btn.small span:last-child {
+  margin-top: 0;
+}
+
+/* Settings Form */
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.settings-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: #374151;
+}
+
+.checkbox-label {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.5rem !important;
+}
+
+.checkbox-label input {
+  width: auto;
+}
+
+/* Canvas Area */
+.designer-canvas-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  overflow: auto;
+  background: #e5e7eb;
+}
+
+.canvas-info {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+.canvas-container {
+  background: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.canvas-container canvas {
+  display: block;
+}
+
+/* Right Sidebar - Properties */
+.designer-properties {
+  width: 260px;
+  background: #ffffff;
+  border-left: 1px solid #e5e7eb;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.designer-properties h4 {
+  font-size: 0.875rem;
+  color: #374151;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.properties-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.properties-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.properties-form input[type="color"] {
+  width: 100%;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.properties-form input[type="checkbox"] {
+  width: auto;
+  margin-left: auto;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .designer-sidebar {
+    width: 240px;
+  }
+
+  .designer-properties {
+    width: 220px;
+  }
+}
+
+@media (max-width: 768px) {
+  .designer-body {
+    flex-direction: column;
+  }
+
+  .designer-sidebar,
+  .designer-properties {
+    width: 100%;
+    max-height: 200px;
+  }
+
+  .designer-canvas-area {
+    min-height: 300px;
+  }
+}

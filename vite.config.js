@@ -22,8 +22,8 @@ export default defineConfig(({ mode }) => {
       port: 5173,
       proxy: {
         "/api": {
-          // For local testing, always use localhost:8082
-          // Change to env.VITE_API_BASE_URL for production proxy if needed
+          // For local testing with Windows backend (USB printer support)
+          // Windows host IP from WSL perspective
           target: env.VITE_API_BASE_URL || "http://localhost:8082",
           changeOrigin: true,
           secure: false,

@@ -4,7 +4,6 @@
 export const ROUTES = {
   // Public routes (keep original)
   HOME: "/",
-  BOOK_APPOINTMENT: "/book-an-appointment",
   SCAVENGER_HUNT: "/scavenger-hunt",
   VERIFY_EMAIL: "/verify-email",
 
@@ -108,6 +107,17 @@ export const ROUTES = {
   POD_ADMIN_WHOLESALE_ORDER_DETAIL: "/dashboard/admin/pod/wholesale-orders/:orderId",
   POD_ADMIN_PHYGITAL_PARTNERS: "/dashboard/admin/pod/phygital-partners",
   POD_ADMIN_PHYGITAL_PARTNER_DETAIL: "/dashboard/admin/pod/phygital-partners/:partnerId",
+
+  // RFID Scanner (for PDA devices)
+  RFID_SCANNER: "/rfid-scanner",
+
+  // RFID Label System routes (nested under admin dashboard)
+  LABEL_TEMPLATES: "/dashboard/admin/label-templates",
+  LABEL_DESIGNER_NEW: "/dashboard/admin/label-designer/new",
+  LABEL_DESIGNER_EDIT: "/dashboard/admin/label-designer/:id",
+  PRINT_JOBS: "/dashboard/admin/print-jobs",
+  PRINT_JOB_CREATE: "/dashboard/admin/print-jobs/new",
+  RFID_TAGS: "/dashboard/admin/rfid-tags",
 };
 
 // Helper to get collection detail route with ID

@@ -274,6 +274,14 @@ const AdminDashboard = () => {
         { id: "pod-phygital-partners", label: "Phygital Partners", type: "route", path: ROUTES.POD_ADMIN_PHYGITAL_PARTNERS },
       ],
     },
+    {
+      id: "group-label-system", label: "Label & RFID", type: "group",
+      children: [
+        { id: "label-templates", label: "Label Templates", type: "route", path: ROUTES.LABEL_TEMPLATES },
+        { id: "print-jobs", label: "Print Jobs", type: "route", path: ROUTES.PRINT_JOBS },
+        { id: "rfid-tags", label: "RFID Tags", type: "route", path: ROUTES.RFID_TAGS },
+      ],
+    },
   ];
 
   const tabAccess = useMemo(
@@ -340,6 +348,10 @@ const AdminDashboard = () => {
       // Wholesale access
       "pod-wholesale-orders": ["ADMIN", "IT_ADMIN"],
       "pod-phygital-partners": ["ADMIN", "IT_ADMIN"],
+      // Label & RFID System access
+      "label-templates": ["ADMIN", "IT_ADMIN", "PRODUCTION_OPS"],
+      "print-jobs": ["ADMIN", "IT_ADMIN", "PRODUCTION_OPS"],
+      "rfid-tags": ["ADMIN", "IT_ADMIN", "PRODUCTION_OPS"],
     }),
     [roles]
   );

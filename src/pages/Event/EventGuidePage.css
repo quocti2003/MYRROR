@@ -380,10 +380,13 @@
 
 .event-guide__music-text {
   position: absolute;
-  top: 50%;
+  top: 47%; /* Same as title-wrapper top */
   left: 50%;
   transform: translateX(-50%);
-  margin-top: min(calc(15vw + 60px), 20vh);
+  /* Title aspect ratio: height = width × 0.732 (from SVG viewBox 805.54 × 589.79) */
+  /* margin-top = (title-width × 0.732 / 2) + gap */
+  /* Desktop: title-width = 30vw */
+  margin-top: calc(30vw * 0.366 + 48px);
   color: #fff;
   text-align: center;
 }
@@ -1206,7 +1209,8 @@
   }
 
   .event-guide__music-text {
-    margin-top: min(calc(20vw + 10px), 22vh);
+    /* Tablet: title-width = 50vw */
+    margin-top: calc(50vw * 0.366 + 40px);
   }
 
   .event-guide__staff-note {
@@ -1330,7 +1334,8 @@
   }
 
   .event-guide__music-text {
-    margin-top: min(calc(21vw + 40px), 18vh);
+    /* Mobile: title-width = 62vw */
+    margin-top: calc(62vw * 0.366 + 30px);
   }
 
   .event-guide__avatar-content {

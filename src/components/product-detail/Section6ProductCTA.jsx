@@ -13,7 +13,7 @@ const Section6ProductCTA = ({ product }) => {
   };
 
   const handleBookAppointment = () => {
-    navigate(ROUTES.BOOK_APPOINTMENT);
+    navigate(ROUTES.CONTACT);
   };
 
   const handleImmersiveShowroom = () => {
