@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Create product_certificates join table for many-to-many relationship -->
+    <changeSet id="081-create-product-certificates-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="product_certificates"/>
+            </not>
+        </preConditions>
+
+        <comment>Create product_certificates join table for many-to-many relationship between products and certificates</comment>
+
+        <createTable tableName="product_certificates">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(30)" remarks="Reference to mirror_products.id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="certificate_id" type="VARCHAR(255)" remarks="Reference to certificates.id">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Add foreign key to mirror_products -->
+        <addForeignKeyConstraint
+            baseTableName="product_certificates"
+            baseColumnNames="product_id"
+            constraintName="fk_product_certificates_product"
+            referencedTableName="mirror_products"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <!-- Add foreign key to certificates -->
+        <addForeignKeyConstraint
+            baseTableName="product_certificates"
+            baseColumnNames="certificate_id"
+            constraintName="fk_product_certificates_certificate"
+            referencedTableName="certificates"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <!-- Add unique constraint to prevent duplicate product-certificate pairs -->
+        <addUniqueConstraint
+            tableName="product_certificates"
+            columnNames="product_id, certificate_id"
+            constraintName="uk_product_certificate"/>
+
+        <!-- Add indexes for performance -->
+        <createIndex tableName="product_certificates" indexName="idx_product_certificates_product_id">
+            <column name="product_id"/>
+        </createIndex>
+
+        <createIndex tableName="product_certificates" indexName="idx_product_certificates_certificate_id">
+            <column name="certificate_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Migrate existing certificate_code data to the new join table -->
+    <changeSet id="081-migrate-existing-certificate-codes" author="system">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="product_certificates"/>
+            <columnExists tableName="mirror_products" columnName="certificate_code"/>
+        </preConditions>
+
+        <comment>Migrate existing certificate_code from mirror_products to product_certificates join table</comment>
+
+        <sql>
+            INSERT INTO product_certificates (product_id, certificate_id, created_at)
+            SELECT mp.id, c.id, CURRENT_TIMESTAMP
+            FROM mirror_products mp
+            INNER JOIN certificates c ON mp.certificate_code = c.certificate_code
+            WHERE mp.certificate_code IS NOT NULL
+              AND mp.certificate_code != ''
+              AND NOT EXISTS (
+                  SELECT 1 FROM product_certificates pc
+                  WHERE pc.product_id = mp.id AND pc.certificate_id = c.id
+              );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

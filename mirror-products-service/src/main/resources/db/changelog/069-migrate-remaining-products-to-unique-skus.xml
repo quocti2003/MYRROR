@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="069-migrate-remaining-products-to-unique-skus" author="claude">
+        <comment>Migrate all remaining products with category IDs to unique SKUs</comment>
+
+        <!-- 1. Create unique SKU for PRD000001 - Lumina Diamond Ring -->
+        <insert tableName="skus">
+            <column name="id" value="SKU-LDR-001"/>
+            <column name="sku_name" value="Lumina Diamond Ring SKU"/>
+            <column name="sku_code" value="SKU-LDR-001"/>
+            <column name="description" value="Unique SKU for Lumina Diamond Ring (PRD000001)"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <sql>
+            UPDATE products
+            SET sku_id = 'SKU-LDR-001',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = 'PRD000001';
+        </sql>
+
+        <!-- 2. Create unique SKU for PRD000002 - Aurora Pendant -->
+        <insert tableName="skus">
+            <column name="id" value="SKU-AP-001"/>
+            <column name="sku_name" value="Aurora Pendant SKU"/>
+            <column name="sku_code" value="SKU-AP-001"/>
+            <column name="description" value="Unique SKU for Aurora Pendant (PRD000002)"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <sql>
+            UPDATE products
+            SET sku_id = 'SKU-AP-001',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = 'PRD000002';
+        </sql>
+
+        <!-- 3. Create unique SKU for PRD000003 - Solaris Gold Ring -->
+        <insert tableName="skus">
+            <column name="id" value="SKU-SGR-001"/>
+            <column name="sku_name" value="Solaris Gold Ring SKU"/>
+            <column name="sku_code" value="SKU-SGR-001"/>
+            <column name="description" value="Unique SKU for Solaris Gold Ring (PRD000003)"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <sql>
+            UPDATE products
+            SET sku_id = 'SKU-SGR-001',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = 'PRD000003';
+        </sql>
+
+        <!-- 4. Create unique SKU for PRD000004 - Luna Sapphire Earrings -->
+        <insert tableName="skus">
+            <column name="id" value="SKU-LSE-001"/>
+            <column name="sku_name" value="Luna Sapphire Earrings SKU"/>
+            <column name="sku_code" value="SKU-LSE-001"/>
+            <column name="description" value="Unique SKU for Luna Sapphire Earrings (PRD000004)"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <sql>
+            UPDATE products
+            SET sku_id = 'SKU-LSE-001',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = 'PRD000004';
+        </sql>
+
+        <!-- 5. Create unique SKU for PRD000024 - Mirror Custom Ring -->
+        <insert tableName="skus">
+            <column name="id" value="SKU-MCR-001"/>
+            <column name="sku_name" value="Mirror Custom Ring SKU"/>
+            <column name="sku_code" value="SKU-MCR-001"/>
+            <column name="description" value="Unique SKU for Mirror Custom Ring (PRD000024)"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <sql>
+            UPDATE products
+            SET sku_id = 'SKU-MCR-001',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = 'PRD000024';
+        </sql>
+
+        <rollback>
+            <!-- Revert products back to their original category SKUs -->
+            <sql>
+                UPDATE products SET sku_id = 'CAT000001', updated_at = CURRENT_TIMESTAMP WHERE id = 'PRD000001';
+                UPDATE products SET sku_id = 'CAT000002', updated_at = CURRENT_TIMESTAMP WHERE id = 'PRD000002';
+                UPDATE products SET sku_id = 'CAT000001', updated_at = CURRENT_TIMESTAMP WHERE id = 'PRD000003';
+                UPDATE products SET sku_id = 'CAT000003', updated_at = CURRENT_TIMESTAMP WHERE id = 'PRD000004';
+                UPDATE products SET sku_id = 'CAT000001', updated_at = CURRENT_TIMESTAMP WHERE id = 'PRD000024';
+            </sql>
+
+            <!-- Remove the created SKUs -->
+            <delete tableName="skus">
+                <where>id IN ('SKU-LDR-001', 'SKU-AP-001', 'SKU-SGR-001', 'SKU-LSE-001', 'SKU-MCR-001')</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

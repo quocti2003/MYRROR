@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="067-fix-orphaned-products-add-skus" author="claude">
+        <comment>Fix products without SKU IDs by creating default SKUs and linking them</comment>
+
+        <!-- Check if CAT000001 exists, if not create it as a generic SKU -->
+        <sql>
+            INSERT INTO skus (id, sku_name, sku_code, description, misa_synced, created_at, updated_at)
+            VALUES ('CAT000001', 'Generic Ring SKU', 'CAT000001', 'Default SKU for ring products without specific SKU definition', false, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            ON CONFLICT (id) DO NOTHING;
+        </sql>
+
+        <!-- Update PRD000009 to use CAT000001 SKU -->
+        <sql>
+            UPDATE products
+            SET sku_id = 'CAT000001'
+            WHERE id = 'PRD000009' AND sku_id IS NULL;
+        </sql>
+
+        <!-- Update any other products without SKU IDs to use CAT000001 -->
+        <sql>
+            UPDATE products
+            SET sku_id = 'CAT000001'
+            WHERE sku_id IS NULL;
+        </sql>
+
+        <rollback>
+            <!-- Remove the generic SKU -->
+            <delete tableName="skus">
+                <where>id = 'CAT000001'</where>
+            </delete>
+
+            <!-- Note: Can't rollback the product updates as we don't know what the previous null values were -->
+            <comment>Rollback: Products SKU IDs cannot be reverted to NULL due to NOT NULL constraint</comment>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="030-1" author="claude">
+        <comment>Add owner_user_id column to vendors table for user-vendor relationship</comment>
+        <addColumn tableName="vendors">
+            <column name="owner_user_id" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="030-2" author="claude">
+        <comment>Create index on owner_user_id for better query performance</comment>
+        <createIndex tableName="vendors" indexName="idx_vendors_owner_user_id">
+            <column name="owner_user_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

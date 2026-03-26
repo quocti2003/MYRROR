@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="001-insert-default-permissions" author="system">
+        <insert tableName="permissions">
+            <column name="name" value="USER_READ"/>
+            <column name="description" value="Read user information"/>
+            <column name="resource" value="USER"/>
+            <column name="action" value="READ"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+        
+        <insert tableName="permissions">
+            <column name="name" value="USER_MODIFY"/>
+            <column name="description" value="Modify user information"/>
+            <column name="resource" value="USER"/>
+            <column name="action" value="modify"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+        
+        <insert tableName="permissions">
+            <column name="name" value="USER_DELETE"/>
+            <column name="description" value="Delete user"/>
+            <column name="resource" value="USER"/>
+            <column name="action" value="delete"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+        
+        <insert tableName="permissions">
+            <column name="name" value="USER_MANAGE"/>
+            <column name="description" value="Manage all users"/>
+            <column name="resource" value="USER"/>
+            <column name="action" value="manage"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+        
+        <insert tableName="permissions">
+            <column name="name" value="ROLE_MANAGE"/>
+            <column name="description" value="Manage roles"/>
+            <column name="resource" value="ROLE"/>
+            <column name="action" value="manage"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+        
+        <insert tableName="permissions">
+            <column name="name" value="PERMISSION_MANAGE"/>
+            <column name="description" value="Manage permissions"/>
+            <column name="resource" value="PERMISSION"/>
+            <column name="action" value="manage"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+        
+        <insert tableName="permissions">
+            <column name="name" value="AUDIT_READ"/>
+            <column name="description" value="Read audit logs"/>
+            <column name="resource" value="AUDIT"/>
+            <column name="action" value="read"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="002-insert-default-roles" author="system">
+        <insert tableName="roles">
+            <column name="name" value="USER"/>
+            <column name="description" value="Standard user role"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+        
+        <insert tableName="roles">
+            <column name="name" value="ADMIN"/>
+            <column name="description" value="Administrator role"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+        
+        <insert tableName="roles">
+            <column name="name" value="SUPER_ADMIN"/>
+            <column name="description" value="Super administrator role"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="003-assign-permissions-to-roles" author="system">
+        <!-- USER role permissions -->
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'USER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_READ')"/>
+        </insert>
+        
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'USER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_MODIFY')"/>
+        </insert>
+        
+        <!-- ADMIN role permissions -->
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_READ')"/>
+        </insert>
+        
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_MODIFY')"/>
+        </insert>
+        
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_DELETE')"/>
+        </insert>
+        
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_MANAGE')"/>
+        </insert>
+        
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'AUDIT_READ')"/>
+        </insert>
+        
+        <!-- SUPER_ADMIN role permissions (all permissions) -->
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_READ')"/>
+        </insert>
+        
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_MODIFY')"/>
+        </insert>
+        
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_DELETE')"/>
+        </insert>
+        
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_MANAGE')"/>
+        </insert>
+        
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'ROLE_MANAGE')"/>
+        </insert>
+        
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'PERMISSION_MANAGE')"/>
+        </insert>
+        
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'AUDIT_READ')"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

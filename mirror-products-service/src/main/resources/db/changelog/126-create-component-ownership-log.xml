@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ========================================== -->
+    <!-- Component Ownership Tracking System        -->
+    <!-- Sprint 7: Component Tracking Backend       -->
+    <!-- ========================================== -->
+
+    <!-- Sequence for component ownership log IDs -->
+    <changeSet id="126-01-create-component-ownership-log-sequence" author="backend-developer">
+        <createSequence sequenceName="component_ownership_log_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <!-- Component Ownership Logs Table -->
+    <changeSet id="126-02-create-component-ownership-logs-table" author="backend-developer">
+        <createTable tableName="component_ownership_logs">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <!-- Relationships -->
+            <column name="production_order_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stage_id" type="VARCHAR(36)">
+                <!-- Nullable for non-stage transfers -->
+            </column>
+            <column name="from_vendor_id" type="VARCHAR(36)">
+                <!-- Null for initial assignment from MIRROR -->
+            </column>
+            <column name="to_vendor_id" type="VARCHAR(36)">
+                <!-- Null for return to MIRROR -->
+            </column>
+
+            <!-- Handoff Details -->
+            <column name="handoff_type" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="INITIATED">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Initiation -->
+            <column name="initiated_by" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="initiated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Receipt -->
+            <column name="received_by" type="VARCHAR(100)"/>
+            <column name="received_at" type="TIMESTAMP"/>
+
+            <!-- Transit Info -->
+            <column name="expected_arrival_date" type="DATE"/>
+            <column name="tracking_number" type="VARCHAR(100)"/>
+            <column name="shipping_carrier" type="VARCHAR(100)"/>
+
+            <!-- Notes -->
+            <column name="reason" type="VARCHAR(500)"/>
+            <column name="notes" type="TEXT"/>
+            <column name="rejection_reason" type="VARCHAR(500)"/>
+
+            <!-- Base Entity Fields -->
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Foreign Keys -->
+        <addForeignKeyConstraint
+            baseTableName="component_ownership_logs"
+            baseColumnNames="production_order_id"
+            constraintName="fk_col_production_order"
+            referencedTableName="production_orders"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="component_ownership_logs"
+            baseColumnNames="stage_id"
+            constraintName="fk_col_stage"
+            referencedTableName="production_order_stages"
+            referencedColumnNames="id"
+            onDelete="SET NULL"/>
+
+        <addForeignKeyConstraint
+            baseTableName="component_ownership_logs"
+            baseColumnNames="from_vendor_id"
+            constraintName="fk_col_from_vendor"
+            referencedTableName="vendors"
+            referencedColumnNames="id"
+            onDelete="SET NULL"/>
+
+        <addForeignKeyConstraint
+            baseTableName="component_ownership_logs"
+            baseColumnNames="to_vendor_id"
+            constraintName="fk_col_to_vendor"
+            referencedTableName="vendors"
+            referencedColumnNames="id"
+            onDelete="SET NULL"/>
+
+        <!-- Indexes for common queries -->
+        <createIndex tableName="component_ownership_logs" indexName="idx_col_production_order">
+            <column name="production_order_id"/>
+        </createIndex>
+        <createIndex tableName="component_ownership_logs" indexName="idx_col_stage">
+            <column name="stage_id"/>
+        </createIndex>
+        <createIndex tableName="component_ownership_logs" indexName="idx_col_from_vendor">
+            <column name="from_vendor_id"/>
+        </createIndex>
+        <createIndex tableName="component_ownership_logs" indexName="idx_col_to_vendor">
+            <column name="to_vendor_id"/>
+        </createIndex>
+        <createIndex tableName="component_ownership_logs" indexName="idx_col_status">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="component_ownership_logs" indexName="idx_col_handoff_type">
+            <column name="handoff_type"/>
+        </createIndex>
+        <createIndex tableName="component_ownership_logs" indexName="idx_col_initiated_at">
+            <column name="initiated_at"/>
+        </createIndex>
+
+        <!-- Composite index for pending receipts query -->
+        <createIndex tableName="component_ownership_logs" indexName="idx_col_pending_receipts">
+            <column name="to_vendor_id"/>
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Check Constraints -->
+    <changeSet id="126-03-add-component-ownership-log-constraints" author="backend-developer" dbms="postgresql">
+        <sql>
+            ALTER TABLE component_ownership_logs
+            ADD CONSTRAINT chk_col_handoff_type
+            CHECK (handoff_type IN ('INITIAL_ASSIGNMENT', 'STAGE_START', 'STAGE_COMPLETE', 'VENDOR_REASSIGN', 'RETURN_TO_MIRROR', 'REWORK_RETURN'));
+
+            ALTER TABLE component_ownership_logs
+            ADD CONSTRAINT chk_col_status
+            CHECK (status IN ('INITIATED', 'IN_TRANSIT', 'RECEIVED', 'REJECTED', 'CANCELLED'));
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

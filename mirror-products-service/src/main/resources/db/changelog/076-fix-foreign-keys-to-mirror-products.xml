@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Fix foreign key references from products to mirror_products -->
+    <changeSet id="076-1" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_products"/>
+            <tableExists tableName="vendor_products"/>
+        </preConditions>
+
+        <comment>Update foreign keys to reference mirror_products instead of products table</comment>
+
+        <!-- 1. Fix vendor_products foreign key -->
+        <dropForeignKeyConstraint
+                baseTableName="vendor_products"
+                constraintName="fk_vendor_products_product"/>
+
+        <!-- Clean up orphaned vendor_products records -->
+        <sql>
+            DELETE FROM vendor_products
+            WHERE product_id NOT IN (SELECT id FROM mirror_products);
+        </sql>
+
+        <addForeignKeyConstraint
+                constraintName="fk_vendor_products_mirror_product"
+                baseTableName="vendor_products"
+                baseColumnNames="product_id"
+                referencedTableName="mirror_products"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <rollback>
+            <dropForeignKeyConstraint
+                    baseTableName="vendor_products"
+                    constraintName="fk_vendor_products_mirror_product"/>
+            <addForeignKeyConstraint
+                    constraintName="fk_vendor_products_product"
+                    baseTableName="vendor_products"
+                    baseColumnNames="product_id"
+                    referencedTableName="products"
+                    referencedColumnNames="id"
+                    onDelete="CASCADE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="076-2" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_products"/>
+            <tableExists tableName="order_items"/>
+        </preConditions>
+
+        <comment>Fix order_items foreign key to reference mirror_products</comment>
+
+        <!-- 2. Fix order_items foreign key -->
+        <dropForeignKeyConstraint
+                baseTableName="order_items"
+                constraintName="fk_order_items_product"/>
+
+        <!-- Clean up orphaned order_items records -->
+        <sql>
+            UPDATE order_items
+            SET product_id = NULL
+            WHERE product_id IS NOT NULL
+            AND product_id NOT IN (SELECT id FROM mirror_products);
+        </sql>
+
+        <addForeignKeyConstraint
+                constraintName="fk_order_items_mirror_product"
+                baseTableName="order_items"
+                baseColumnNames="product_id"
+                referencedTableName="mirror_products"
+                referencedColumnNames="id"
+                onDelete="SET NULL"/>
+
+        <rollback>
+            <dropForeignKeyConstraint
+                    baseTableName="order_items"
+                    constraintName="fk_order_items_mirror_product"/>
+            <addForeignKeyConstraint
+                    constraintName="fk_order_items_product"
+                    baseTableName="order_items"
+                    baseColumnNames="product_id"
+                    referencedTableName="products"
+                    referencedColumnNames="id"
+                    onDelete="SET NULL"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="076-3" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_products"/>
+            <tableExists tableName="custom_order_items"/>
+        </preConditions>
+
+        <comment>Fix custom_order_items foreign key to reference mirror_products</comment>
+
+        <!-- 3. Fix custom_order_items foreign key -->
+        <dropForeignKeyConstraint
+                baseTableName="custom_order_items"
+                constraintName="fk_custom_order_items_base_product"/>
+
+        <!-- Clean up orphaned custom_order_items records -->
+        <sql>
+            UPDATE custom_order_items
+            SET base_product_id = NULL
+            WHERE base_product_id IS NOT NULL
+            AND base_product_id NOT IN (SELECT id FROM mirror_products);
+        </sql>
+
+        <addForeignKeyConstraint
+                constraintName="fk_custom_order_items_base_mirror_product"
+                baseTableName="custom_order_items"
+                baseColumnNames="base_product_id"
+                referencedTableName="mirror_products"
+                referencedColumnNames="id"
+                onDelete="SET NULL"/>
+
+        <rollback>
+            <dropForeignKeyConstraint
+                    baseTableName="custom_order_items"
+                    constraintName="fk_custom_order_items_base_mirror_product"/>
+            <addForeignKeyConstraint
+                    constraintName="fk_custom_order_items_base_product"
+                    baseTableName="custom_order_items"
+                    baseColumnNames="base_product_id"
+                    referencedTableName="products"
+                    referencedColumnNames="id"
+                    onDelete="SET NULL"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="076-4" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_products"/>
+            <tableExists tableName="collection_products"/>
+        </preConditions>
+
+        <comment>Fix collection_products foreign key to reference mirror_products</comment>
+
+        <!-- 4. Fix collection_products foreign key -->
+        <dropForeignKeyConstraint
+                baseTableName="collection_products"
+                constraintName="fk_collection_products_product"/>
+
+        <!-- Clean up orphaned collection_products records -->
+        <sql>
+            DELETE FROM collection_products
+            WHERE product_id NOT IN (SELECT id FROM mirror_products);
+        </sql>
+
+        <addForeignKeyConstraint
+                constraintName="fk_collection_products_mirror_product"
+                baseTableName="collection_products"
+                baseColumnNames="product_id"
+                referencedTableName="mirror_products"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <rollback>
+            <dropForeignKeyConstraint
+                    baseTableName="collection_products"
+                    constraintName="fk_collection_products_mirror_product"/>
+            <addForeignKeyConstraint
+                    constraintName="fk_collection_products_product"
+                    baseTableName="collection_products"
+                    baseColumnNames="product_id"
+                    referencedTableName="products"
+                    referencedColumnNames="id"
+                    onDelete="CASCADE"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="076-5" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_products"/>
+            <foreignKeyConstraintExists foreignKeyName="fk_product_designer"/>
+        </preConditions>
+
+        <comment>Fix products designer_id self-reference to use mirror_products</comment>
+
+        <!-- 5. Fix products.designer_id self-reference -->
+        <dropForeignKeyConstraint
+                baseTableName="products"
+                constraintName="fk_product_designer"/>
+
+        <addForeignKeyConstraint
+                constraintName="fk_mirror_product_designer"
+                baseTableName="mirror_products"
+                baseColumnNames="designer_id"
+                referencedTableName="mirror_products"
+                referencedColumnNames="id"
+                onDelete="SET NULL"/>
+
+        <rollback>
+            <dropForeignKeyConstraint
+                    baseTableName="mirror_products"
+                    constraintName="fk_mirror_product_designer"/>
+            <addForeignKeyConstraint
+                    constraintName="fk_product_designer"
+                    baseTableName="products"
+                    baseColumnNames="designer_id"
+                    referencedTableName="products"
+                    referencedColumnNames="id"
+                    onDelete="SET NULL"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

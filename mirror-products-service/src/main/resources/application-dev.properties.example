@@ -1,0 +1,29 @@
+# Development Environment Configuration Example
+# Copy this file to application-dev.properties and update values as needed
+
+spring.application.name=product
+
+# PostgreSQL Datasource Configuration
+spring.datasource.url=jdbc:postgresql://localhost:5432/todoList_dev
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+
+# JPA Configuration
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.format_sql=true
+
+# Liquibase Configuration
+spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.xml
+spring.liquibase.enabled=true
+spring.liquibase.contexts=dev
+
+# Logging Configuration
+logging.level.liquibase=INFO
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+
+# Server Configuration
+server.port=8080

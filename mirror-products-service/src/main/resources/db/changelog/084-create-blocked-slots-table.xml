@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="084-create-blocked-slots-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="blocked_slots"/>
+            </not>
+        </preConditions>
+
+        <comment>Create blocked_slots table for admin slot blocking functionality</comment>
+
+        <createTable tableName="blocked_slots">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (BLK prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="venue_id" type="VARCHAR(30)" remarks="Reference to locations table (null = all venues)"/>
+            <column name="block_date" type="DATE" remarks="Date of the blocked slot">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_time" type="TIME" remarks="Start time of blocked period">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_time" type="TIME" remarks="End time of blocked period (null = single slot)"/>
+            <column name="is_full_day" type="BOOLEAN" defaultValueBoolean="false" remarks="Whether the entire day is blocked">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reason" type="VARCHAR(255)" remarks="Reason for blocking (e.g., Lunch break, Meeting, Holiday)"/>
+            <column name="block_type" type="VARCHAR(20)" defaultValue="SINGLE" remarks="Type of block (SINGLE, RECURRING_DAILY, RECURRING_WEEKLY)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recurring_end_date" type="DATE" remarks="End date for recurring blocks"/>
+            <column name="created_by" type="VARCHAR(255)" remarks="Admin user who created the block"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Add indexes for common queries -->
+        <createIndex tableName="blocked_slots" indexName="idx_blocked_slot_date">
+            <column name="block_date"/>
+        </createIndex>
+
+        <createIndex tableName="blocked_slots" indexName="idx_blocked_slot_venue_date">
+            <column name="venue_id"/>
+            <column name="block_date"/>
+        </createIndex>
+
+        <createIndex tableName="blocked_slots" indexName="idx_blocked_slot_type">
+            <column name="block_type"/>
+        </createIndex>
+
+        <!-- Add foreign key constraint to locations table (optional - venue can be null for global blocks) -->
+        <addForeignKeyConstraint
+            baseTableName="blocked_slots"
+            baseColumnNames="venue_id"
+            constraintName="fk_blocked_slot_venue"
+            referencedTableName="locations"
+            referencedColumnNames="id"
+            onDelete="SET NULL"
+            onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

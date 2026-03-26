@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="014-create-locations-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="locations"/>
+            </not>
+        </preConditions>
+        
+        <comment>Create locations table for store locations management</comment>
+        
+        <createTable tableName="locations">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(500)" remarks="Location name">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="VARCHAR(100)" remarks="Location type (SHOWROOM, BOUTIQUE, POD)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address" type="TEXT" remarks="Full address">
+                <constraints nullable="false"/>
+            </column>
+            <column name="city" type="VARCHAR(255)" remarks="City or province">
+                <constraints nullable="false"/>
+            </column>
+            <column name="latitude" type="DECIMAL(10,7)" remarks="GPS latitude">
+                <constraints nullable="false"/>
+            </column>
+            <column name="longitude" type="DECIMAL(10,7)" remarks="GPS longitude">
+                <constraints nullable="false"/>
+            </column>
+            <column name="hours" type="VARCHAR(255)" remarks="Operating hours">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone" type="VARCHAR(50)" remarks="Contact phone number">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" remarks="Location status (ACTIVE, INACTIVE, TEMPORARY)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <!-- Add indexes for common queries -->
+        <createIndex tableName="locations" indexName="idx_locations_city">
+            <column name="city"/>
+        </createIndex>
+        
+        <createIndex tableName="locations" indexName="idx_locations_type">
+            <column name="type"/>
+        </createIndex>
+        
+        <createIndex tableName="locations" indexName="idx_locations_status">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Add Location sequence to id_sequences table -->
+<!--    <changeSet id="014-add-location-sequence" author="system">-->
+<!--        <comment>Add Location sequence to id_sequences table</comment>-->
+<!--        -->
+<!--        <insert tableName="id_sequences">-->
+<!--            <column name="entity_name" value="Location"/>-->
+<!--            <column name="prefix" value="LOC"/>-->
+<!--            <column name="current_value" valueNumeric="5"/>-->
+<!--        </insert>-->
+<!--    </changeSet>-->
+
+    <!-- Insert initial location data -->
+    <changeSet id="011-insert-initial-locations" author="system">
+        <comment>Insert initial store locations data</comment>
+        
+        <insert tableName="locations">
+            <column name="id" value="LOC001"/>
+            <column name="name" value="Mirror Diamond SHOWROOM An Khanh"/>
+            <column name="type" value="SHOWROOM"/>
+            <column name="address" value="71 Nguyen Co Thach, Ward An Khanh, Ho Chi Minh City"/>
+            <column name="city" value="Ho Chi Minh City"/>
+            <column name="latitude" value="10.771097"/>
+            <column name="longitude" value="106.724306"/>
+            <column name="hours" value="Mon-Sat: 9:00 AM - 8:00 PM"/>
+            <column name="phone" value="+84 28 3991 2345"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="created_at" value="NOW()"/>
+        </insert>
+        
+        <insert tableName="locations">
+            <column name="id" value="LOC002"/>
+            <column name="name" value="Mirror Diamond BOUTIQUE Gia Dinh"/>
+            <column name="type" value="BOUTIQUE"/>
+            <column name="address" value="282/14 Bui Huu Nghia, Ward Gia Dinh, Ho Chi Minh City"/>
+            <column name="city" value="Ho Chi Minh City"/>
+            <column name="latitude" value="10.800850"/>
+            <column name="longitude" value="106.700840"/>
+            <column name="hours" value="Mon-Sun: 10:00 AM - 9:00 PM"/>
+            <column name="phone" value="+84 28 3876 5432"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="created_at" value="NOW()"/>
+        </insert>
+        
+        <insert tableName="locations">
+            <column name="id" value="LOC003"/>
+            <column name="name" value="Mirror Diamond SHOWROOM Quy Nhon"/>
+            <column name="type" value="SHOWROOM"/>
+            <column name="address" value="03 Dinh Cong Trang, Ward Quy Nhon, Binh Dinh Province"/>
+            <column name="city" value="Binh Dinh Province"/>
+            <column name="latitude" value="13.761730"/>
+            <column name="longitude" value="109.215771"/>
+            <column name="hours" value="Mon-Sat: 9:00 AM - 7:30 PM"/>
+            <column name="phone" value="+84 256 3821 9876"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="created_at" value="NOW()"/>
+        </insert>
+        
+        <insert tableName="locations">
+            <column name="id" value="LOC004"/>
+            <column name="name" value="Six Senses Con Dao"/>
+            <column name="type" value="POD"/>
+            <column name="address" value="Con Dao Special Zone, Ho Chi Minh City"/>
+            <column name="city" value="Ho Chi Minh City"/>
+            <column name="latitude" value="8.701154"/>
+            <column name="longitude" value="106.633890"/>
+            <column name="hours" value="Daily: 8:00 AM - 10:00 PM"/>
+            <column name="phone" value="+84 254 3831 2222"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="created_at" value="NOW()"/>
+        </insert>
+        
+        <insert tableName="locations">
+            <column name="id" value="LOC005"/>
+            <column name="name" value="InterContinental Da Nang"/>
+            <column name="type" value="POD"/>
+            <column name="address" value="Ward Son Tra, Da Nang City"/>
+            <column name="city" value="Da Nang City"/>
+            <column name="latitude" value="16.121054"/>
+            <column name="longitude" value="108.306280"/>
+            <column name="hours" value="Daily: 8:00 AM - 10:00 PM"/>
+            <column name="phone" value="+84 236 3938 8888"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="created_at" value="NOW()"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

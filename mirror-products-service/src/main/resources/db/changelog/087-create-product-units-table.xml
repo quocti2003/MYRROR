@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add is_serialized column to mirror_products -->
+    <changeSet id="087-01-add-is-serialized-column" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="mirror_products" columnName="is_serialized"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="mirror_products">
+            <column name="is_serialized" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <comment>Add is_serialized flag to distinguish between serialized (jewelry) and non-serialized (packaging) products</comment>
+    </changeSet>
+
+    <!-- Create product_units table for unit-level tracking -->
+    <changeSet id="087-02-create-product-units-table" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="product_units"/>
+            </not>
+        </preConditions>
+        <createTable tableName="product_units">
+            <column name="id" type="VARCHAR(30)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unit_barcode" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="serial_number" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="VARCHAR(30)" defaultValue="AVAILABLE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="location" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="cost_price" type="DECIMAL(19,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="sale_price" type="DECIMAL(19,2)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="notes" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="purchase_date" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="sold_date" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <comment>Create product_units table for unit-level inventory tracking (serialized items like jewelry)</comment>
+    </changeSet>
+
+    <!-- Add foreign key constraint -->
+    <changeSet id="087-03-add-product-units-fk" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="product_units"/>
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="fk_product_units_product"/>
+            </not>
+        </preConditions>
+        <addForeignKeyConstraint
+            baseTableName="product_units"
+            baseColumnNames="product_id"
+            constraintName="fk_product_units_product"
+            referencedTableName="mirror_products"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+        <comment>Add foreign key from product_units to mirror_products</comment>
+    </changeSet>
+
+    <!-- Create indexes for better query performance -->
+    <changeSet id="087-04-create-product-units-indexes" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="product_units"/>
+        </preConditions>
+        <createIndex indexName="idx_product_units_product_id" tableName="product_units">
+            <column name="product_id"/>
+        </createIndex>
+        <createIndex indexName="idx_product_units_status" tableName="product_units">
+            <column name="status"/>
+        </createIndex>
+        <createIndex indexName="idx_product_units_barcode" tableName="product_units">
+            <column name="unit_barcode"/>
+        </createIndex>
+        <comment>Add indexes for product_units table</comment>
+    </changeSet>
+
+    <!-- Create sequence for product unit IDs -->
+    <changeSet id="087-05-create-product-unit-sequence" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="product_unit_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="product_unit_seq" startValue="1" incrementBy="1"/>
+        <comment>Create sequence for product unit ID generation</comment>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Fix missing columns in label_templates table -->
+    <changeSet id="126-1" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="canvas_json"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="canvas_json" type="JSONB" defaultValue="{}">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="126-2" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="label_width"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="label_width" type="DECIMAL(10,2)" defaultValueNumeric="30">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="126-3" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="label_height"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="label_height" type="DECIMAL(10,2)" defaultValueNumeric="70">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="126-4" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="dpi"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="dpi" type="INTEGER" defaultValueNumeric="203">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="126-5" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="is_default"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="is_default" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="126-6" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="is_active"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="126-7" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="is_deleted"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="126-8" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="preview_url"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="preview_url" type="VARCHAR(500)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="126-9" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="created_by"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="created_by" type="VARCHAR(50)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="126-10" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="updated_by"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="updated_by" type="VARCHAR(50)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

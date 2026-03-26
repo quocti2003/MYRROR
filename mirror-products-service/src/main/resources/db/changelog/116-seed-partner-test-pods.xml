@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Seed test PODs with coordinates for partner PTN000005 (map testing) -->
+
+    <changeSet id="116-seed-test-pods-with-coords" author="system">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">SELECT COUNT(*) FROM pod_partners WHERE id = 'PTN000005'</sqlCheck>
+        </preConditions>
+        <comment>Create 3 test PODs with coordinates in HCM City for map testing</comment>
+
+        <!-- POD 1: Vincom Center Dong Khoi, District 1 -->
+        <sql>
+            INSERT INTO pods (id, partner_id, name, description, location_name, address_line1, city, country,
+                latitude, longitude, status, display_capacity, commission_rate,
+                installation_date, created_at, updated_at, is_deleted, is_active)
+            VALUES ('POD000010', 'PTN000005', 'Mirror POD - Vincom Dong Khoi',
+                'Premium display at Vincom Center ground floor',
+                'Vincom Center Dong Khoi', '72 Le Thanh Ton, Ben Nghe, District 1',
+                'Ho Chi Minh City', 'Vietnam',
+                10.7769, 106.7009, 'ACTIVE', 15, 10.00,
+                '2025-01-15', NOW(), NOW(), false, true)
+            ON CONFLICT (id) DO NOTHING;
+        </sql>
+
+        <!-- POD 2: Crescent Mall, District 7 -->
+        <sql>
+            INSERT INTO pods (id, partner_id, name, description, location_name, address_line1, city, country,
+                latitude, longitude, status, display_capacity, commission_rate,
+                installation_date, created_at, updated_at, is_deleted, is_active)
+            VALUES ('POD000011', 'PTN000005', 'Mirror POD - Crescent Mall',
+                'Jewelry showcase near main entrance',
+                'Crescent Mall', '101 Ton Dat Tien, Tan Phu, District 7',
+                'Ho Chi Minh City', 'Vietnam',
+                10.7292, 106.7196, 'ACTIVE', 10, 8.50,
+                '2025-02-01', NOW(), NOW(), false, true)
+            ON CONFLICT (id) DO NOTHING;
+        </sql>
+
+        <!-- POD 3: Landmark 81, Binh Thanh -->
+        <sql>
+            INSERT INTO pods (id, partner_id, name, description, location_name, address_line1, city, country,
+                latitude, longitude, status, display_capacity, commission_rate,
+                installation_date, created_at, updated_at, is_deleted, is_active)
+            VALUES ('POD000012', 'PTN000005', 'Mirror POD - Landmark 81',
+                'Luxury display on observation deck level',
+                'Landmark 81', '720A Dien Bien Phu, Ward 22, Binh Thanh',
+                'Ho Chi Minh City', 'Vietnam',
+                10.7952, 106.7219, 'ACTIVE', 20, 12.00,
+                '2025-03-10', NOW(), NOW(), false, true)
+            ON CONFLICT (id) DO NOTHING;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

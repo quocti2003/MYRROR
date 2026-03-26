@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+    
+    <changeSet id="024-reset-collection-sequence" author="liquibase">
+        <comment>Reset collection sequence to start from 6</comment>
+        <sql>SELECT setval('col_seq', 10, false);</sql>
+    </changeSet>
+</databaseChangeLog>

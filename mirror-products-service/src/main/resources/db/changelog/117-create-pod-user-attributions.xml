@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="117-create-pod-user-attributions-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="pod_user_attributions"/>
+            </not>
+        </preConditions>
+
+        <comment>Create pod_user_attributions table for user-POD attribution tracking</comment>
+
+        <createTable tableName="pod_user_attributions">
+            <column name="id" type="VARCHAR(20)" remarks="Primary key (PUA prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT" remarks="Reference to users">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pod_id" type="VARCHAR(20)" remarks="Reference to pods">
+                <constraints nullable="false"/>
+            </column>
+            <column name="partner_id" type="VARCHAR(20)" remarks="Reference to pod_partners">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(20)" remarks="Product that was scanned"/>
+            <column name="qr_code_id" type="VARCHAR(20)" remarks="QR code that was scanned"/>
+            <column name="first_scan_at" type="TIMESTAMP WITH TIME ZONE" remarks="Timestamp of the first scan">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expires_at" type="TIMESTAMP WITH TIME ZONE" remarks="Attribution expiry (first_scan_at + 30 days)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE" remarks="Attribution status (ACTIVE, EXPIRED)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" remarks="Creation timestamp"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Indexes -->
+        <createIndex tableName="pod_user_attributions" indexName="idx_pua_user_pod">
+            <column name="user_id"/>
+            <column name="pod_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_user_attributions" indexName="idx_pua_user_status">
+            <column name="user_id"/>
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="pod_user_attributions" indexName="idx_pua_partner">
+            <column name="partner_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_user_attributions" indexName="idx_pua_expires">
+            <column name="expires_at"/>
+        </createIndex>
+
+        <!-- Partial unique index: only one ACTIVE record per (user, pod) -->
+        <sql>
+            CREATE UNIQUE INDEX uk_pua_user_pod_active
+            ON pod_user_attributions(user_id, pod_id)
+            WHERE status = 'ACTIVE' AND is_deleted = false;
+        </sql>
+
+        <!-- Foreign keys -->
+        <addForeignKeyConstraint
+            baseTableName="pod_user_attributions"
+            baseColumnNames="user_id"
+            constraintName="fk_pua_user"
+            referencedTableName="users"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_user_attributions"
+            baseColumnNames="pod_id"
+            constraintName="fk_pua_pod"
+            referencedTableName="pods"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_user_attributions"
+            baseColumnNames="partner_id"
+            constraintName="fk_pua_partner"
+            referencedTableName="pod_partners"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

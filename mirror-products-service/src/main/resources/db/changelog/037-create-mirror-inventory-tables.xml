@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Mirror Products Table -->
+    <changeSet id="037-1" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="mirror_products"/>
+            </not>
+        </preConditions>
+        <createTable tableName="mirror_products">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="mirror_code" type="VARCHAR(30)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="misa_item_code" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="category" type="VARCHAR(100)"/>
+            <column name="item_name" type="VARCHAR(500)"/>
+            <column name="description" type="TEXT"/>
+            <column name="price" type="DECIMAL(19,2)"/>
+            <column name="cost" type="DECIMAL(19,2)"/>
+            <column name="current_quantity" type="INTEGER" defaultValue="0"/>
+            <column name="min_quantity" type="INTEGER"/>
+            <column name="max_quantity" type="INTEGER"/>
+            <column name="location" type="VARCHAR(255)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="mirror_products"
+                baseColumnNames="misa_item_code"
+                constraintName="fk_mirror_misa_item"
+                referencedTableName="misa_inventory_items"
+                referencedColumnNames="inventory_item_code"
+                onDelete="SET NULL"
+                onUpdate="CASCADE"/>
+    </changeSet>
+
+    <!-- Mirror Inventory Transactions Table -->
+    <changeSet id="037-2" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="mirror_inventory_transactions"/>
+            </not>
+        </preConditions>
+        <createTable tableName="mirror_inventory_transactions">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="product_code" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="transaction_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity_change" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity_after" type="INTEGER"/>
+            <column name="reference_type" type="VARCHAR(50)"/>
+            <column name="reference_id" type="VARCHAR(255)"/>
+            <column name="notes" type="TEXT"/>
+            <column name="performed_by" type="VARCHAR(255)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="mirror_inventory_transactions"
+                baseColumnNames="product_code"
+                constraintName="fk_transaction_product"
+                referencedTableName="mirror_products"
+                referencedColumnNames="mirror_code"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+    </changeSet>
+
+    <!-- Mirror Invoices Table -->
+    <changeSet id="037-3" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="mirror_invoices"/>
+            </not>
+        </preConditions>
+        <createTable tableName="mirror_invoices">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="invoice_number" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="invoice_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="customer_name" type="VARCHAR(500)"/>
+            <column name="customer_contact" type="VARCHAR(255)"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="PENDING"/>
+            <column name="total_amount" type="DECIMAL(19,2)"/>
+            <column name="notes" type="TEXT"/>
+            <column name="created_by" type="VARCHAR(255)"/>
+            <column name="completed_by" type="VARCHAR(255)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP"/>
+            <column name="completed_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Mirror Invoice Items Table -->
+    <changeSet id="037-4" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="mirror_invoice_items"/>
+            </not>
+        </preConditions>
+        <createTable tableName="mirror_invoice_items">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="invoice_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_code" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unit_price" type="DECIMAL(19,2)"/>
+            <column name="discount" type="DECIMAL(19,2)" defaultValue="0"/>
+            <column name="subtotal" type="DECIMAL(19,2)"/>
+            <column name="notes" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueDate="CURRENT_TIMESTAMP"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="mirror_invoice_items"
+                baseColumnNames="invoice_id"
+                constraintName="fk_item_invoice"
+                referencedTableName="mirror_invoices"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+                baseTableName="mirror_invoice_items"
+                baseColumnNames="product_code"
+                constraintName="fk_item_product"
+                referencedTableName="mirror_products"
+                referencedColumnNames="mirror_code"
+                onDelete="RESTRICT"
+                onUpdate="CASCADE"/>
+    </changeSet>
+
+    <!-- Indexes -->
+    <changeSet id="037-5" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_products"/>
+            <tableExists tableName="mirror_inventory_transactions"/>
+            <tableExists tableName="mirror_invoices"/>
+            <tableExists tableName="mirror_invoice_items"/>
+        </preConditions>
+
+        <createIndex tableName="mirror_products" indexName="idx_mirror_code">
+            <column name="mirror_code"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_products" indexName="idx_mirror_misa_item_code">
+            <column name="misa_item_code"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_products" indexName="idx_mirror_category">
+            <column name="category"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_inventory_transactions" indexName="idx_trans_product">
+            <column name="product_code"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_inventory_transactions" indexName="idx_trans_type">
+            <column name="transaction_type"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_inventory_transactions" indexName="idx_trans_created">
+            <column name="created_at"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_invoices" indexName="idx_invoice_number">
+            <column name="invoice_number"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_invoices" indexName="idx_invoice_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_invoices" indexName="idx_invoice_type">
+            <column name="invoice_type"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_invoice_items" indexName="idx_item_invoice">
+            <column name="invoice_id"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_invoice_items" indexName="idx_item_product">
+            <column name="product_code"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

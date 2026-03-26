@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="057-1" author="claude">
+        <comment>Create purchase_order_items table - Line items in purchase orders</comment>
+        <createTable tableName="purchase_order_items">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="purchase_order_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="material_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unit_price" type="DECIMAL(10,2)"/>
+            <column name="total_price" type="DECIMAL(12,2)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="057-2" author="claude">
+        <comment>Add foreign key constraints</comment>
+        <addForeignKeyConstraint
+            constraintName="fk_purchase_order_items_purchase_order"
+            baseTableName="purchase_order_items"
+            baseColumnNames="purchase_order_id"
+            referencedTableName="purchase_orders"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+            constraintName="fk_purchase_order_items_material"
+            baseTableName="purchase_order_items"
+            baseColumnNames="material_id"
+            referencedTableName="material_inventory"
+            referencedColumnNames="id"
+            onDelete="RESTRICT"/>
+    </changeSet>
+
+    <changeSet id="057-3" author="claude">
+        <comment>Create indexes for purchase_order_items</comment>
+        <createIndex tableName="purchase_order_items" indexName="idx_purchase_order_items_purchase_order_id">
+            <column name="purchase_order_id"/>
+        </createIndex>
+        <createIndex tableName="purchase_order_items" indexName="idx_purchase_order_items_material_id">
+            <column name="material_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

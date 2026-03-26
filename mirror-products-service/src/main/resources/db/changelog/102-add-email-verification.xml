@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add email_verified column to users table -->
+    <changeSet id="006-1" author="nam">
+        <addColumn tableName="users">
+            <column name="email_verified" type="boolean" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!-- Create email_verification_tokens table -->
+    <changeSet id="006-2" author="nam">
+        <createTable tableName="email_verification_tokens">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_verification_token_user"
+                             references="users(id)"
+                             deleteCascade="true"/>
+            </column>
+            <column name="token" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="expires_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="verified_at" type="timestamp"/>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create indexes for email_verification_tokens -->
+    <changeSet id="006-3" author="nam">
+        <createIndex indexName="idx_verification_token" tableName="email_verification_tokens">
+            <column name="token"/>
+        </createIndex>
+
+        <createIndex indexName="idx_verification_user_pending" tableName="email_verification_tokens">
+            <column name="user_id"/>
+            <column name="verified_at"/>
+        </createIndex>
+
+        <createIndex indexName="idx_verification_cleanup" tableName="email_verification_tokens">
+            <column name="expires_at"/>
+            <column name="verified_at"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Create unique constraint for one pending token per user -->
+    <changeSet id="006-4" author="nam">
+        <sql>
+            CREATE UNIQUE INDEX idx_one_pending_per_user
+            ON email_verification_tokens(user_id)
+            WHERE verified_at IS NULL;
+        </sql>
+        <rollback>
+            DROP INDEX IF EXISTS idx_one_pending_per_user;
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

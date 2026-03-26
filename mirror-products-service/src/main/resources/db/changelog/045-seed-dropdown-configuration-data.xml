@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Seed Prefix Options -->
+    <changeSet id="045-1" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sku_prefix_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM sku_prefix_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="sku_prefix_options">
+            <column name="prefix_code" value="RNG"/>
+            <column name="prefix_name" value="Ring"/>
+            <column name="description" value="Ring products"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="sku_prefix_options">
+            <column name="prefix_code" value="NCK"/>
+            <column name="prefix_name" value="Necklace"/>
+            <column name="description" value="Necklace products"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="sku_prefix_options">
+            <column name="prefix_code" value="EAR"/>
+            <column name="prefix_name" value="Earring"/>
+            <column name="description" value="Earring products"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="sku_prefix_options">
+            <column name="prefix_code" value="BRC"/>
+            <column name="prefix_name" value="Bracelet"/>
+            <column name="description" value="Bracelet products"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="sku_prefix_options">
+            <column name="prefix_code" value="PDT"/>
+            <column name="prefix_name" value="Pendant"/>
+            <column name="description" value="Pendant products"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+        <insert tableName="sku_prefix_options">
+            <column name="prefix_code" value="BOX"/>
+            <column name="prefix_name" value="Box/Packaging"/>
+            <column name="description" value="Packaging and box products"/>
+            <column name="display_order" valueNumeric="6"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="sku_prefix_options"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Seed Material Options -->
+    <changeSet id="045-2" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="material_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM material_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="material_options">
+            <column name="material_code" value="18KWHITEGOLD"/>
+            <column name="material_name" value="18K White Gold"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="material_options">
+            <column name="material_code" value="18KYELLOWGOLD"/>
+            <column name="material_name" value="18K Yellow Gold"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="material_options">
+            <column name="material_code" value="18KROSEGOLD"/>
+            <column name="material_name" value="18K Rose Gold"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="material_options">
+            <column name="material_code" value="PLATINUM"/>
+            <column name="material_name" value="Platinum"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="material_options">
+            <column name="material_code" value="SILVER"/>
+            <column name="material_name" value="Silver"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+        <insert tableName="material_options">
+            <column name="material_code" value="VELVET"/>
+            <column name="material_name" value="Velvet"/>
+            <column name="description" value="For packaging"/>
+            <column name="display_order" valueNumeric="6"/>
+        </insert>
+        <insert tableName="material_options">
+            <column name="material_code" value="LEATHERETTE"/>
+            <column name="material_name" value="Leatherette"/>
+            <column name="description" value="For packaging"/>
+            <column name="display_order" valueNumeric="7"/>
+        </insert>
+        <insert tableName="material_options">
+            <column name="material_code" value="MICROFIBER"/>
+            <column name="material_name" value="Microfiber"/>
+            <column name="description" value="For packaging"/>
+            <column name="display_order" valueNumeric="8"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="material_options"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Seed Stone Origin Options -->
+    <changeSet id="045-3" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="stone_origin_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM stone_origin_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="stone_origin_options">
+            <column name="origin_code" value="LABGROWN"/>
+            <column name="origin_name" value="Lab Grown"/>
+            <column name="description" value="Laboratory grown diamonds"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="stone_origin_options">
+            <column name="origin_code" value="NATURAL"/>
+            <column name="origin_name" value="Natural"/>
+            <column name="description" value="Natural mined diamonds"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="stone_origin_options"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Seed Stone Shape Options -->
+    <changeSet id="045-4" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="stone_shape_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM stone_shape_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="stone_shape_options">
+            <column name="shape_code" value="ROUND"/>
+            <column name="shape_name" value="Round"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="stone_shape_options">
+            <column name="shape_code" value="PEAR"/>
+            <column name="shape_name" value="Pear"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="stone_shape_options">
+            <column name="shape_code" value="EMERALD"/>
+            <column name="shape_name" value="Emerald"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="stone_shape_options">
+            <column name="shape_code" value="OVAL"/>
+            <column name="shape_name" value="Oval"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="stone_shape_options">
+            <column name="shape_code" value="CUSHION"/>
+            <column name="shape_name" value="Cushion"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+        <insert tableName="stone_shape_options">
+            <column name="shape_code" value="PRINCESS"/>
+            <column name="shape_name" value="Princess"/>
+            <column name="display_order" valueNumeric="6"/>
+        </insert>
+        <insert tableName="stone_shape_options">
+            <column name="shape_code" value="ASSCHER"/>
+            <column name="shape_name" value="Asscher"/>
+            <column name="display_order" valueNumeric="7"/>
+        </insert>
+        <insert tableName="stone_shape_options">
+            <column name="shape_code" value="RADIANT"/>
+            <column name="shape_name" value="Radiant"/>
+            <column name="display_order" valueNumeric="8"/>
+        </insert>
+        <insert tableName="stone_shape_options">
+            <column name="shape_code" value="MARQUISE"/>
+            <column name="shape_name" value="Marquise"/>
+            <column name="display_order" valueNumeric="9"/>
+        </insert>
+        <insert tableName="stone_shape_options">
+            <column name="shape_code" value="HEART"/>
+            <column name="shape_name" value="Heart"/>
+            <column name="display_order" valueNumeric="10"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="stone_shape_options"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Seed Stone Weight Options -->
+    <changeSet id="045-5" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="stone_weight_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM stone_weight_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="stone_weight_options">
+            <column name="weight_code" value="0.50CT"/>
+            <column name="weight_range" value="0.50 Carat"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="stone_weight_options">
+            <column name="weight_code" value="0.75CT"/>
+            <column name="weight_range" value="0.75 Carat"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="stone_weight_options">
+            <column name="weight_code" value="1.00CT"/>
+            <column name="weight_range" value="1.00 Carat"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="stone_weight_options">
+            <column name="weight_code" value="1.50CT"/>
+            <column name="weight_range" value="1.50 Carat"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="stone_weight_options">
+            <column name="weight_code" value="2.00CT"/>
+            <column name="weight_range" value="2.00 Carat"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+        <insert tableName="stone_weight_options">
+            <column name="weight_code" value="2.50CT"/>
+            <column name="weight_range" value="2.50 Carat"/>
+            <column name="display_order" valueNumeric="6"/>
+        </insert>
+        <insert tableName="stone_weight_options">
+            <column name="weight_code" value="3.00CT"/>
+            <column name="weight_range" value="3.00 Carat"/>
+            <column name="display_order" valueNumeric="7"/>
+        </insert>
+        <insert tableName="stone_weight_options">
+            <column name="weight_code" value="5.00CT"/>
+            <column name="weight_range" value="5.00 Carat"/>
+            <column name="display_order" valueNumeric="8"/>
+        </insert>
+        <insert tableName="stone_weight_options">
+            <column name="weight_code" value="7.98CT"/>
+            <column name="weight_range" value="7.98 Carat"/>
+            <column name="display_order" valueNumeric="9"/>
+        </insert>
+        <insert tableName="stone_weight_options">
+            <column name="weight_code" value="10.00CT"/>
+            <column name="weight_range" value="10.00 Carat"/>
+            <column name="display_order" valueNumeric="10"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="stone_weight_options"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Seed Side Stones Options -->
+    <changeSet id="045-6" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="side_stones_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM side_stones_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="side_stones_options">
+            <column name="stone_code" value="DIAMONDS"/>
+            <column name="stone_type" value="Diamonds"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="side_stones_options">
+            <column name="stone_code" value="SAPPHIRES"/>
+            <column name="stone_type" value="Sapphires"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="side_stones_options">
+            <column name="stone_code" value="RUBIES"/>
+            <column name="stone_type" value="Rubies"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="side_stones_options">
+            <column name="stone_code" value="EMERALDS"/>
+            <column name="stone_type" value="Emeralds"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="side_stones_options">
+            <column name="stone_code" value="MIXED"/>
+            <column name="stone_type" value="Mixed Stones"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+        <insert tableName="side_stones_options">
+            <column name="stone_code" value="NONE"/>
+            <column name="stone_type" value="No Side Stones"/>
+            <column name="display_order" valueNumeric="6"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="side_stones_options"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Seed Country of Origin Options -->
+    <changeSet id="045-7" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="country_of_origin_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM country_of_origin_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="country_of_origin_options">
+            <column name="country_code" value="CN"/>
+            <column name="country_name" value="China"/>
+            <column name="description" value="Made in China"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="country_of_origin_options">
+            <column name="country_code" value="IN"/>
+            <column name="country_name" value="India"/>
+            <column name="description" value="Made in India"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="country_of_origin_options">
+            <column name="country_code" value="TH"/>
+            <column name="country_name" value="Thailand"/>
+            <column name="description" value="Made in Thailand"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="country_of_origin_options">
+            <column name="country_code" value="HK"/>
+            <column name="country_name" value="Hongkong"/>
+            <column name="description" value="Made in Hongkong"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="country_of_origin_options"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

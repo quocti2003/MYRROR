@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ========================================== -->
+    <!-- Production Order System                    -->
+    <!-- Sprint 4: Production Orders & Stage Lifecycle -->
+    <!-- ========================================== -->
+
+    <!-- Sequences for production order entities -->
+    <changeSet id="120-01-create-production-order-sequences" author="backend-developer">
+        <createSequence sequenceName="production_order_seq" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="production_order_stage_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <!-- Production Orders Table -->
+    <changeSet id="120-02-create-production-orders-table" author="backend-developer">
+        <createTable tableName="production_orders">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <!-- Relationships -->
+            <column name="production_plan_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="collection_plan_item_id" type="UUID"/>
+            <column name="jtrc_id" type="VARCHAR(36)"/>
+
+            <!-- Order Details -->
+            <column name="order_number" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="quantity" type="INTEGER" defaultValueNumeric="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="DRAFT">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Current Position -->
+            <column name="current_stage_order" type="INTEGER"/>
+            <column name="current_holder_id" type="VARCHAR(36)"/>
+
+            <!-- Dates -->
+            <column name="estimated_completion_date" type="DATE"/>
+            <column name="actual_completion_date" type="DATE"/>
+
+            <column name="notes" type="TEXT"/>
+
+            <!-- Audit Fields -->
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+
+            <!-- Base Entity Fields -->
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Foreign Keys -->
+        <addForeignKeyConstraint
+            baseTableName="production_orders"
+            baseColumnNames="production_plan_id"
+            constraintName="fk_por_production_plan"
+            referencedTableName="production_plans"
+            referencedColumnNames="id"
+            onDelete="RESTRICT"/>
+
+        <addForeignKeyConstraint
+            baseTableName="production_orders"
+            baseColumnNames="collection_plan_item_id"
+            constraintName="fk_por_collection_plan_item"
+            referencedTableName="collection_plan_items"
+            referencedColumnNames="id"
+            onDelete="SET NULL"/>
+
+        <addForeignKeyConstraint
+            baseTableName="production_orders"
+            baseColumnNames="jtrc_id"
+            constraintName="fk_por_jtrc"
+            referencedTableName="jewelry_technical_reports"
+            referencedColumnNames="id"
+            onDelete="SET NULL"/>
+
+        <!-- Indexes -->
+        <createIndex tableName="production_orders" indexName="idx_por_order_number">
+            <column name="order_number"/>
+        </createIndex>
+        <createIndex tableName="production_orders" indexName="idx_por_production_plan">
+            <column name="production_plan_id"/>
+        </createIndex>
+        <createIndex tableName="production_orders" indexName="idx_por_collection_plan_item">
+            <column name="collection_plan_item_id"/>
+        </createIndex>
+        <createIndex tableName="production_orders" indexName="idx_por_jtrc">
+            <column name="jtrc_id"/>
+        </createIndex>
+        <createIndex tableName="production_orders" indexName="idx_por_status">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="production_orders" indexName="idx_por_current_holder">
+            <column name="current_holder_id"/>
+        </createIndex>
+        <createIndex tableName="production_orders" indexName="idx_por_estimated_completion">
+            <column name="estimated_completion_date"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Production Order Stages Table -->
+    <changeSet id="120-03-create-production-order-stages-table" author="backend-developer">
+        <createTable tableName="production_order_stages">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <!-- Relationships -->
+            <column name="production_order_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="workflow_stage_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assigned_vendor_id" type="VARCHAR(36)"/>
+
+            <!-- Stage Details (copied from template) -->
+            <column name="stage_order" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stage_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="required_capability" type="VARCHAR(30)"/>
+
+            <column name="status" type="VARCHAR(20)" defaultValue="BLOCKED">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Planned Dates -->
+            <column name="planned_start_date" type="DATE"/>
+            <column name="planned_end_date" type="DATE"/>
+
+            <!-- Actual Dates -->
+            <column name="actual_start_date" type="DATE"/>
+            <column name="actual_end_date" type="DATE"/>
+
+            <!-- Cost Tracking -->
+            <column name="estimated_cost" type="DECIMAL(15,2)"/>
+            <column name="actual_cost" type="DECIMAL(15,2)"/>
+
+            <column name="is_final_stage" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notes" type="TEXT"/>
+
+            <!-- Completion Tracking -->
+            <column name="completed_by" type="VARCHAR(100)"/>
+            <column name="completed_at" type="TIMESTAMP"/>
+
+            <!-- Base Entity Fields -->
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Foreign Keys -->
+        <addForeignKeyConstraint
+            baseTableName="production_order_stages"
+            baseColumnNames="production_order_id"
+            constraintName="fk_pos_production_order"
+            referencedTableName="production_orders"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="production_order_stages"
+            baseColumnNames="workflow_stage_id"
+            constraintName="fk_pos_workflow_stage"
+            referencedTableName="workflow_stages"
+            referencedColumnNames="id"
+            onDelete="RESTRICT"/>
+
+        <addForeignKeyConstraint
+            baseTableName="production_order_stages"
+            baseColumnNames="assigned_vendor_id"
+            constraintName="fk_pos_assigned_vendor"
+            referencedTableName="vendors"
+            referencedColumnNames="id"
+            onDelete="SET NULL"/>
+
+        <!-- Unique Constraint -->
+        <addUniqueConstraint
+            tableName="production_order_stages"
+            columnNames="production_order_id, stage_order"
+            constraintName="uk_order_stage_order"/>
+
+        <!-- Indexes -->
+        <createIndex tableName="production_order_stages" indexName="idx_pos_production_order">
+            <column name="production_order_id"/>
+        </createIndex>
+        <createIndex tableName="production_order_stages" indexName="idx_pos_workflow_stage">
+            <column name="workflow_stage_id"/>
+        </createIndex>
+        <createIndex tableName="production_order_stages" indexName="idx_pos_stage_order">
+            <column name="stage_order"/>
+        </createIndex>
+        <createIndex tableName="production_order_stages" indexName="idx_pos_status">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="production_order_stages" indexName="idx_pos_assigned_vendor">
+            <column name="assigned_vendor_id"/>
+        </createIndex>
+        <createIndex tableName="production_order_stages" indexName="idx_pos_capability">
+            <column name="required_capability"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Check Constraints -->
+    <changeSet id="120-04-add-production-order-check-constraints" author="backend-developer" dbms="postgresql">
+        <sql>
+            ALTER TABLE production_orders
+            ADD CONSTRAINT chk_por_status
+            CHECK (status IN ('DRAFT', 'READY', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'));
+
+            ALTER TABLE production_orders
+            ADD CONSTRAINT chk_por_quantity_positive
+            CHECK (quantity > 0);
+
+            ALTER TABLE production_order_stages
+            ADD CONSTRAINT chk_pos_status
+            CHECK (status IN ('BLOCKED', 'READY', 'IN_PROGRESS', 'COMPLETED', 'SKIPPED'));
+
+            ALTER TABLE production_order_stages
+            ADD CONSTRAINT chk_pos_stage_order_positive
+            CHECK (stage_order > 0);
+
+            ALTER TABLE production_order_stages
+            ADD CONSTRAINT chk_pos_planned_dates
+            CHECK (planned_end_date IS NULL OR planned_start_date IS NULL OR planned_end_date >= planned_start_date);
+
+            ALTER TABLE production_order_stages
+            ADD CONSTRAINT chk_pos_actual_dates
+            CHECK (actual_end_date IS NULL OR actual_start_date IS NULL OR actual_end_date >= actual_start_date);
+
+            ALTER TABLE production_order_stages
+            ADD CONSTRAINT chk_pos_costs_non_negative
+            CHECK ((estimated_cost IS NULL OR estimated_cost >= 0) AND (actual_cost IS NULL OR actual_cost >= 0));
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

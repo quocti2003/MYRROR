@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Drop 'name' column (duplicate of 'item_name') -->
+    <changeSet id="074-1" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="mirror_products"/>
+                <columnExists tableName="mirror_products" columnName="name"/>
+            </and>
+        </preConditions>
+        <comment>Drop 'name' column - duplicate of 'item_name'</comment>
+        <dropColumn tableName="mirror_products" columnName="name"/>
+        <rollback>
+            <addColumn tableName="mirror_products">
+                <column name="name" type="varchar(500)"/>
+            </addColumn>
+        </rollback>
+    </changeSet>
+
+    <!-- Drop 'current_quantity' column (duplicate of 'stock_quantity') -->
+    <changeSet id="074-2" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="mirror_products"/>
+                <columnExists tableName="mirror_products" columnName="current_quantity"/>
+            </and>
+        </preConditions>
+        <comment>Drop 'current_quantity' column - duplicate of 'stock_quantity'</comment>
+        <dropColumn tableName="mirror_products" columnName="current_quantity"/>
+        <rollback>
+            <addColumn tableName="mirror_products">
+                <column name="current_quantity" type="integer"/>
+            </addColumn>
+        </rollback>
+    </changeSet>
+
+    <!-- Drop 'min_quantity' column (duplicate of 'min_stock_level') -->
+    <changeSet id="074-3" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="mirror_products"/>
+                <columnExists tableName="mirror_products" columnName="min_quantity"/>
+            </and>
+        </preConditions>
+        <comment>Drop 'min_quantity' column - duplicate of 'min_stock_level'</comment>
+        <dropColumn tableName="mirror_products" columnName="min_quantity"/>
+        <rollback>
+            <addColumn tableName="mirror_products">
+                <column name="min_quantity" type="integer"/>
+            </addColumn>
+        </rollback>
+    </changeSet>
+
+    <!-- Drop 'max_quantity' column (not used) -->
+    <changeSet id="074-4" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="mirror_products"/>
+                <columnExists tableName="mirror_products" columnName="max_quantity"/>
+            </and>
+        </preConditions>
+        <comment>Drop 'max_quantity' column - not used</comment>
+        <dropColumn tableName="mirror_products" columnName="max_quantity"/>
+        <rollback>
+            <addColumn tableName="mirror_products">
+                <column name="max_quantity" type="integer"/>
+            </addColumn>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

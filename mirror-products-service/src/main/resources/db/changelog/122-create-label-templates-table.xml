@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ========================================== -->
+    <!-- Label Printing System                       -->
+    <!-- Label Templates for ZPL-based printing     -->
+    <!-- ========================================== -->
+
+    <!-- Sequence for label template IDs -->
+    <changeSet id="122-01-create-label-template-sequence" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="label_template_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="label_template_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <!-- Label Templates Table -->
+    <changeSet id="122-02-create-label-templates-table" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="label_templates"/>
+            </not>
+        </preConditions>
+        <createTable tableName="label_templates">
+            <column name="id" type="VARCHAR(30)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="zpl_content" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label_type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Label dimensions -->
+            <column name="width_mm" type="INTEGER"/>
+            <column name="height_mm" type="INTEGER"/>
+            <column name="dpi" type="INTEGER" defaultValueNumeric="203">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Variables stored as JSON array -->
+            <column name="variables" type="TEXT"/>
+            <column name="preview_image_url" type="VARCHAR(500)"/>
+
+            <!-- Flags -->
+            <column name="is_default" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Base Entity Fields -->
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Indexes -->
+        <createIndex tableName="label_templates" indexName="idx_lbt_name">
+            <column name="name"/>
+        </createIndex>
+        <createIndex tableName="label_templates" indexName="idx_lbt_label_type">
+            <column name="label_type"/>
+        </createIndex>
+        <createIndex tableName="label_templates" indexName="idx_lbt_is_default">
+            <column name="is_default"/>
+        </createIndex>
+        <createIndex tableName="label_templates" indexName="idx_lbt_is_active">
+            <column name="is_active"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Check Constraints - Skip if table doesn't have expected columns -->
+    <changeSet id="122-03-add-label-template-check-constraints" author="backend-developer" dbms="postgresql">
+        <preConditions onFail="MARK_RAN" onError="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="label_type"/>
+        </preConditions>
+        <sql>
+            DO $$
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_lbt_label_type') THEN
+                    ALTER TABLE label_templates
+                    ADD CONSTRAINT chk_lbt_label_type
+                    CHECK (label_type IN ('JEWELRY_TAG', 'BUTTERFLY_TAG', 'PRODUCT_LABEL', 'QR_CODE', 'BARCODE', 'PRICE_TAG'));
+                END IF;
+
+                IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_lbt_dpi_positive') THEN
+                    ALTER TABLE label_templates
+                    ADD CONSTRAINT chk_lbt_dpi_positive
+                    CHECK (dpi > 0);
+                END IF;
+
+                IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_lbt_width_positive') THEN
+                    ALTER TABLE label_templates
+                    ADD CONSTRAINT chk_lbt_width_positive
+                    CHECK (width_mm IS NULL OR width_mm > 0);
+                END IF;
+
+                IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_lbt_height_positive') THEN
+                    ALTER TABLE label_templates
+                    ADD CONSTRAINT chk_lbt_height_positive
+                    CHECK (height_mm IS NULL OR height_mm > 0);
+                END IF;
+            END $$;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="060-1" author="claude">
+        <comment>Seed age groups - Customer demographic segments</comment>
+        <sql>
+            INSERT INTO age_groups (id, name, min_age, max_age) VALUES
+            ('11111111-1111-1111-1111-111111111111', 'Gen Z (18-25)', 18, 25),
+            ('22222222-2222-2222-2222-222222222222', 'Millennials (26-35)', 26, 35),
+            ('33333333-3333-3333-3333-333333333333', 'Gen X (36-50)', 36, 50),
+            ('44444444-4444-4444-4444-444444444444', 'Boomers (51-70)', 51, 70),
+            ('55555555-5555-5555-5555-555555555555', 'All Ages', NULL, NULL);
+        </sql>
+        <rollback>
+            DELETE FROM age_groups WHERE id IN (
+                '11111111-1111-1111-1111-111111111111',
+                '22222222-2222-2222-2222-222222222222',
+                '33333333-3333-3333-3333-333333333333',
+                '44444444-4444-4444-4444-444444444444',
+                '55555555-5555-5555-5555-555555555555'
+            );
+        </rollback>
+    </changeSet>
+
+    <changeSet id="060-2" author="claude">
+        <comment>Seed age group preferences - Preferences by demographic</comment>
+        <sql>
+            -- Gen Z preferences
+            INSERT INTO age_group_preferences (id, age_group_id, attribute_type, weight) VALUES
+            ('aaaa1111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'METAL_TYPE', 80),
+            ('aaaa2222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'STONE_TYPE', 70),
+            ('aaaa3333-3333-3333-3333-333333333333', '11111111-1111-1111-1111-111111111111', 'PRICE_RANGE', 90);
+
+            -- Millennials preferences
+            INSERT INTO age_group_preferences (id, age_group_id, attribute_type, weight) VALUES
+            ('bbbb1111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'METAL_TYPE', 85),
+            ('bbbb2222-2222-2222-2222-222222222222', '22222222-2222-2222-2222-222222222222', 'STONE_TYPE', 80),
+            ('bbbb3333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', 'PRICE_RANGE', 75);
+        </sql>
+        <rollback>
+            DELETE FROM age_group_preferences WHERE age_group_id IN (
+                '11111111-1111-1111-1111-111111111111',
+                '22222222-2222-2222-2222-222222222222'
+            );
+        </rollback>
+    </changeSet>
+
+    <changeSet id="060-3" author="claude">
+        <comment>Seed age group preference values</comment>
+        <sql>
+            -- Gen Z metal preferences
+            INSERT INTO age_group_preference_values (preference_id, preferred_value) VALUES
+            ('aaaa1111-1111-1111-1111-111111111111', '14K White Gold'),
+            ('aaaa1111-1111-1111-1111-111111111111', 'Sterling Silver'),
+            ('aaaa1111-1111-1111-1111-111111111111', 'Rose Gold');
+
+            -- Gen Z stone preferences
+            INSERT INTO age_group_preference_values (preference_id, preferred_value) VALUES
+            ('aaaa2222-2222-2222-2222-222222222222', 'Diamond'),
+            ('aaaa2222-2222-2222-2222-222222222222', 'Sapphire'),
+            ('aaaa2222-2222-2222-2222-222222222222', 'Emerald');
+
+            -- Gen Z price range
+            INSERT INTO age_group_preference_values (preference_id, preferred_value) VALUES
+            ('aaaa3333-3333-3333-3333-333333333333', '$100-$500'),
+            ('aaaa3333-3333-3333-3333-333333333333', '$500-$1000');
+
+            -- Millennials metal preferences
+            INSERT INTO age_group_preference_values (preference_id, preferred_value) VALUES
+            ('bbbb1111-1111-1111-1111-111111111111', '18K Yellow Gold'),
+            ('bbbb1111-1111-1111-1111-111111111111', '18K White Gold'),
+            ('bbbb1111-1111-1111-1111-111111111111', 'Platinum');
+
+            -- Millennials stone preferences
+            INSERT INTO age_group_preference_values (preference_id, preferred_value) VALUES
+            ('bbbb2222-2222-2222-2222-222222222222', 'Diamond'),
+            ('bbbb2222-2222-2222-2222-222222222222', 'Ruby'),
+            ('bbbb2222-2222-2222-2222-222222222222', 'Tanzanite');
+
+            -- Millennials price range
+            INSERT INTO age_group_preference_values (preference_id, preferred_value) VALUES
+            ('bbbb3333-3333-3333-3333-333333333333', '$1000-$3000'),
+            ('bbbb3333-3333-3333-3333-333333333333', '$3000-$5000');
+        </sql>
+        <rollback>
+            DELETE FROM age_group_preference_values WHERE preference_id IN (
+                'aaaa1111-1111-1111-1111-111111111111',
+                'aaaa2222-2222-2222-2222-222222222222',
+                'aaaa3333-3333-3333-3333-333333333333',
+                'bbbb1111-1111-1111-1111-111111111111',
+                'bbbb2222-2222-2222-2222-222222222222',
+                'bbbb3333-3333-3333-3333-333333333333'
+            );
+        </rollback>
+    </changeSet>
+
+    <changeSet id="060-4" author="claude">
+        <comment>Seed material inventory - Sample raw materials</comment>
+        <sql>
+            -- Note: Assuming vendors exist from previous seeds
+            -- Using vendor IDs from existing data or create test vendor
+
+            INSERT INTO material_inventory (id, name, type, vendor_id, base_price, market_price, currency,
+                                           tax_customs_percent, assembly_cost_local,
+                                           delivery_lead_time_days, production_lead_time_days,
+                                           assembly_lead_time_days, created_at) VALUES
+            ('cccc1111-1111-1111-1111-111111111111', '14K White Gold', 'METAL',
+             (SELECT id FROM vendors WHERE is_active = true AND is_deleted = false LIMIT 1),
+             65.00, 70.00, 'USD', 5.00, 8.00, 7, 14, 3, CURRENT_TIMESTAMP),
+
+            ('cccc2222-2222-2222-2222-222222222222', '18K Yellow Gold', 'METAL',
+             (SELECT id FROM vendors WHERE is_active = true AND is_deleted = false LIMIT 1),
+             85.50, 90.00, 'USD', 5.00, 10.00, 7, 14, 3, CURRENT_TIMESTAMP),
+
+            ('cccc3333-3333-3333-3333-333333333333', 'Sterling Silver', 'METAL',
+             (SELECT id FROM vendors WHERE is_active = true AND is_deleted = false LIMIT 1),
+             1.50, 2.00, 'USD', 3.00, 2.00, 5, 10, 2, CURRENT_TIMESTAMP),
+
+            ('cccc4444-4444-4444-4444-444444444444', 'Diamond 0.5ct VS1', 'STONE',
+             (SELECT id FROM vendors WHERE is_active = true AND is_deleted = false LIMIT 1),
+             500.00, 550.00, 'USD', 10.00, 50.00, 14, 21, 5, CURRENT_TIMESTAMP),
+
+            ('cccc5555-5555-5555-5555-555555555555', 'Sapphire 1ct', 'STONE',
+             (SELECT id FROM vendors WHERE is_active = true AND is_deleted = false LIMIT 1),
+             300.00, 350.00, 'USD', 10.00, 40.00, 14, 21, 5, CURRENT_TIMESTAMP),
+
+            ('cccc6666-6666-6666-6666-666666666666', 'Gold-Plated Clasp', 'FINDING',
+             (SELECT id FROM vendors WHERE is_active = true AND is_deleted = false LIMIT 1),
+             2.50, 3.00, 'USD', 5.00, 0.50, 3, 7, 1, CURRENT_TIMESTAMP);
+        </sql>
+        <rollback>
+            DELETE FROM material_inventory WHERE id IN (
+                'cccc1111-1111-1111-1111-111111111111',
+                'cccc2222-2222-2222-2222-222222222222',
+                'cccc3333-3333-3333-3333-333333333333',
+                'cccc4444-4444-4444-4444-444444444444',
+                'cccc5555-5555-5555-5555-555555555555',
+                'cccc6666-6666-6666-6666-666666666666'
+            );
+        </rollback>
+    </changeSet>
+
+    <changeSet id="060-5" author="claude">
+        <comment>Seed purchase orders - Sample POs to vendors</comment>
+        <sql>
+            INSERT INTO purchase_orders (id, vendor_id, status, created_at, expected_delivery_date, total_cost) VALUES
+            ('dddd1111-1111-1111-1111-111111111111',
+             (SELECT id FROM vendors WHERE is_active = true AND is_deleted = false LIMIT 1),
+             'DRAFT', CURRENT_TIMESTAMP, CURRENT_DATE + INTERVAL '30 days', 15000.00),
+
+            ('dddd2222-2222-2222-2222-222222222222',
+             (SELECT id FROM vendors WHERE is_active = true AND is_deleted = false LIMIT 1),
+             'SENT', CURRENT_TIMESTAMP, CURRENT_DATE + INTERVAL '45 days', 25000.00),
+
+            ('dddd3333-3333-3333-3333-333333333333',
+             (SELECT id FROM vendors WHERE is_active = true AND is_deleted = false LIMIT 1),
+             'CONFIRMED', CURRENT_TIMESTAMP, CURRENT_DATE + INTERVAL '60 days', 50000.00);
+        </sql>
+        <rollback>
+            DELETE FROM purchase_orders WHERE id IN (
+                'dddd1111-1111-1111-1111-111111111111',
+                'dddd2222-2222-2222-2222-222222222222',
+                'dddd3333-3333-3333-3333-333333333333'
+            );
+        </rollback>
+    </changeSet>
+
+    <changeSet id="060-6" author="claude">
+        <comment>Seed purchase order items - Line items for POs</comment>
+        <sql>
+            -- Items for PO 1 (DRAFT)
+            INSERT INTO purchase_order_items (id, purchase_order_id, material_id, quantity, unit_price, total_price) VALUES
+            ('eeee1111-1111-1111-1111-111111111111', 'dddd1111-1111-1111-1111-111111111111',
+             'cccc1111-1111-1111-1111-111111111111', 100, 65.00, 6500.00),
+            ('eeee1112-1111-1111-1111-111111111111', 'dddd1111-1111-1111-1111-111111111111',
+             'cccc3333-3333-3333-3333-333333333333', 200, 1.50, 300.00);
+
+            -- Items for PO 2 (SENT)
+            INSERT INTO purchase_order_items (id, purchase_order_id, material_id, quantity, unit_price, total_price) VALUES
+            ('eeee2111-1111-1111-1111-111111111111', 'dddd2222-2222-2222-2222-222222222222',
+             'cccc2222-2222-2222-2222-222222222222', 150, 85.50, 12825.00),
+            ('eeee2112-1111-1111-1111-111111111111', 'dddd2222-2222-2222-2222-222222222222',
+             'cccc4444-4444-4444-4444-444444444444', 50, 500.00, 25000.00);
+
+            -- Items for PO 3 (CONFIRMED)
+            INSERT INTO purchase_order_items (id, purchase_order_id, material_id, quantity, unit_price, total_price) VALUES
+            ('eeee3111-1111-1111-1111-111111111111', 'dddd3333-3333-3333-3333-333333333333',
+             'cccc2222-2222-2222-2222-222222222222', 200, 85.50, 17100.00),
+            ('eeee3112-1111-1111-1111-111111111111', 'dddd3333-3333-3333-3333-333333333333',
+             'cccc4444-4444-4444-4444-444444444444', 100, 500.00, 50000.00),
+            ('eeee3113-1111-1111-1111-111111111111', 'dddd3333-3333-3333-3333-333333333333',
+             'cccc5555-5555-5555-5555-555555555555', 80, 300.00, 24000.00);
+        </sql>
+        <rollback>
+            DELETE FROM purchase_order_items WHERE purchase_order_id IN (
+                'dddd1111-1111-1111-1111-111111111111',
+                'dddd2222-2222-2222-2222-222222222222',
+                'dddd3333-3333-3333-3333-333333333333'
+            );
+        </rollback>
+    </changeSet>
+
+    <changeSet id="060-7" author="claude">
+        <comment>Seed purchase order age group allocations - Demographic targeting</comment>
+        <sql>
+            -- Allocations for PO 1 (targeting Gen Z and Millennials)
+            INSERT INTO purchase_order_age_group_allocations (id, purchase_order_id, age_group_id, allocation_percentage, quantity) VALUES
+            ('ffff1111-1111-1111-1111-111111111111', 'dddd1111-1111-1111-1111-111111111111',
+             '11111111-1111-1111-1111-111111111111', 40.00, 120),
+            ('ffff1112-1111-1111-1111-111111111111', 'dddd1111-1111-1111-1111-111111111111',
+             '22222222-2222-2222-2222-222222222222', 60.00, 180);
+
+            -- Allocations for PO 2 (targeting Millennials and Gen X)
+            INSERT INTO purchase_order_age_group_allocations (id, purchase_order_id, age_group_id, allocation_percentage, quantity) VALUES
+            ('ffff2111-1111-1111-1111-111111111111', 'dddd2222-2222-2222-2222-222222222222',
+             '22222222-2222-2222-2222-222222222222', 50.00, 100),
+            ('ffff2112-1111-1111-1111-111111111111', 'dddd2222-2222-2222-2222-222222222222',
+             '33333333-3333-3333-3333-333333333333', 50.00, 100);
+
+            -- Allocations for PO 3 (targeting all age groups)
+            INSERT INTO purchase_order_age_group_allocations (id, purchase_order_id, age_group_id, allocation_percentage, quantity) VALUES
+            ('ffff3111-1111-1111-1111-111111111111', 'dddd3333-3333-3333-3333-333333333333',
+             '11111111-1111-1111-1111-111111111111', 25.00, 95),
+            ('ffff3112-1111-1111-1111-111111111111', 'dddd3333-3333-3333-3333-333333333333',
+             '22222222-2222-2222-2222-222222222222', 35.00, 133),
+            ('ffff3113-1111-1111-1111-111111111111', 'dddd3333-3333-3333-3333-333333333333',
+             '33333333-3333-3333-3333-333333333333', 25.00, 95),
+            ('ffff3114-1111-1111-1111-111111111111', 'dddd3333-3333-3333-3333-333333333333',
+             '44444444-4444-4444-4444-444444444444', 15.00, 57);
+        </sql>
+        <rollback>
+            DELETE FROM purchase_order_age_group_allocations WHERE purchase_order_id IN (
+                'dddd1111-1111-1111-1111-111111111111',
+                'dddd2222-2222-2222-2222-222222222222',
+                'dddd3333-3333-3333-3333-333333333333'
+            );
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

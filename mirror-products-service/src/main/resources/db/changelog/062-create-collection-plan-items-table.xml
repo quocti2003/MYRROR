@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="062-1" author="claude">
+        <comment>Create collection_plan_items table - Individual items in a collection plan</comment>
+        <createTable tableName="collection_plan_items">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="collection_plan_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_type" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="base_design" type="VARCHAR(255)"/>
+            <column name="target_quantity" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="estimated_unit_cost" type="DECIMAL(10,2)"/>
+            <column name="jewelry_spec_id" type="VARCHAR(255)"/>
+        </createTable>
+        <rollback>
+            <dropTable tableName="collection_plan_items"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="062-2" author="claude">
+        <comment>Add foreign key from collection_plan_items to collection_plans</comment>
+        <addForeignKeyConstraint
+                constraintName="fk_collection_plan_items_collection_plan"
+                baseTableName="collection_plan_items"
+                baseColumnNames="collection_plan_id"
+                referencedTableName="collection_plans"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+        <rollback>
+            <dropForeignKeyConstraint
+                    baseTableName="collection_plan_items"
+                    constraintName="fk_collection_plan_items_collection_plan"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="062-3" author="claude">
+        <comment>Create indexes on collection_plan_items table</comment>
+        <createIndex tableName="collection_plan_items" indexName="idx_collection_plan_items_collection_plan_id">
+            <column name="collection_plan_id"/>
+        </createIndex>
+        <createIndex tableName="collection_plan_items" indexName="idx_collection_plan_items_product_type">
+            <column name="product_type"/>
+        </createIndex>
+        <rollback>
+            <dropIndex tableName="collection_plan_items" indexName="idx_collection_plan_items_collection_plan_id"/>
+            <dropIndex tableName="collection_plan_items" indexName="idx_collection_plan_items_product_type"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

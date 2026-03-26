@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="111-create-pod-qr-scans-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="pod_qr_scans"/>
+            </not>
+        </preConditions>
+
+        <comment>Create pod_qr_scans table for tracking QR code scans</comment>
+
+        <createTable tableName="pod_qr_scans">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (PQS prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="qr_code_id" type="VARCHAR(255)" remarks="Reference to pod_qr_codes">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pod_id" type="VARCHAR(255)" remarks="Reference to pods (denormalized for performance)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(255)" remarks="Reference to mirror_products (denormalized)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="partner_id" type="VARCHAR(255)" remarks="Reference to pod_partners (denormalized)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="session_id" type="VARCHAR(100)" remarks="Browser/device session identifier"/>
+            <column name="user_id" type="BIGINT" remarks="User ID if logged in"/>
+            <column name="ip_address" type="VARCHAR(45)" remarks="Client IP address (IPv4 or IPv6)"/>
+            <column name="user_agent" type="VARCHAR(500)" remarks="Browser user agent string"/>
+            <column name="device_type" type="VARCHAR(20)" remarks="Device type (MOBILE, TABLET, DESKTOP)"/>
+            <column name="os" type="VARCHAR(50)" remarks="Operating system"/>
+            <column name="browser" type="VARCHAR(50)" remarks="Browser name"/>
+            <column name="referer" type="VARCHAR(500)" remarks="HTTP referer if available"/>
+            <column name="country" type="VARCHAR(100)" remarks="Country from IP geolocation"/>
+            <column name="city" type="VARCHAR(100)" remarks="City from IP geolocation"/>
+            <column name="scanned_at" type="TIMESTAMP" remarks="Scan timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_unique" type="BOOLEAN" defaultValueBoolean="true" remarks="Is this a unique scan (not duplicate within window)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Indexes for analytics queries -->
+        <createIndex tableName="pod_qr_scans" indexName="idx_qr_scan_qr_code">
+            <column name="qr_code_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_qr_scans" indexName="idx_qr_scan_pod">
+            <column name="pod_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_qr_scans" indexName="idx_qr_scan_partner">
+            <column name="partner_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_qr_scans" indexName="idx_qr_scan_product">
+            <column name="product_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_qr_scans" indexName="idx_qr_scan_session">
+            <column name="session_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_qr_scans" indexName="idx_qr_scan_user">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_qr_scans" indexName="idx_qr_scan_scanned_at">
+            <column name="scanned_at"/>
+        </createIndex>
+
+        <createIndex tableName="pod_qr_scans" indexName="idx_qr_scan_partner_date">
+            <column name="partner_id"/>
+            <column name="scanned_at"/>
+        </createIndex>
+
+        <!-- Foreign keys -->
+        <addForeignKeyConstraint
+            baseTableName="pod_qr_scans"
+            baseColumnNames="qr_code_id"
+            constraintName="fk_qr_scan_qr_code"
+            referencedTableName="pod_qr_codes"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_qr_scans"
+            baseColumnNames="pod_id"
+            constraintName="fk_qr_scan_pod"
+            referencedTableName="pods"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_qr_scans"
+            baseColumnNames="partner_id"
+            constraintName="fk_qr_scan_partner"
+            referencedTableName="pod_partners"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_qr_scans"
+            baseColumnNames="product_id"
+            constraintName="fk_qr_scan_product"
+            referencedTableName="mirror_products"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_qr_scans"
+            baseColumnNames="user_id"
+            constraintName="fk_qr_scan_user"
+            referencedTableName="users"
+            referencedColumnNames="id"
+            onDelete="SET NULL"
+            onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

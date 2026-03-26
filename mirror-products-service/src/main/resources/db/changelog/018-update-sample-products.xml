@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="018-insert-sample-products-fixed" author="system">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM products WHERE id = 'PRD000001'
+            </sqlCheck>
+        </preConditions>
+        
+        <comment>Insert sample jewelry products with new ID format</comment>
+        
+        <insert tableName="products">
+            <column name="id" value="PRD000001"/>
+            <column name="name" value="Lumina Diamond Ring"/>
+            <column name="description" value="Elegant diamond ring featuring a brilliant cut center stone with delicate side accents. Perfect for engagements or special occasions."/>
+            <column name="category_id" value="CAT000001"/>
+            <column name="sku" value="LUM-DR-001"/>
+            <column name="price" value="25000000"/>
+            <column name="currency" value="VND"/>
+            <column name="metal_type" value="GOLD"/>
+            <column name="metal_purity" value="18K"/>
+            <column name="stone_type" value="DIAMOND"/>
+            <column name="weight_grams" value="3.5"/>
+            <column name="dimensions" value='{"width": "6mm", "height": "4mm", "depth": "2mm"}'/>
+            <column name="image_url" value="/products/lumina-ring.png"/>
+            <column name="image_urls" value='["/products/lumina-ring-1.png", "/products/lumina-ring-2.png", "/products/lumina-ring-3.png"]'/>
+            <column name="tags" value='["diamond", "engagement", "luxury", "18k gold"]'/>
+            <column name="status" value="ACTIVE"/>
+            <column name="featured" value="true"/>
+            <column name="stock_quantity" value="15"/>
+            <column name="min_stock_level" value="3"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="is_active" value="true"/>
+            <column name="is_deleted" value="false"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="PRD000002"/>
+            <column name="name" value="Aurora Pendant"/>
+            <column name="description" value="Stunning pendant inspired by the northern lights, featuring multiple gemstones in a contemporary setting."/>
+            <column name="category_id" value="CAT000002"/>
+            <column name="sku" value="AUR-PEN-001"/>
+            <column name="price" value="18000000"/>
+            <column name="currency" value="VND"/>
+            <column name="metal_type" value="GOLD"/>
+            <column name="metal_purity" value="18K"/>
+            <column name="stone_type" value="MIXED_GEMS"/>
+            <column name="weight_grams" value="2.8"/>
+            <column name="dimensions" value='{"width": "12mm", "height": "18mm", "depth": "3mm"}'/>
+            <column name="image_url" value="/collections/pendant.png"/>
+            <column name="image_urls" value='["/collections/pendant-1.png", "/collections/pendant-2.png"]'/>
+            <column name="tags" value='["pendant", "contemporary", "mixed gems", "18k gold"]'/>
+            <column name="status" value="ACTIVE"/>
+            <column name="featured" value="true"/>
+            <column name="stock_quantity" value="8"/>
+            <column name="min_stock_level" value="2"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="is_active" value="true"/>
+            <column name="is_deleted" value="false"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="PRD000003"/>
+            <column name="name" value="Solaris Gold Ring"/>
+            <column name="description" value="Classic gold ring with a modern twist, featuring clean lines and exceptional craftsmanship."/>
+            <column name="category_id" value="CAT000001"/>
+            <column name="sku" value="SOL-RNG-001"/>
+            <column name="price" value="22000000"/>
+            <column name="currency" value="VND"/>
+            <column name="metal_type" value="GOLD"/>
+            <column name="metal_purity" value="18K"/>
+            <column name="stone_type" value="NONE"/>
+            <column name="weight_grams" value="4.2"/>
+            <column name="dimensions" value='{"width": "5mm", "height": "3mm", "depth": "2mm"}'/>
+            <column name="image_url" value="/collections/ring1.png"/>
+            <column name="image_urls" value='["/collections/ring1-1.png", "/collections/ring1-2.png"]'/>
+            <column name="tags" value='["ring", "gold", "classic", "modern"]'/>
+            <column name="status" value="ACTIVE"/>
+            <column name="featured" value="true"/>
+            <column name="stock_quantity" value="12"/>
+            <column name="min_stock_level" value="3"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="is_active" value="true"/>
+            <column name="is_deleted" value="false"/>
+        </insert>
+        
+        <insert tableName="products">
+            <column name="id" value="PRD000004"/>
+            <column name="name" value="Luna Sapphire Earrings"/>
+            <column name="description" value="Elegant sapphire earrings that capture the mystique of moonlight, perfect for evening wear."/>
+            <column name="category_id" value="CAT000003"/>
+            <column name="sku" value="LUN-EAR-001"/>
+            <column name="price" value="32000000"/>
+            <column name="currency" value="VND"/>
+            <column name="metal_type" value="GOLD"/>
+            <column name="metal_purity" value="18K"/>
+            <column name="stone_type" value="SAPPHIRE"/>
+            <column name="weight_grams" value="3.1"/>
+            <column name="dimensions" value='{"width": "8mm", "height": "15mm", "depth": "4mm"}'/>
+            <column name="image_url" value="/collections/earings.png"/>
+            <column name="image_urls" value='["/collections/earings-1.png", "/collections/earings-2.png"]'/>
+            <column name="tags" value='["earrings", "sapphire", "evening", "elegant"]'/>
+            <column name="status" value="ACTIVE"/>
+            <column name="featured" value="true"/>
+            <column name="stock_quantity" value="6"/>
+            <column name="min_stock_level" value="2"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="is_active" value="true"/>
+            <column name="is_deleted" value="false"/>
+        </insert>
+
+        <rollback>
+            <sql>
+                DELETE FROM products WHERE id IN ('PRD000001', 'PRD000002', 'PRD000003', 'PRD000004');
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

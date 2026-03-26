@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="071-fix-sku-names-to-categories" author="claude">
+        <comment>Update SKU names to show proper category names instead of product-specific names</comment>
+
+        <!-- Update Ring SKUs to show "Rings" category -->
+        <sql>
+            UPDATE skus
+            SET sku_name = 'Rings'
+            WHERE id IN ('SKU-LDR-001', 'SKU-SGR-001', 'SKU-DSER-001', 'SKU-MCR-001', 'SKU-RING-2411-009');
+        </sql>
+
+        <!-- Update Bracelet SKUs to show "Bracelets" category -->
+        <sql>
+            UPDATE skus
+            SET sku_name = 'Bracelets'
+            WHERE id IN ('SKU-BRAC-2411-010');
+        </sql>
+
+        <!-- Update Necklace/Pendant SKUs to show "Necklaces" category -->
+        <sql>
+            UPDATE skus
+            SET sku_name = 'Necklaces'
+            WHERE id = 'SKU-AP-001';
+        </sql>
+
+        <!-- Update Earring SKUs to show "Earrings" category -->
+        <sql>
+            UPDATE skus
+            SET sku_name = 'Earrings'
+            WHERE id = 'SKU-LSE-001';
+        </sql>
+
+        <rollback>
+            <!-- Revert SKU names back to product-specific names -->
+            <sql>
+                UPDATE skus SET sku_name = 'Lumina Diamond Ring SKU' WHERE id = 'SKU-LDR-001';
+                UPDATE skus SET sku_name = 'Aurora Pendant SKU' WHERE id = 'SKU-AP-001';
+                UPDATE skus SET sku_name = 'Solaris Gold Ring SKU' WHERE id = 'SKU-SGR-001';
+                UPDATE skus SET sku_name = 'Luna Sapphire Earrings SKU' WHERE id = 'SKU-LSE-001';
+                UPDATE skus SET sku_name = 'Diamond Solitaire Engagement Ring SKU' WHERE id = 'SKU-DSER-001';
+                UPDATE skus SET sku_name = 'Mirror Custom Ring SKU' WHERE id = 'SKU-MCR-001';
+                UPDATE skus SET sku_name = 'Ring SKU 009' WHERE id = 'SKU-RING-2411-009';
+                UPDATE skus SET sku_name = 'Bracelet SKU 010' WHERE id = 'SKU-BRAC-2411-010';
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

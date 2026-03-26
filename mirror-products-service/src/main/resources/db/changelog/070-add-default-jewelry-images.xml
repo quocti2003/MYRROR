@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="070-add-default-jewelry-images" author="claude">
+        <comment>Add beautiful default jewelry images from Unsplash for all products</comment>
+
+        <!-- 1. Platinum Eternity Band - elegant eternity band photo -->
+        <sql>
+            UPDATE products
+            SET image_url = 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800',
+                image_urls = '["https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800",
+                              "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800",
+                              "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800"]',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = 'prod-ops-009';
+        </sql>
+
+        <!-- 2. Rose Gold Charm Bracelet - beautiful bracelet photo -->
+        <sql>
+            UPDATE products
+            SET image_url = 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800',
+                image_urls = '["https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800",
+                              "https://images.unsplash.com/photo-1635767798638-3e25273a8236?w=800",
+                              "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=800"]',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = 'prod-ops-010';
+        </sql>
+
+        <!-- 3. Mirror Custom Ring - stunning ring close-up -->
+        <sql>
+            UPDATE products
+            SET image_url = 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800',
+                image_urls = '["https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800",
+                              "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800",
+                              "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=800"]',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = 'PRD000024';
+        </sql>
+
+        <!-- 4. Aurora Pendant - elegant necklace pendant -->
+        <sql>
+            UPDATE products
+            SET image_url = 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800',
+                image_urls = '["https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800",
+                              "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800",
+                              "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=800"]',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = 'PRD000002';
+        </sql>
+
+        <!-- 5. Solaris Gold Ring - beautiful gold ring -->
+        <sql>
+            UPDATE products
+            SET image_url = 'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=800',
+                image_urls = '["https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=800",
+                              "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800",
+                              "https://images.unsplash.com/photo-1603561596112-0a132b757442?w=800"]',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = 'PRD000003';
+        </sql>
+
+        <!-- 6. Luna Sapphire Earrings - elegant earrings -->
+        <sql>
+            UPDATE products
+            SET image_url = 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800',
+                image_urls = '["https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800",
+                              "https://images.unsplash.com/photo-1630019852942-f89202989a59?w=800",
+                              "https://images.unsplash.com/photo-1564843953119-be92e840f011?w=800"]',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = 'PRD000004';
+        </sql>
+
+        <rollback>
+            <!-- Revert to original image URLs -->
+            <sql>
+                UPDATE products SET image_url = 'https://example.com/images/eternity-band.jpg', image_urls = NULL WHERE id = 'prod-ops-009';
+                UPDATE products SET image_url = 'https://example.com/images/charm-bracelet.jpg', image_urls = NULL WHERE id = 'prod-ops-010';
+                UPDATE products SET image_url = '/models/refine-mirror-ring-1.glb', image_urls = NULL WHERE id = 'PRD000024';
+                UPDATE products SET image_url = '/collections/pendant.png', image_urls = NULL WHERE id = 'PRD000002';
+                UPDATE products SET image_url = '/collections/ring1.png', image_urls = NULL WHERE id = 'PRD000003';
+                UPDATE products SET image_url = '/collections/earings.png', image_urls = NULL WHERE id = 'PRD000004';
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

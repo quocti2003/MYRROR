@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add remaining Product columns to mirror_products for complete migration -->
+    <changeSet id="072-1" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_products"/>
+        </preConditions>
+
+        <!-- Add name column (in addition to item_name) -->
+        <addColumn tableName="mirror_products">
+            <column name="name" type="VARCHAR(500)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Add currency column -->
+        <addColumn tableName="mirror_products">
+            <column name="currency" type="VARCHAR(3)" defaultValue="VND">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Add jewelry-specific columns -->
+        <addColumn tableName="mirror_products">
+            <column name="metal_type" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="mirror_products">
+            <column name="metal_purity" type="VARCHAR(20)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="mirror_products">
+            <column name="stone_type" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="mirror_products">
+            <column name="weight_grams" type="DECIMAL(8,3)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="mirror_products">
+            <column name="dimensions" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Add image and tags columns -->
+        <addColumn tableName="mirror_products">
+            <column name="image_url" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="mirror_products">
+            <column name="image_urls" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="mirror_products">
+            <column name="tags" type="TEXT">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Add design columns -->
+        <addColumn tableName="mirror_products">
+            <column name="design_id" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="mirror_products">
+            <column name="designer_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Add status/feature columns -->
+        <addColumn tableName="mirror_products">
+            <column name="featured" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="mirror_products">
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="mirror_products">
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Add alternate stock columns for compatibility -->
+        <addColumn tableName="mirror_products">
+            <column name="stock_quantity" type="INTEGER" defaultValueNumeric="0">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="mirror_products">
+            <column name="min_stock_level" type="INTEGER" defaultValueNumeric="1">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="mirror_products" columnName="name"/>
+            <dropColumn tableName="mirror_products" columnName="currency"/>
+            <dropColumn tableName="mirror_products" columnName="metal_type"/>
+            <dropColumn tableName="mirror_products" columnName="metal_purity"/>
+            <dropColumn tableName="mirror_products" columnName="stone_type"/>
+            <dropColumn tableName="mirror_products" columnName="weight_grams"/>
+            <dropColumn tableName="mirror_products" columnName="dimensions"/>
+            <dropColumn tableName="mirror_products" columnName="image_url"/>
+            <dropColumn tableName="mirror_products" columnName="image_urls"/>
+            <dropColumn tableName="mirror_products" columnName="tags"/>
+            <dropColumn tableName="mirror_products" columnName="design_id"/>
+            <dropColumn tableName="mirror_products" columnName="designer_id"/>
+            <dropColumn tableName="mirror_products" columnName="featured"/>
+            <dropColumn tableName="mirror_products" columnName="is_active"/>
+            <dropColumn tableName="mirror_products" columnName="is_deleted"/>
+            <dropColumn tableName="mirror_products" columnName="stock_quantity"/>
+            <dropColumn tableName="mirror_products" columnName="min_stock_level"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Create indexes for new columns -->
+    <changeSet id="072-2" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="mirror_products"/>
+                <not>
+                    <indexExists tableName="mirror_products" indexName="idx_mirror_name"/>
+                </not>
+            </and>
+        </preConditions>
+
+        <createIndex tableName="mirror_products" indexName="idx_mirror_name">
+            <column name="name"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_products" indexName="idx_mirror_featured">
+            <column name="featured"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_products" indexName="idx_mirror_design_id">
+            <column name="design_id"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_products" indexName="idx_mirror_designer_id">
+            <column name="designer_id"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_products" indexName="idx_mirror_is_active">
+            <column name="is_active"/>
+        </createIndex>
+
+        <createIndex tableName="mirror_products" indexName="idx_mirror_is_deleted">
+            <column name="is_deleted"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="mirror_products" indexName="idx_mirror_name"/>
+            <dropIndex tableName="mirror_products" indexName="idx_mirror_featured"/>
+            <dropIndex tableName="mirror_products" indexName="idx_mirror_design_id"/>
+            <dropIndex tableName="mirror_products" indexName="idx_mirror_designer_id"/>
+            <dropIndex tableName="mirror_products" indexName="idx_mirror_is_active"/>
+            <dropIndex tableName="mirror_products" indexName="idx_mirror_is_deleted"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

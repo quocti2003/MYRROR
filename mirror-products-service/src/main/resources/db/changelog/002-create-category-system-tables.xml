@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="002" author="system">
+        <!-- Drop test table -->
+        <dropTable tableName="test_table"/>
+        
+        <!-- Create categories table -->
+        <createTable tableName="categories">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="category_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <!-- Create components table -->
+        <createTable tableName="components">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="component_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="category_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <!-- Create component_optionals table -->
+        <createTable tableName="component_optionals">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="component_optional_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="component_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <!-- Create item_variants table -->
+        <createTable tableName="item_variants">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="item_variant_url" type="VARCHAR(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <!-- Create item_variant_configs table -->
+        <createTable tableName="item_variant_configs">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="item_variant_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="component_optional_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <!-- Add Foreign Key Constraints -->
+        <addForeignKeyConstraint baseTableName="components"
+                                 baseColumnNames="category_id"
+                                 constraintName="fk_component_category"
+                                 referencedTableName="categories"
+                                 referencedColumnNames="id"/>
+        
+        <addForeignKeyConstraint baseTableName="component_optionals"
+                                 baseColumnNames="component_id"
+                                 constraintName="fk_component_optional_component"
+                                 referencedTableName="components"
+                                 referencedColumnNames="id"/>
+        
+        <addForeignKeyConstraint baseTableName="item_variant_configs"
+                                 baseColumnNames="item_variant_id"
+                                 constraintName="fk_item_variant_config_item_variant"
+                                 referencedTableName="item_variants"
+                                 referencedColumnNames="id"/>
+        
+        <addForeignKeyConstraint baseTableName="item_variant_configs"
+                                 baseColumnNames="component_optional_id"
+                                 constraintName="fk_item_variant_config_component_optional"
+                                 referencedTableName="component_optionals"
+                                 referencedColumnNames="id"/>
+        
+        <!-- Add Indexes for better performance -->
+        <createIndex indexName="idx_categories_name_active" tableName="categories">
+            <column name="category_name"/>
+            <column name="is_active"/>
+            <column name="is_deleted"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_components_name_category_active" tableName="components">
+            <column name="component_name"/>
+            <column name="category_id"/>
+            <column name="is_active"/>
+            <column name="is_deleted"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_component_optionals_name_component_active" tableName="component_optionals">
+            <column name="component_optional_name"/>
+            <column name="component_id"/>
+            <column name="is_active"/>
+            <column name="is_deleted"/>
+        </createIndex>
+        
+        <createIndex indexName="idx_item_variants_url_active" tableName="item_variants">
+            <column name="item_variant_url"/>
+            <column name="is_active"/>
+            <column name="is_deleted"/>
+        </createIndex>
+        
+    </changeSet>
+
+</databaseChangeLog>

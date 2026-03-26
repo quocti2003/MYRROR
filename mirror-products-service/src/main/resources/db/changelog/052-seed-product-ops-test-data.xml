@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="052-seed-product-ops-test-data" author="claude">
+        <comment>Seed data for Product Ops Dashboard testing - covers all workflow stages</comment>
+
+        <!-- First, create SKU entries that products will reference -->
+        <!-- Note: SKU 'id' must match the 'sku_id' values used in products (foreign key) -->
+        <insert tableName="skus">
+            <column name="id" value="SKU-RING-2411-001"/>
+            <column name="sku_name" value="Ring SKU 001"/>
+            <column name="sku_code" value="SKU-RING-2411-001"/>
+            <column name="description" value="Test SKU for Product Ops Dashboard"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="skus">
+            <column name="id" value="SKU-NECK-2411-002"/>
+            <column name="sku_name" value="Necklace SKU 002"/>
+            <column name="sku_code" value="SKU-NECK-2411-002"/>
+            <column name="description" value="Test SKU for Product Ops Dashboard"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="skus">
+            <column name="id" value="SKU-PEND-2411-003"/>
+            <column name="sku_name" value="Pendant SKU 003"/>
+            <column name="sku_code" value="SKU-PEND-2411-003"/>
+            <column name="description" value="Test SKU for Product Ops Dashboard"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="skus">
+            <column name="id" value="SKU-EARR-2411-004"/>
+            <column name="sku_name" value="Earrings SKU 004"/>
+            <column name="sku_code" value="SKU-EARR-2411-004"/>
+            <column name="description" value="Test SKU for Product Ops Dashboard"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="skus">
+            <column name="id" value="SKU-BRAC-2411-005"/>
+            <column name="sku_name" value="Bracelet SKU 005"/>
+            <column name="sku_code" value="SKU-BRAC-2411-005"/>
+            <column name="description" value="Test SKU for Product Ops Dashboard"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="skus">
+            <column name="id" value="SKU-RING-2411-006"/>
+            <column name="sku_name" value="Ring SKU 006"/>
+            <column name="sku_code" value="SKU-RING-2411-006"/>
+            <column name="description" value="Test SKU for Product Ops Dashboard"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="skus">
+            <column name="id" value="SKU-RING-2411-007"/>
+            <column name="sku_name" value="Ring SKU 007"/>
+            <column name="sku_code" value="SKU-RING-2411-007"/>
+            <column name="description" value="Test SKU for Product Ops Dashboard"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="skus">
+            <column name="id" value="SKU-EARR-2411-008"/>
+            <column name="sku_name" value="Earrings SKU 008"/>
+            <column name="sku_code" value="SKU-EARR-2411-008"/>
+            <column name="description" value="Test SKU for Product Ops Dashboard"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="skus">
+            <column name="id" value="SKU-RING-2411-009"/>
+            <column name="sku_name" value="Ring SKU 009"/>
+            <column name="sku_code" value="SKU-RING-2411-009"/>
+            <column name="description" value="Test SKU for Product Ops Dashboard"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="skus">
+            <column name="id" value="SKU-BRAC-2411-010"/>
+            <column name="sku_name" value="Bracelet SKU 010"/>
+            <column name="sku_code" value="SKU-BRAC-2411-010"/>
+            <column name="description" value="Test SKU for Product Ops Dashboard"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <!-- DRAFT Products (Step 1-2: SKU Generated, Draft Created) -->
+        <!-- Using PRD prefix to match existing product ID pattern -->
+        <insert tableName="products">
+            <column name="id" value="PRD-OPS-001"/>
+            <column name="name" value="Diamond Solitaire Ring - Draft"/>
+            <column name="sku_id" value="SKU-RING-2411-001"/>
+            <column name="price" value="0"/>
+            <column name="currency" value="VND"/>
+            <column name="status" value="DRAFT"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <insert tableName="products">
+            <column name="id" value="PRD-OPS-002"/>
+            <column name="name" value="Gold Chain Necklace - Draft"/>
+            <column name="sku_id" value="SKU-NECK-2411-002"/>
+            <column name="price" value="0"/>
+            <column name="currency" value="VND"/>
+            <column name="status" value="DRAFT"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '2 days'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '2 days'"/>
+        </insert>
+
+        <!-- IN PROGRESS Products (Step 3: Partial Fulfillment) -->
+        <insert tableName="products">
+            <column name="id" value="PRD-OPS-003"/>
+            <column name="name" value="Emerald Pendant - In Progress"/>
+            <column name="sku_id" value="SKU-PEND-2411-003"/>
+            <column name="description" value="Beautiful emerald pendant with 18k gold setting. Features a 2-carat natural emerald surrounded by small diamonds."/>
+            <column name="price" value="25000000"/>
+            <column name="currency" value="VND"/>
+            <column name="status" value="DRAFT"/>
+            <column name="image_url" value="https://example.com/images/emerald-pendant.jpg"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '3 days'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '1 day'"/>
+        </insert>
+
+        <insert tableName="products">
+            <column name="id" value="PRD-OPS-004"/>
+            <column name="name" value="Pearl Earrings - In Progress"/>
+            <column name="sku_id" value="SKU-EARR-2411-004"/>
+            <column name="description" value="Elegant pearl earrings with sterling silver posts. Perfect for formal occasions."/>
+            <column name="price" value="8500000"/>
+            <column name="currency" value="VND"/>
+            <column name="status" value="DRAFT"/>
+            <column name="image_urls" value="https://example.com/images/pearl1.jpg,https://example.com/images/pearl2.jpg"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '4 days'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '1 day'"/>
+        </insert>
+
+        <!-- FULFILLED Products (Step 3 Complete: Images + Description) -->
+        <insert tableName="products">
+            <column name="id" value="PRD-OPS-005"/>
+            <column name="name" value="Ruby Tennis Bracelet"/>
+            <column name="sku_id" value="SKU-BRAC-2411-005"/>
+            <column name="description" value="Stunning ruby tennis bracelet featuring 40 brilliant-cut rubies totaling 8 carats, set in 18k white gold. Classic design that never goes out of style."/>
+            <column name="price" value="45000000"/>
+            <column name="currency" value="VND"/>
+            <column name="status" value="DRAFT"/>
+            <column name="image_url" value="https://example.com/images/ruby-bracelet-main.jpg"/>
+            <column name="image_urls" value="https://example.com/images/ruby1.jpg,https://example.com/images/ruby2.jpg,https://example.com/images/ruby3.jpg"/>
+            <column name="fulfillment_completed_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '12 hours'"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '5 days'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '12 hours'"/>
+        </insert>
+
+        <insert tableName="products">
+            <column name="id" value="PRD-OPS-006"/>
+            <column name="name" value="Sapphire Engagement Ring"/>
+            <column name="sku_id" value="SKU-RING-2411-006"/>
+            <column name="description" value="Breathtaking sapphire engagement ring with a 3-carat Ceylon blue sapphire center stone, surrounded by a halo of diamonds. Set in platinum."/>
+            <column name="price" value="75000000"/>
+            <column name="currency" value="VND"/>
+            <column name="status" value="DRAFT"/>
+            <column name="image_url" value="https://example.com/images/sapphire-ring.jpg"/>
+            <column name="image_urls" value="https://example.com/images/sapphire1.jpg,https://example.com/images/sapphire2.jpg,https://example.com/images/sapphire3.jpg,https://example.com/images/sapphire4.jpg"/>
+            <column name="fulfillment_completed_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '1 day'"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '6 days'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '1 day'"/>
+        </insert>
+
+        <!-- READY Products (Step 5: Marked Ready for Release) -->
+        <insert tableName="products">
+            <column name="id" value="PRD-OPS-007"/>
+            <column name="name" value="Gold Wedding Band Set"/>
+            <column name="sku_id" value="SKU-RING-2411-007"/>
+            <column name="description" value="Classic gold wedding band set for couples. Crafted from 18k yellow gold with a polished finish. Timeless design for your special day."/>
+            <column name="price" value="15000000"/>
+            <column name="currency" value="VND"/>
+            <column name="status" value="READY_FOR_RELEASE"/>
+            <column name="image_url" value="https://example.com/images/wedding-bands.jpg"/>
+            <column name="image_urls" value="https://example.com/images/wedding1.jpg,https://example.com/images/wedding2.jpg"/>
+            <column name="fulfillment_completed_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '2 days'"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '7 days'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '2 days'"/>
+        </insert>
+
+        <insert tableName="products">
+            <column name="id" value="PRD-OPS-008"/>
+            <column name="name" value="Diamond Stud Earrings"/>
+            <column name="sku_id" value="SKU-EARR-2411-008"/>
+            <column name="description" value="Classic diamond stud earrings with 1-carat total weight. Each earring features a 0.5-carat round brilliant diamond in a 4-prong 14k white gold setting."/>
+            <column name="price" value="32000000"/>
+            <column name="currency" value="VND"/>
+            <column name="status" value="READY_FOR_RELEASE"/>
+            <column name="image_url" value="https://example.com/images/diamond-studs.jpg"/>
+            <column name="image_urls" value="https://example.com/images/studs1.jpg,https://example.com/images/studs2.jpg,https://example.com/images/studs3.jpg"/>
+            <column name="fulfillment_completed_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '3 days'"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '8 days'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '3 days'"/>
+        </insert>
+
+        <!-- PUBLISHED Products (Step 6: Published to Website) -->
+        <insert tableName="products">
+            <column name="id" value="PRD-OPS-009"/>
+            <column name="name" value="Platinum Eternity Band"/>
+            <column name="sku_id" value="SKU-RING-2411-009"/>
+            <column name="description" value="Exquisite platinum eternity band featuring 2 carats of brilliant-cut diamonds. Perfect as a wedding band or anniversary gift."/>
+            <column name="price" value="55000000"/>
+            <column name="currency" value="VND"/>
+            <column name="status" value="PUBLISHED"/>
+            <column name="image_url" value="https://example.com/images/eternity-band.jpg"/>
+            <column name="image_urls" value="https://example.com/images/eternity1.jpg,https://example.com/images/eternity2.jpg,https://example.com/images/eternity3.jpg"/>
+            <column name="fulfillment_completed_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '5 days'"/>
+            <column name="published_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '4 days'"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '10 days'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '4 days'"/>
+        </insert>
+
+        <insert tableName="products">
+            <column name="id" value="PRD-OPS-010"/>
+            <column name="name" value="Rose Gold Charm Bracelet"/>
+            <column name="sku_id" value="SKU-BRAC-2411-010"/>
+            <column name="description" value="Delicate rose gold charm bracelet with customizable charms. Includes 5 starter charms: heart, star, moon, flower, and infinity symbol."/>
+            <column name="price" value="12000000"/>
+            <column name="currency" value="VND"/>
+            <column name="status" value="PUBLISHED"/>
+            <column name="image_url" value="https://example.com/images/charm-bracelet.jpg"/>
+            <column name="image_urls" value="https://example.com/images/charm1.jpg,https://example.com/images/charm2.jpg,https://example.com/images/charm3.jpg,https://example.com/images/charm4.jpg"/>
+            <column name="fulfillment_completed_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '6 days'"/>
+            <column name="published_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '5 days'"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '12 days'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '5 days'"/>
+        </insert>
+
+        <!-- MISA Inventory Items (Simulating synced products) -->
+        <insert tableName="misa_inventory_items">
+            <column name="inventory_item_code" value="SKU-RING-2411-007"/>
+            <column name="inventory_item_name" value="Gold Wedding Band Set"/>
+            <column name="inventory_item_id" value="MISA-00001"/>
+            <column name="inventory_item_category_name" value="Rings"/>
+            <column name="unit_name" value="Piece"/>
+            <column name="sale_price" value="15000000"/>
+            <column name="cost_price" value="10000000"/>
+            <column name="quantity_on_hand" value="5"/>
+            <column name="quantity_available" value="5"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="is_for_sale" valueBoolean="true"/>
+            <column name="sync_status" value="SYNCED"/>
+            <column name="last_sync_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL '1 day'"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '2 days'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '1 day'"/>
+        </insert>
+
+        <insert tableName="misa_inventory_items">
+            <column name="inventory_item_code" value="SKU-EARR-2411-008"/>
+            <column name="inventory_item_name" value="Diamond Stud Earrings"/>
+            <column name="inventory_item_id" value="MISA-00002"/>
+            <column name="inventory_item_category_name" value="Earrings"/>
+            <column name="unit_name" value="Pair"/>
+            <column name="sale_price" value="32000000"/>
+            <column name="cost_price" value="22000000"/>
+            <column name="quantity_on_hand" value="3"/>
+            <column name="quantity_available" value="3"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="is_for_sale" valueBoolean="true"/>
+            <column name="sync_status" value="SYNCED"/>
+            <column name="last_sync_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL '2 hours'"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '3 days'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '2 hours'"/>
+        </insert>
+
+        <insert tableName="misa_inventory_items">
+            <column name="inventory_item_code" value="SKU-RING-2411-009"/>
+            <column name="inventory_item_name" value="Platinum Eternity Band"/>
+            <column name="inventory_item_id" value="MISA-00003"/>
+            <column name="inventory_item_category_name" value="Rings"/>
+            <column name="unit_name" value="Piece"/>
+            <column name="sale_price" value="55000000"/>
+            <column name="cost_price" value="38000000"/>
+            <column name="quantity_on_hand" value="2"/>
+            <column name="quantity_available" value="2"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="is_for_sale" valueBoolean="true"/>
+            <column name="sync_status" value="SYNCED"/>
+            <column name="last_sync_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL '4 days'"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '5 days'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '4 days'"/>
+        </insert>
+
+        <insert tableName="misa_inventory_items">
+            <column name="inventory_item_code" value="SKU-BRAC-2411-010"/>
+            <column name="inventory_item_name" value="Rose Gold Charm Bracelet"/>
+            <column name="inventory_item_id" value="MISA-00004"/>
+            <column name="inventory_item_category_name" value="Bracelets"/>
+            <column name="unit_name" value="Piece"/>
+            <column name="sale_price" value="12000000"/>
+            <column name="cost_price" value="8000000"/>
+            <column name="quantity_on_hand" value="8"/>
+            <column name="quantity_available" value="8"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="is_for_sale" valueBoolean="true"/>
+            <column name="sync_status" value="SYNCED"/>
+            <column name="last_sync_date" valueComputed="CURRENT_TIMESTAMP - INTERVAL '5 days'"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '6 days'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '5 days'"/>
+        </insert>
+
+        <!-- MISA item pending sync (SKU exported but not yet in MISA) -->
+        <insert tableName="misa_inventory_items">
+            <column name="inventory_item_code" value="SKU-BRAC-2411-005"/>
+            <column name="inventory_item_name" value="Ruby Tennis Bracelet"/>
+            <column name="inventory_item_id" value="MISA-00005"/>
+            <column name="inventory_item_category_name" value="Bracelets"/>
+            <column name="unit_name" value="Piece"/>
+            <column name="sale_price" value="45000000"/>
+            <column name="cost_price" value="30000000"/>
+            <column name="quantity_on_hand" value="0"/>
+            <column name="quantity_available" value="0"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="is_for_sale" valueBoolean="true"/>
+            <column name="sync_status" value="PENDING"/>
+            <column name="sync_error_message" value="Waiting for MISA upload"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '12 hours'"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '12 hours'"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="misa_inventory_items">
+                <where>inventory_item_code LIKE 'SKU-%-2411-%'</where>
+            </delete>
+            <delete tableName="products">
+                <where>id LIKE 'PRD-OPS-%'</where>
+            </delete>
+            <delete tableName="skus">
+                <where>sku_code LIKE 'SKU-%-2411-%'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

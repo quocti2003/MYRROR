@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="085-add-jewelry-specification-fields" author="mirror">
+        <comment>Add jewelry specification fields to mirror_products for complete SKU data tracking</comment>
+
+        <!-- Material color (WHITE, YELLOW, ROSE, etc.) -->
+        <addColumn tableName="mirror_products">
+            <column name="material_color" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Whether the material is coated -->
+        <addColumn tableName="mirror_products">
+            <column name="is_coated" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Coating material (RHODIUM, GOLD, etc.) - only if is_coated = true -->
+        <addColumn tableName="mirror_products">
+            <column name="coating_material" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Stone shape (ROUND, OVAL, PEAR, PRINCESS, etc.) -->
+        <addColumn tableName="mirror_products">
+            <column name="stone_shape" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Stone weight in carats (stored as string to preserve format like "1.29CT") -->
+        <addColumn tableName="mirror_products">
+            <column name="stone_weight" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Side stones (DIAMONDS, NONE, etc.) -->
+        <addColumn tableName="mirror_products">
+            <column name="side_stones" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Country of origin (CN, IN, TH, HK, etc.) -->
+        <addColumn tableName="mirror_products">
+            <column name="country_of_origin" type="VARCHAR(10)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Stone origin (LAB GROWN, NATURAL) - rename from stone_type for clarity -->
+        <addColumn tableName="mirror_products">
+            <column name="stone_origin" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Material weight (e.g., "2.09G") - stored as string to preserve unit -->
+        <addColumn tableName="mirror_products">
+            <column name="material_weight" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+    </changeSet>
+
+</databaseChangeLog>

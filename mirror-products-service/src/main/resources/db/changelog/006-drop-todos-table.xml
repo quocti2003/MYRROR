@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+<!--    <changeSet id="006-drop-todos-table" author="system-cleanup">-->
+<!--        <preConditions onFail="MARK_RAN">-->
+<!--            <tableExists tableName="todos"/>-->
+<!--        </preConditions>-->
+<!--        -->
+<!--        <comment>Drop unused todos table from legacy todo application</comment>-->
+<!--        -->
+<!--        <dropTable tableName="todos" cascadeConstraints="true"/>-->
+<!--        -->
+<!--        <rollback>-->
+<!--            <comment>Recreate todos table if rollback is needed</comment>-->
+<!--            <createTable tableName="todos">-->
+<!--                <column name="id" type="bigint" autoIncrement="true">-->
+<!--                    <constraints primaryKey="true" nullable="false"/>-->
+<!--                </column>-->
+<!--                <column name="title" type="varchar(255)">-->
+<!--                    <constraints nullable="false"/>-->
+<!--                </column>-->
+<!--                <column name="description" type="varchar(500)"/>-->
+<!--                <column name="completed" type="boolean" defaultValue="false">-->
+<!--                    <constraints nullable="false"/>-->
+<!--                </column>-->
+<!--                <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">-->
+<!--                    <constraints nullable="false"/>-->
+<!--                </column>-->
+<!--                <column name="updated_at" type="timestamp"/>-->
+<!--            </createTable>-->
+<!--        </rollback>-->
+<!--    </changeSet>-->
+
+</databaseChangeLog>

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add missing columns to pods table that were skipped due to preconditions -->
+
+    <!-- Fix: Make pod_type nullable since entity doesn't use it -->
+    <changeSet id="109a-make-pod-type-nullable" author="system">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="pods" columnName="pod_type"/>
+        </preConditions>
+        <dropNotNullConstraint tableName="pods" columnName="pod_type" columnDataType="VARCHAR(50)"/>
+    </changeSet>
+
+    <changeSet id="109a-add-name" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="name"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="name" type="VARCHAR(255)" defaultValue="Unknown POD" remarks="Display name for the POD">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-partner-id" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="partner_id"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="partner_id" type="VARCHAR(255)" remarks="Reference to pod_partners">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-description" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="description"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="description" type="TEXT" remarks="POD description"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-location-name" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="location_name"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="location_name" type="VARCHAR(255)" remarks="Physical location name"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-address-line1" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="address_line1"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="address_line1" type="VARCHAR(255)" remarks="Address line 1"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-address-line2" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="address_line2"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="address_line2" type="VARCHAR(255)" remarks="Address line 2"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-city" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="city"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="city" type="VARCHAR(100)" remarks="City"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-state" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="state"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="state" type="VARCHAR(100)" remarks="State/Province"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-postal-code" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="postal_code"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="postal_code" type="VARCHAR(20)" remarks="Postal/ZIP code"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-country" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="country"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="country" type="VARCHAR(100)" remarks="Country"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-latitude" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="latitude"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="latitude" type="DECIMAL(10,8)" remarks="GPS latitude"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-longitude" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="longitude"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="longitude" type="DECIMAL(11,8)" remarks="GPS longitude"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-status" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="status"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="status" type="VARCHAR(20)" defaultValue="DRAFT" remarks="POD status">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-display-capacity" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="display_capacity"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="display_capacity" type="INTEGER" defaultValueNumeric="10" remarks="Maximum number of products"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-installation-date" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="installation_date"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="installation_date" type="DATE" remarks="Date when POD was installed"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-last-maintenance-date" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="last_maintenance_date"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="last_maintenance_date" type="DATE" remarks="Last maintenance date"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-next-maintenance-date" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="next_maintenance_date"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="next_maintenance_date" type="DATE" remarks="Scheduled next maintenance"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-notes" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="notes"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="notes" type="TEXT" remarks="Internal notes"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-created-at" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="created_at"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-updated-at" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="updated_at"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-is-deleted" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="is_deleted"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="109a-add-is-active" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="is_active"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pods">
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

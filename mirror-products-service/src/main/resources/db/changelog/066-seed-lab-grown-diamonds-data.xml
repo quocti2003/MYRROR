@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!--
+    Seed Data: 7 Lab-Grown Diamonds from Invoice 312521770
+    Import Date: 2025-09-05
+    Customs Declaration: 107650143530
+    Supplier: KARP IMPEX LIMITED (India)
+    Total Value: $7,160.05 USD
+    Total Carats: 20.06 ct
+    -->
+
+    <changeSet id="066-1" author="mirror">
+        <comment>Insert 7 lab-grown diamonds from invoice 312521770</comment>
+
+        <!-- Diamond 1: F VS1 2.13ct - SKU: LGD-FVS1-213-RD-IN-KARP-493218 -->
+        <insert tableName="lab_grown_diamonds">
+            <column name="id" value="d1a2b3c4-5678-90ab-cdef-000000000001"/>
+            <column name="sku_code" value="LGD-FVS1-213-RD-IN-KARP-493218"/>
+            <column name="color" value="F"/>
+            <column name="clarity" value="VS1"/>
+            <column name="carat_weight" value="2.13"/>
+            <column name="shape" value="ROUND"/>
+            <column name="origin_country" value="IN"/>
+            <column name="manufacturer_code" value="KARP"/>
+            <column name="manufacturer_name" value="KARP IMPEX LIMITED"/>
+            <column name="manufacturer_serial" value="1146846"/>
+            <column name="cert_number" value="636493218"/>
+            <column name="cert_lab" value="IGI"/>
+            <column name="cert_url" valueComputed="NULL"/>
+            <column name="unit_price_usd" value="290.00"/>
+            <column name="total_price_usd" value="617.70"/>
+            <column name="invoice_number" value="312521770"/>
+            <column name="invoice_date" value="2025-09-05"/>
+            <column name="customs_declaration" value="107650143530"/>
+            <column name="import_date" value="2025-09-05"/>
+            <column name="status" value="IN_STOCK"/>
+            <column name="location" value="Main Warehouse"/>
+            <column name="mirror_product_id" valueComputed="NULL"/>
+            <column name="notes" value="Imported from KARP IMPEX LIMITED - Stelo F VS1 1146846"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <!-- Diamond 2: E VVS2 2.14ct - SKU: LGD-EVVS2-214-RD-IN-KARP-491722 -->
+        <insert tableName="lab_grown_diamonds">
+            <column name="id" value="d1a2b3c4-5678-90ab-cdef-000000000002"/>
+            <column name="sku_code" value="LGD-EVVS2-214-RD-IN-KARP-491722"/>
+            <column name="color" value="E"/>
+            <column name="clarity" value="VVS2"/>
+            <column name="carat_weight" value="2.14"/>
+            <column name="shape" value="ROUND"/>
+            <column name="origin_country" value="IN"/>
+            <column name="manufacturer_code" value="KARP"/>
+            <column name="manufacturer_name" value="KARP IMPEX LIMITED"/>
+            <column name="manufacturer_serial" value="1149542"/>
+            <column name="cert_number" value="638491722"/>
+            <column name="cert_lab" value="IGI"/>
+            <column name="cert_url" valueComputed="NULL"/>
+            <column name="unit_price_usd" value="290.00"/>
+            <column name="total_price_usd" value="620.60"/>
+            <column name="invoice_number" value="312521770"/>
+            <column name="invoice_date" value="2025-09-05"/>
+            <column name="customs_declaration" value="107650143530"/>
+            <column name="import_date" value="2025-09-05"/>
+            <column name="status" value="IN_STOCK"/>
+            <column name="location" value="Main Warehouse"/>
+            <column name="mirror_product_id" valueComputed="NULL"/>
+            <column name="notes" value="Imported from KARP IMPEX LIMITED - Stelo E VVS2 1149542"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <!-- Diamond 3: E VVS2 2.14ct - SKU: LGD-EVVS2-214-RD-IN-KARP-491721 -->
+        <insert tableName="lab_grown_diamonds">
+            <column name="id" value="d1a2b3c4-5678-90ab-cdef-000000000003"/>
+            <column name="sku_code" value="LGD-EVVS2-214-RD-IN-KARP-491721"/>
+            <column name="color" value="E"/>
+            <column name="clarity" value="VVS2"/>
+            <column name="carat_weight" value="2.14"/>
+            <column name="shape" value="ROUND"/>
+            <column name="origin_country" value="IN"/>
+            <column name="manufacturer_code" value="KARP"/>
+            <column name="manufacturer_name" value="KARP IMPEX LIMITED"/>
+            <column name="manufacturer_serial" value="1149544"/>
+            <column name="cert_number" value="638491721"/>
+            <column name="cert_lab" value="IGI"/>
+            <column name="cert_url" valueComputed="NULL"/>
+            <column name="unit_price_usd" value="290.00"/>
+            <column name="total_price_usd" value="620.60"/>
+            <column name="invoice_number" value="312521770"/>
+            <column name="invoice_date" value="2025-09-05"/>
+            <column name="customs_declaration" value="107650143530"/>
+            <column name="import_date" value="2025-09-05"/>
+            <column name="status" value="IN_STOCK"/>
+            <column name="location" value="Main Warehouse"/>
+            <column name="mirror_product_id" valueComputed="NULL"/>
+            <column name="notes" value="Imported from KARP IMPEX LIMITED - Stelo E VVS2 1149544"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <!-- Diamond 4: D VS1 2.17ct - SKU: LGD-DVS1-217-RD-IN-KARP-491720 -->
+        <insert tableName="lab_grown_diamonds">
+            <column name="id" value="d1a2b3c4-5678-90ab-cdef-000000000004"/>
+            <column name="sku_code" value="LGD-DVS1-217-RD-IN-KARP-491720"/>
+            <column name="color" value="D"/>
+            <column name="clarity" value="VS1"/>
+            <column name="carat_weight" value="2.17"/>
+            <column name="shape" value="ROUND"/>
+            <column name="origin_country" value="IN"/>
+            <column name="manufacturer_code" value="KARP"/>
+            <column name="manufacturer_name" value="KARP IMPEX LIMITED"/>
+            <column name="manufacturer_serial" value="1149543"/>
+            <column name="cert_number" value="638491720"/>
+            <column name="cert_lab" value="IGI"/>
+            <column name="cert_url" valueComputed="NULL"/>
+            <column name="unit_price_usd" value="290.00"/>
+            <column name="total_price_usd" value="629.30"/>
+            <column name="invoice_number" value="312521770"/>
+            <column name="invoice_date" value="2025-09-05"/>
+            <column name="customs_declaration" value="107650143530"/>
+            <column name="import_date" value="2025-09-05"/>
+            <column name="status" value="IN_STOCK"/>
+            <column name="location" value="Main Warehouse"/>
+            <column name="mirror_product_id" valueComputed="NULL"/>
+            <column name="notes" value="Imported from KARP IMPEX LIMITED - Stelo D VS1 1149543"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <!-- Diamond 5: F VS2 3.32ct - SKU: LGD-FVS2-332-RD-IN-KARP-212817 -->
+        <insert tableName="lab_grown_diamonds">
+            <column name="id" value="d1a2b3c4-5678-90ab-cdef-000000000005"/>
+            <column name="sku_code" value="LGD-FVS2-332-RD-IN-KARP-212817"/>
+            <column name="color" value="F"/>
+            <column name="clarity" value="VS2"/>
+            <column name="carat_weight" value="3.32"/>
+            <column name="shape" value="ROUND"/>
+            <column name="origin_country" value="IN"/>
+            <column name="manufacturer_code" value="KARP"/>
+            <column name="manufacturer_name" value="KARP IMPEX LIMITED"/>
+            <column name="manufacturer_serial" value="1027626"/>
+            <column name="cert_number" value="542212817"/>
+            <column name="cert_lab" value="IGI"/>
+            <column name="cert_url" valueComputed="NULL"/>
+            <column name="unit_price_usd" value="365.00"/>
+            <column name="total_price_usd" value="1211.80"/>
+            <column name="invoice_number" value="312521770"/>
+            <column name="invoice_date" value="2025-09-05"/>
+            <column name="customs_declaration" value="107650143530"/>
+            <column name="import_date" value="2025-09-05"/>
+            <column name="status" value="IN_STOCK"/>
+            <column name="location" value="Main Warehouse"/>
+            <column name="mirror_product_id" valueComputed="NULL"/>
+            <column name="notes" value="Imported from KARP IMPEX LIMITED - Stelo F VS2 1027626"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <!-- Diamond 6: E VS1 3.09ct - SKU: LGD-EVS1-309-RD-IN-KARP-548868 -->
+        <insert tableName="lab_grown_diamonds">
+            <column name="id" value="d1a2b3c4-5678-90ab-cdef-000000000006"/>
+            <column name="sku_code" value="LGD-EVS1-309-RD-IN-KARP-548868"/>
+            <column name="color" value="E"/>
+            <column name="clarity" value="VS1"/>
+            <column name="carat_weight" value="3.09"/>
+            <column name="shape" value="ROUND"/>
+            <column name="origin_country" value="IN"/>
+            <column name="manufacturer_code" value="KARP"/>
+            <column name="manufacturer_name" value="KARP IMPEX LIMITED"/>
+            <column name="manufacturer_serial" value="1324049"/>
+            <column name="cert_number" value="729548868"/>
+            <column name="cert_lab" value="IGI"/>
+            <column name="cert_url" valueComputed="NULL"/>
+            <column name="unit_price_usd" value="365.00"/>
+            <column name="total_price_usd" value="1127.85"/>
+            <column name="invoice_number" value="312521770"/>
+            <column name="invoice_date" value="2025-09-05"/>
+            <column name="customs_declaration" value="107650143530"/>
+            <column name="import_date" value="2025-09-05"/>
+            <column name="status" value="IN_STOCK"/>
+            <column name="location" value="Main Warehouse"/>
+            <column name="mirror_product_id" valueComputed="NULL"/>
+            <column name="notes" value="Imported from KARP IMPEX LIMITED - Stelo E VS1 1324049"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <!-- Diamond 7: F VS1 5.07ct - SKU: LGD-FVS1-507-RD-IN-KARP-548828 -->
+        <insert tableName="lab_grown_diamonds">
+            <column name="id" value="d1a2b3c4-5678-90ab-cdef-000000000007"/>
+            <column name="sku_code" value="LGD-FVS1-507-RD-IN-KARP-548828"/>
+            <column name="color" value="F"/>
+            <column name="clarity" value="VS1"/>
+            <column name="carat_weight" value="5.07"/>
+            <column name="shape" value="ROUND"/>
+            <column name="origin_country" value="IN"/>
+            <column name="manufacturer_code" value="KARP"/>
+            <column name="manufacturer_name" value="KARP IMPEX LIMITED"/>
+            <column name="manufacturer_serial" value="1324050"/>
+            <column name="cert_number" value="729548828"/>
+            <column name="cert_lab" value="IGI"/>
+            <column name="cert_url" valueComputed="NULL"/>
+            <column name="unit_price_usd" value="460.00"/>
+            <column name="total_price_usd" value="2332.20"/>
+            <column name="invoice_number" value="312521770"/>
+            <column name="invoice_date" value="2025-09-05"/>
+            <column name="customs_declaration" value="107650143530"/>
+            <column name="import_date" value="2025-09-05"/>
+            <column name="status" value="IN_STOCK"/>
+            <column name="location" value="Main Warehouse"/>
+            <column name="mirror_product_id" valueComputed="NULL"/>
+            <column name="notes" value="Imported from KARP IMPEX LIMITED - Stelo F VS1 1324050"/>
+            <column name="created_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueDate="CURRENT_TIMESTAMP"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="lab_grown_diamonds">
+                <where>invoice_number = '312521770'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

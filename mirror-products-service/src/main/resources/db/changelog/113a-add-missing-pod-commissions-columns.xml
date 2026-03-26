@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add missing columns to pod_commissions table -->
+
+    <changeSet id="113a-add-adjustment-reason" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="adjustment_reason"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="adjustment_reason" type="TEXT" remarks="Reason for adjustment"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-adjustments" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="adjustments"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="adjustments" type="DECIMAL(15,2)" remarks="Adjustment amount"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-approved-at" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="approved_at"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="approved_at" type="TIMESTAMP" remarks="Approval timestamp"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-approved-by" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="approved_by"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="approved_by" type="VARCHAR(100)" remarks="Approver"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-attributed-amount" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="attributed_amount"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="attributed_amount" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Attributed amount">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-bank-account" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="bank_account"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="bank_account" type="VARCHAR(50)" remarks="Bank account number"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-bank-name" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="bank_name"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="bank_name" type="VARCHAR(100)" remarks="Bank name"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-commission-amount" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="commission_amount"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="commission_amount" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Commission amount">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-commission-rate" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="commission_rate"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="commission_rate" type="DECIMAL(5,2)" defaultValueNumeric="5.00" remarks="Commission rate">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-currency" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="currency"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="currency" type="VARCHAR(3)" defaultValue="VND" remarks="Currency">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-final-amount" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="final_amount"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="final_amount" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Final amount">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-notes" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="notes"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="notes" type="TEXT" remarks="Internal notes"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-paid-at" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="paid_at"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="paid_at" type="TIMESTAMP" remarks="Payment timestamp"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-payment-method" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="payment_method"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="payment_method" type="VARCHAR(50)" remarks="Payment method"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-payment-reference" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="payment_reference"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="payment_reference" type="VARCHAR(100)" remarks="Payment reference"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-total-order-amount" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="total_order_amount"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="total_order_amount" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Total order amount">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-total-orders" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="total_orders"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="total_orders" type="INTEGER" defaultValueNumeric="0" remarks="Total orders">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-status" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="status"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="status" type="VARCHAR(20)" defaultValue="PENDING" remarks="Commission status">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-is-deleted" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="is_deleted"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-is-active" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="is_active"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active flag">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-period-start" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="period_start"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="period_start" type="DATE" remarks="Period start date">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-period-end" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="period_end"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="period_end" type="DATE" remarks="Period end date">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-partner-id" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="partner_id"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="partner_id" type="VARCHAR(255)" remarks="Partner ID">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-created-at" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="created_at"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Created timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="113a-add-updated-at" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_commissions" columnName="updated_at"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_commissions">
+            <column name="updated_at" type="TIMESTAMP" remarks="Updated timestamp"/>
+        </addColumn>
+    </changeSet>
+
+    <!-- Drop order_id column if it exists (not used by entity) -->
+    <changeSet id="113a-drop-order-id" author="system">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="pod_commissions" columnName="order_id"/>
+        </preConditions>
+        <dropColumn tableName="pod_commissions" columnName="order_id"/>
+    </changeSet>
+
+    <!-- Drop order_total column if it exists (not used by entity) -->
+    <changeSet id="113a-drop-order-total" author="system">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="pod_commissions" columnName="order_total"/>
+        </preConditions>
+        <dropColumn tableName="pod_commissions" columnName="order_total"/>
+    </changeSet>
+
+</databaseChangeLog>

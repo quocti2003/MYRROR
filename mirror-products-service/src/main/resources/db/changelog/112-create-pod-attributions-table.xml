@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="112-create-pod-attributions-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="pod_attributions"/>
+            </not>
+        </preConditions>
+
+        <comment>Create pod_attributions table for order-to-POD attribution tracking</comment>
+
+        <createTable tableName="pod_attributions">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (PAT prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="order_id" type="VARCHAR(255)" remarks="Reference to orders">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pod_id" type="VARCHAR(255)" remarks="Reference to pods">
+                <constraints nullable="false"/>
+            </column>
+            <column name="partner_id" type="VARCHAR(255)" remarks="Reference to pod_partners">
+                <constraints nullable="false"/>
+            </column>
+            <column name="qr_code_id" type="VARCHAR(255)" remarks="Reference to pod_qr_codes"/>
+            <column name="scan_id" type="VARCHAR(255)" remarks="Reference to the original QR scan"/>
+            <column name="attribution_type" type="VARCHAR(30)" remarks="Type: FIRST_TOUCH, LAST_TOUCH, MULTI_TOUCH">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attribution_weight" type="DECIMAL(5,4)" defaultValueNumeric="1.0000" remarks="Weight for multi-touch attribution (0.0-1.0)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_amount" type="DECIMAL(15,2)" remarks="Order total amount">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attributed_amount" type="DECIMAL(15,2)" remarks="Amount attributed to this POD (order_amount * weight)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(3)" defaultValue="VND" remarks="Currency code">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_scan_at" type="TIMESTAMP" remarks="First scan timestamp in attribution window"/>
+            <column name="last_scan_at" type="TIMESTAMP" remarks="Last scan timestamp before order"/>
+            <column name="order_placed_at" type="TIMESTAMP" remarks="Order placement timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="days_to_conversion" type="INTEGER" remarks="Days between first scan and order"/>
+            <column name="touch_count" type="INTEGER" defaultValueNumeric="1" remarks="Number of touches before conversion"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="PENDING" remarks="Attribution status (PENDING, CONFIRMED, CANCELLED)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="commission_id" type="VARCHAR(255)" remarks="Reference to pod_commissions when commission is calculated"/>
+            <column name="notes" type="TEXT" remarks="Internal notes"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Indexes -->
+        <createIndex tableName="pod_attributions" indexName="idx_attribution_order">
+            <column name="order_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_attributions" indexName="idx_attribution_pod">
+            <column name="pod_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_attributions" indexName="idx_attribution_partner">
+            <column name="partner_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_attributions" indexName="idx_attribution_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="pod_attributions" indexName="idx_attribution_order_placed">
+            <column name="order_placed_at"/>
+        </createIndex>
+
+        <createIndex tableName="pod_attributions" indexName="idx_attribution_partner_date">
+            <column name="partner_id"/>
+            <column name="order_placed_at"/>
+        </createIndex>
+
+        <!-- Foreign keys -->
+        <addForeignKeyConstraint
+            baseTableName="pod_attributions"
+            baseColumnNames="order_id"
+            constraintName="fk_attribution_order"
+            referencedTableName="orders"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_attributions"
+            baseColumnNames="pod_id"
+            constraintName="fk_attribution_pod"
+            referencedTableName="pods"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_attributions"
+            baseColumnNames="partner_id"
+            constraintName="fk_attribution_partner"
+            referencedTableName="pod_partners"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_attributions"
+            baseColumnNames="qr_code_id"
+            constraintName="fk_attribution_qr_code"
+            referencedTableName="pod_qr_codes"
+            referencedColumnNames="id"
+            onDelete="SET NULL"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_attributions"
+            baseColumnNames="scan_id"
+            constraintName="fk_attribution_scan"
+            referencedTableName="pod_qr_scans"
+            referencedColumnNames="id"
+            onDelete="SET NULL"
+            onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

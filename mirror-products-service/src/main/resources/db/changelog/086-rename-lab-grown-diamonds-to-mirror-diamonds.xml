@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="086-1-rename-lab-grown-diamonds-table" author="mirror">
+        <comment>Rename lab_grown_diamonds table to mirror_diamonds</comment>
+        <renameTable oldTableName="lab_grown_diamonds" newTableName="mirror_diamonds"/>
+    </changeSet>
+
+    <changeSet id="086-2-rename-lab-grown-diamonds-sequence" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <sequenceExists sequenceName="lab_grown_diamonds_id_seq"/>
+        </preConditions>
+        <comment>Rename the sequence if it exists</comment>
+        <sql>ALTER SEQUENCE lab_grown_diamonds_id_seq RENAME TO mirror_diamonds_id_seq;</sql>
+    </changeSet>
+
+</databaseChangeLog>

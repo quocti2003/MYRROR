@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add location_id column to pods table for map display -->
+    <changeSet id="115-add-location-id-to-pods" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pods" columnName="location_id"/>
+            </not>
+        </preConditions>
+
+        <comment>Add location_id column to pods table to link with Location entity for map display</comment>
+
+        <addColumn tableName="pods">
+            <column name="location_id" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Add foreign key constraint -->
+        <addForeignKeyConstraint
+            baseTableName="pods"
+            baseColumnNames="location_id"
+            constraintName="fk_pods_location"
+            referencedTableName="locations"
+            referencedColumnNames="id"
+            onDelete="SET NULL"/>
+
+        <!-- Add index for performance -->
+        <createIndex indexName="idx_pods_location_id" tableName="pods">
+            <column name="location_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,61 @@
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<databaseChangeLog-->
+<!--    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"-->
+<!--    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"-->
+<!--    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-->
+<!--        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">-->
+
+<!--    <changeSet id="003" author="system">-->
+<!--        &lt;!&ndash; Create ID sequence table &ndash;&gt;-->
+<!--        <createTable tableName="id_sequences">-->
+<!--            <column name="entity_name" type="VARCHAR(50)">-->
+<!--                <constraints primaryKey="true" nullable="false"/>-->
+<!--            </column>-->
+<!--            <column name="prefix" type="VARCHAR(10)">-->
+<!--                <constraints nullable="false"/>-->
+<!--            </column>-->
+<!--            <column name="current_value" type="BIGINT" defaultValueNumeric="0">-->
+<!--                <constraints nullable="false"/>-->
+<!--            </column>-->
+<!--            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">-->
+<!--                <constraints nullable="false"/>-->
+<!--            </column>-->
+<!--            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">-->
+<!--                <constraints nullable="false"/>-->
+<!--            </column>-->
+<!--        </createTable>-->
+<!--        -->
+<!--        &lt;!&ndash; Insert initial values &ndash;&gt;-->
+<!--        <insert tableName="id_sequences">-->
+<!--            <column name="entity_name" value="Category"/>-->
+<!--            <column name="prefix" value="CAT"/>-->
+<!--            <column name="current_value" valueNumeric="0"/>-->
+<!--        </insert>-->
+<!--        -->
+<!--        <insert tableName="id_sequences">-->
+<!--            <column name="entity_name" value="Component"/>-->
+<!--            <column name="prefix" value="COM"/>-->
+<!--            <column name="current_value" valueNumeric="0"/>-->
+<!--        </insert>-->
+<!--        -->
+<!--        <insert tableName="id_sequences">-->
+<!--            <column name="entity_name" value="ComponentOptional"/>-->
+<!--            <column name="prefix" value="OPT"/>-->
+<!--            <column name="current_value" valueNumeric="0"/>-->
+<!--        </insert>-->
+<!--        -->
+<!--        <insert tableName="id_sequences">-->
+<!--            <column name="entity_name" value="ItemVariant"/>-->
+<!--            <column name="prefix" value="ITV"/>-->
+<!--            <column name="current_value" valueNumeric="0"/>-->
+<!--        </insert>-->
+<!--        -->
+<!--        <insert tableName="id_sequences">-->
+<!--            <column name="entity_name" value="ItemVariantConfig"/>-->
+<!--            <column name="prefix" value="ITC"/>-->
+<!--            <column name="current_value" valueNumeric="0"/>-->
+<!--        </insert>-->
+<!--        -->
+<!--    </changeSet>-->
+
+<!--</databaseChangeLog>-->

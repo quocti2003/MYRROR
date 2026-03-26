@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Seed Metal Type Options -->
+    <changeSet id="136-1" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="metal_type_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM metal_type_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="metal_type_options">
+            <column name="type_code" value="WHITEGOLD"/>
+            <column name="type_name" value="White Gold"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="metal_type_options">
+            <column name="type_code" value="YELLOWGOLD"/>
+            <column name="type_name" value="Yellow Gold"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="metal_type_options">
+            <column name="type_code" value="ROSEGOLD"/>
+            <column name="type_name" value="Rose Gold"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="metal_type_options">
+            <column name="type_code" value="PLATINUM"/>
+            <column name="type_name" value="Platinum"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="metal_type_options">
+            <column name="type_code" value="SILVER"/>
+            <column name="type_name" value="Silver"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+
+        <rollback><delete tableName="metal_type_options"/></rollback>
+    </changeSet>
+
+    <!-- Seed Metal Purity Options -->
+    <changeSet id="136-2" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="metal_purity_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM metal_purity_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="metal_purity_options">
+            <column name="purity_code" value="24K"/>
+            <column name="purity_name" value="24K (99.9%)"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="metal_purity_options">
+            <column name="purity_code" value="22K"/>
+            <column name="purity_name" value="22K (91.6%)"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="metal_purity_options">
+            <column name="purity_code" value="18K"/>
+            <column name="purity_name" value="18K (75%)"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="metal_purity_options">
+            <column name="purity_code" value="14K"/>
+            <column name="purity_name" value="14K (58.3%)"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="metal_purity_options">
+            <column name="purity_code" value="10K"/>
+            <column name="purity_name" value="10K (41.7%)"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+        <insert tableName="metal_purity_options">
+            <column name="purity_code" value="950PT"/>
+            <column name="purity_name" value="950 Platinum"/>
+            <column name="display_order" valueNumeric="6"/>
+        </insert>
+        <insert tableName="metal_purity_options">
+            <column name="purity_code" value="900PT"/>
+            <column name="purity_name" value="900 Platinum"/>
+            <column name="display_order" valueNumeric="7"/>
+        </insert>
+        <insert tableName="metal_purity_options">
+            <column name="purity_code" value="925S"/>
+            <column name="purity_name" value="925 Sterling Silver"/>
+            <column name="display_order" valueNumeric="8"/>
+        </insert>
+
+        <rollback><delete tableName="metal_purity_options"/></rollback>
+    </changeSet>
+
+    <!-- Seed Stone Type Options -->
+    <changeSet id="136-3" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="stone_type_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM stone_type_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="stone_type_options">
+            <column name="type_code" value="LABDIAMOND"/>
+            <column name="type_name" value="Lab Diamond"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="stone_type_options">
+            <column name="type_code" value="NATURALDIAMOND"/>
+            <column name="type_name" value="Natural Diamond"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="stone_type_options">
+            <column name="type_code" value="MOISSANITE"/>
+            <column name="type_name" value="Moissanite"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="stone_type_options">
+            <column name="type_code" value="RUBY"/>
+            <column name="type_name" value="Ruby"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="stone_type_options">
+            <column name="type_code" value="SAPPHIRE"/>
+            <column name="type_name" value="Sapphire"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+        <insert tableName="stone_type_options">
+            <column name="type_code" value="EMERALD"/>
+            <column name="type_name" value="Emerald"/>
+            <column name="display_order" valueNumeric="6"/>
+        </insert>
+        <insert tableName="stone_type_options">
+            <column name="type_code" value="OTHER"/>
+            <column name="type_name" value="Other"/>
+            <column name="display_order" valueNumeric="7"/>
+        </insert>
+
+        <rollback><delete tableName="stone_type_options"/></rollback>
+    </changeSet>
+
+    <!-- Seed Stone Role Options -->
+    <changeSet id="136-4" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="stone_role_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM stone_role_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="stone_role_options">
+            <column name="role_code" value="MAIN"/>
+            <column name="role_name" value="Main Stone"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="stone_role_options">
+            <column name="role_code" value="MAIN_2"/>
+            <column name="role_name" value="Secondary Main Stone"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="stone_role_options">
+            <column name="role_code" value="SIDE"/>
+            <column name="role_name" value="Side Stone"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="stone_role_options">
+            <column name="role_code" value="SIDE_2"/>
+            <column name="role_name" value="Secondary Side Stone"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="stone_role_options">
+            <column name="role_code" value="MELEE"/>
+            <column name="role_name" value="Melee"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+
+        <rollback><delete tableName="stone_role_options"/></rollback>
+    </changeSet>
+
+    <!-- Seed Color Grade Options -->
+    <changeSet id="136-5" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="color_grade_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM color_grade_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="color_grade_options">
+            <column name="grade_code" value="D"/>
+            <column name="grade_name" value="D"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="color_grade_options">
+            <column name="grade_code" value="E"/>
+            <column name="grade_name" value="E"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="color_grade_options">
+            <column name="grade_code" value="F"/>
+            <column name="grade_name" value="F"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="color_grade_options">
+            <column name="grade_code" value="G"/>
+            <column name="grade_name" value="G"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="color_grade_options">
+            <column name="grade_code" value="H"/>
+            <column name="grade_name" value="H"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+        <insert tableName="color_grade_options">
+            <column name="grade_code" value="I"/>
+            <column name="grade_name" value="I"/>
+            <column name="display_order" valueNumeric="6"/>
+        </insert>
+        <insert tableName="color_grade_options">
+            <column name="grade_code" value="J"/>
+            <column name="grade_name" value="J"/>
+            <column name="display_order" valueNumeric="7"/>
+        </insert>
+        <insert tableName="color_grade_options">
+            <column name="grade_code" value="K"/>
+            <column name="grade_name" value="K"/>
+            <column name="display_order" valueNumeric="8"/>
+        </insert>
+
+        <rollback><delete tableName="color_grade_options"/></rollback>
+    </changeSet>
+
+    <!-- Seed Clarity Grade Options -->
+    <changeSet id="136-6" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="clarity_grade_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM clarity_grade_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="clarity_grade_options">
+            <column name="clarity_code" value="FL"/>
+            <column name="clarity_name" value="FL (Flawless)"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="clarity_grade_options">
+            <column name="clarity_code" value="IF"/>
+            <column name="clarity_name" value="IF (Internally Flawless)"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="clarity_grade_options">
+            <column name="clarity_code" value="VVS1"/>
+            <column name="clarity_name" value="VVS1"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="clarity_grade_options">
+            <column name="clarity_code" value="VVS2"/>
+            <column name="clarity_name" value="VVS2"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="clarity_grade_options">
+            <column name="clarity_code" value="VS1"/>
+            <column name="clarity_name" value="VS1"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+        <insert tableName="clarity_grade_options">
+            <column name="clarity_code" value="VS2"/>
+            <column name="clarity_name" value="VS2"/>
+            <column name="display_order" valueNumeric="6"/>
+        </insert>
+        <insert tableName="clarity_grade_options">
+            <column name="clarity_code" value="SI1"/>
+            <column name="clarity_name" value="SI1"/>
+            <column name="display_order" valueNumeric="7"/>
+        </insert>
+        <insert tableName="clarity_grade_options">
+            <column name="clarity_code" value="SI2"/>
+            <column name="clarity_name" value="SI2"/>
+            <column name="display_order" valueNumeric="8"/>
+        </insert>
+
+        <rollback><delete tableName="clarity_grade_options"/></rollback>
+    </changeSet>
+
+    <!-- Seed Labor Type Options -->
+    <changeSet id="136-7" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="labor_type_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM labor_type_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="labor_type_options">
+            <column name="labor_code" value="CASTING"/>
+            <column name="labor_name" value="Casting"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="labor_type_options">
+            <column name="labor_code" value="SETTING"/>
+            <column name="labor_name" value="Setting"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="labor_type_options">
+            <column name="labor_code" value="POLISHING"/>
+            <column name="labor_name" value="Polishing"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="labor_type_options">
+            <column name="labor_code" value="FINISHING"/>
+            <column name="labor_name" value="Finishing"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="labor_type_options">
+            <column name="labor_code" value="ENGRAVING"/>
+            <column name="labor_name" value="Engraving"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+        <insert tableName="labor_type_options">
+            <column name="labor_code" value="PLATING"/>
+            <column name="labor_name" value="Plating"/>
+            <column name="display_order" valueNumeric="6"/>
+        </insert>
+        <insert tableName="labor_type_options">
+            <column name="labor_code" value="ASSEMBLY"/>
+            <column name="labor_name" value="Assembly"/>
+            <column name="display_order" valueNumeric="7"/>
+        </insert>
+        <insert tableName="labor_type_options">
+            <column name="labor_code" value="OTHER"/>
+            <column name="labor_name" value="Other"/>
+            <column name="display_order" valueNumeric="8"/>
+        </insert>
+
+        <rollback><delete tableName="labor_type_options"/></rollback>
+    </changeSet>
+
+    <!-- Add Brooch and Cufflinks to existing sku_prefix_options -->
+    <changeSet id="136-8" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="sku_prefix_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM sku_prefix_options WHERE prefix_code = 'BRH'</sqlCheck>
+        </preConditions>
+
+        <insert tableName="sku_prefix_options">
+            <column name="prefix_code" value="BRH"/>
+            <column name="prefix_name" value="Brooch"/>
+            <column name="description" value="Brooch products"/>
+            <column name="display_order" valueNumeric="7"/>
+        </insert>
+        <insert tableName="sku_prefix_options">
+            <column name="prefix_code" value="CLK"/>
+            <column name="prefix_name" value="Cufflinks"/>
+            <column name="description" value="Cufflinks products"/>
+            <column name="display_order" valueNumeric="8"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="sku_prefix_options"><where>prefix_code IN ('BRH', 'CLK')</where></delete>
+        </rollback>
+    </changeSet>
+
+    <!-- Update EMERALD shape display name to "Emerald Cut" -->
+    <changeSet id="136-9" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="stone_shape_options"/>
+            <sqlCheck expectedResult="1">SELECT COUNT(*) FROM stone_shape_options WHERE shape_code = 'EMERALD'</sqlCheck>
+        </preConditions>
+
+        <update tableName="stone_shape_options">
+            <column name="shape_name" value="Emerald Cut"/>
+            <where>shape_code = 'EMERALD'</where>
+        </update>
+
+        <rollback>
+            <update tableName="stone_shape_options">
+                <column name="shape_name" value="Emerald"/>
+                <where>shape_code = 'EMERALD'</where>
+            </update>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

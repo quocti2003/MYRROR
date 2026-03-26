@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="041-1" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="misa_product_categories"/>
+                <not>
+                    <columnExists tableName="misa_product_categories" columnName="sync_status"/>
+                </not>
+            </and>
+        </preConditions>
+
+        <addColumn tableName="misa_product_categories">
+            <column name="sync_status" type="VARCHAR(50)" defaultValue="PENDING"/>
+            <column name="sync_error_message" type="TEXT"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

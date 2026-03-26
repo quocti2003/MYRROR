@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Migrate data from products table to mirror_products -->
+    <changeSet id="073-1" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="products"/>
+                <tableExists tableName="mirror_products"/>
+            </and>
+        </preConditions>
+
+        <comment>
+            Migrate existing product data to mirror_products.
+            For products that already have mirror_products records (matched by sku_id = mirror_code),
+            update the mirror_products with product data.
+            For products without mirror_products records, insert new records.
+        </comment>
+
+        <!-- Update existing mirror_products with product data -->
+        <sql>
+            UPDATE mirror_products mp
+            SET
+                name = COALESCE(mp.name, p.name),
+                currency = COALESCE(mp.currency, p.currency, 'VND'),
+                metal_type = COALESCE(mp.metal_type, p.metal_type),
+                metal_purity = COALESCE(mp.metal_purity, p.metal_purity),
+                stone_type = COALESCE(mp.stone_type, p.stone_type),
+                weight_grams = COALESCE(mp.weight_grams, p.weight_grams),
+                dimensions = COALESCE(mp.dimensions, p.dimensions),
+                image_url = COALESCE(mp.image_url, p.image_url),
+                image_urls = COALESCE(mp.image_urls, p.image_urls),
+                tags = COALESCE(mp.tags, p.tags),
+                design_id = COALESCE(mp.design_id, p.design_id),
+                designer_id = COALESCE(mp.designer_id, p.designer_id),
+                featured = COALESCE(mp.featured, p.featured, false),
+                is_active = COALESCE(mp.is_active, p.is_active, true),
+                is_deleted = COALESCE(mp.is_deleted, p.is_deleted, false),
+                stock_quantity = COALESCE(mp.stock_quantity, p.stock_quantity, mp.current_quantity, 0),
+                min_stock_level = COALESCE(mp.min_stock_level, p.min_stock_level, mp.min_quantity, 1),
+                price = COALESCE(mp.price, p.price),
+                description = COALESCE(mp.description, p.description),
+                updated_at = CURRENT_TIMESTAMP
+            FROM products p
+            WHERE mp.mirror_code = p.sku_id;
+        </sql>
+
+        <!-- Insert products that don't have mirror_products records yet -->
+        <!-- Use DISTINCT ON to handle duplicate sku_ids, keeping the most recent product -->
+        <sql>
+            INSERT INTO mirror_products (
+                mirror_code, name, item_name, description, price, currency,
+                metal_type, metal_purity, stone_type, weight_grams, dimensions,
+                image_url, image_urls, tags,
+                design_id, designer_id,
+                status, published_at, fulfillment_completed_at,
+                featured, is_active, is_deleted,
+                current_quantity, stock_quantity, min_quantity, min_stock_level,
+                created_at, updated_at
+            )
+            SELECT DISTINCT ON (sku_id)
+                p.sku_id as mirror_code,
+                p.name,
+                p.name as item_name,
+                p.description,
+                p.price,
+                COALESCE(p.currency, 'VND') as currency,
+                p.metal_type,
+                p.metal_purity,
+                p.stone_type,
+                p.weight_grams,
+                p.dimensions,
+                p.image_url,
+                p.image_urls,
+                p.tags,
+                p.design_id,
+                p.designer_id,
+                p.status,
+                p.published_at,
+                p.fulfillment_completed_at,
+                COALESCE(p.featured, false) as featured,
+                COALESCE(p.is_active, true) as is_active,
+                COALESCE(p.is_deleted, false) as is_deleted,
+                COALESCE(p.stock_quantity, 0) as current_quantity,
+                COALESCE(p.stock_quantity, 0) as stock_quantity,
+                COALESCE(p.min_stock_level, 1) as min_quantity,
+                COALESCE(p.min_stock_level, 1) as min_stock_level,
+                p.created_at,
+                p.updated_at
+            FROM products p
+            WHERE p.sku_id IS NOT NULL
+            AND NOT EXISTS (
+                SELECT 1 FROM mirror_products mp
+                WHERE mp.mirror_code = p.sku_id
+            )
+            ORDER BY p.sku_id, p.updated_at DESC NULLS LAST, p.id DESC;
+        </sql>
+
+        <rollback>
+            <!-- Cannot safely rollback data migration -->
+            <comment>Data migration cannot be automatically rolled back</comment>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

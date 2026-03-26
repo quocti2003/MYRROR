@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Seed department/actor roles referenced across apps -->
+    <changeSet id="009-add-department-roles" author="claude-code">
+        <sql>INSERT INTO roles (name, description, active, created_at, updated_at) VALUES
+('CUSTOMER','Customer role',true,'2025-01-01T00:00:00','2025-01-01T00:00:00')
+ON CONFLICT (name) DO NOTHING;</sql>
+
+        <sql>INSERT INTO roles (name, description, active, created_at, updated_at) VALUES
+('VENDOR','External vendor role',true,'2025-01-01T00:00:00','2025-01-01T00:00:00')
+ON CONFLICT (name) DO NOTHING;</sql>
+
+        <sql>INSERT INTO roles (name, description, active, created_at, updated_at) VALUES
+('CREATIVE_DESIGN','Creative &amp; Product Development role',true,'2025-01-01T00:00:00','2025-01-01T00:00:00')
+ON CONFLICT (name) DO NOTHING;</sql>
+
+        <sql>INSERT INTO roles (name, description, active, created_at, updated_at) VALUES
+('MARKETING','Marketing &amp; Branding role',true,'2025-01-01T00:00:00','2025-01-01T00:00:00')
+ON CONFLICT (name) DO NOTHING;</sql>
+
+        <sql>INSERT INTO roles (name, description, active, created_at, updated_at) VALUES
+('PRODUCTION_OPS','Production &amp; Operations role',true,'2025-01-01T00:00:00','2025-01-01T00:00:00')
+ON CONFLICT (name) DO NOTHING;</sql>
+
+        <sql>INSERT INTO roles (name, description, active, created_at, updated_at) VALUES
+('SALES_CUSTOMER_OPS','Sales &amp; Customer Operations role',true,'2025-01-01T00:00:00','2025-01-01T00:00:00')
+ON CONFLICT (name) DO NOTHING;</sql>
+
+        <sql>INSERT INTO roles (name, description, active, created_at, updated_at) VALUES
+('FINANCE','Finance &amp; Administration role',true,'2025-01-01T00:00:00','2025-01-01T00:00:00')
+ON CONFLICT (name) DO NOTHING;</sql>
+
+        <sql>INSERT INTO roles (name, description, active, created_at, updated_at) VALUES
+('LEGAL','Legal &amp; Compliance role',true,'2025-01-01T00:00:00','2025-01-01T00:00:00')
+ON CONFLICT (name) DO NOTHING;</sql>
+
+        <sql>INSERT INTO roles (name, description, active, created_at, updated_at) VALUES
+('IT_ADMIN','IT administration and developer role',true,'2025-01-01T00:00:00','2025-01-01T00:00:00')
+ON CONFLICT (name) DO NOTHING;</sql>
+    </changeSet>
+
+    <!-- Attach baseline permissions so new roles function immediately -->
+    <changeSet id="009-assign-department-permissions" author="claude-code">
+        <!-- Shared read access -->
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'CUSTOMER'), (SELECT id FROM permissions WHERE name = 'USER_READ'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'VENDOR'), (SELECT id FROM permissions WHERE name = 'USER_READ'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'CREATIVE_DESIGN'), (SELECT id FROM permissions WHERE name = 'USER_READ'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'MARKETING'), (SELECT id FROM permissions WHERE name = 'USER_READ'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'PRODUCTION_OPS'), (SELECT id FROM permissions WHERE name = 'USER_READ'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'SALES_CUSTOMER_OPS'), (SELECT id FROM permissions WHERE name = 'USER_READ'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'FINANCE'), (SELECT id FROM permissions WHERE name = 'USER_READ'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'LEGAL'), (SELECT id FROM permissions WHERE name = 'USER_READ'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <!-- Creative role gets design permissions -->
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'CREATIVE_DESIGN'), (SELECT id FROM permissions WHERE name = 'DESIGN_READ'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'CREATIVE_DESIGN'), (SELECT id FROM permissions WHERE name = 'DESIGN_CREATE'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'CREATIVE_DESIGN'), (SELECT id FROM permissions WHERE name = 'DESIGN_MODIFY'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'CREATIVE_DESIGN'), (SELECT id FROM permissions WHERE name = 'DESIGN_COMMISSION_READ'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'CREATIVE_DESIGN'), (SELECT id FROM permissions WHERE name = 'DESIGN_SALES_READ'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <!-- IT admin gets elevated management permissions -->
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'IT_ADMIN'), (SELECT id FROM permissions WHERE name = 'USER_READ'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'IT_ADMIN'), (SELECT id FROM permissions WHERE name = 'USER_MODIFY'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'IT_ADMIN'), (SELECT id FROM permissions WHERE name = 'USER_MANAGE'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'IT_ADMIN'), (SELECT id FROM permissions WHERE name = 'ROLE_MANAGE'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'IT_ADMIN'), (SELECT id FROM permissions WHERE name = 'PERMISSION_MANAGE'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+
+        <sql>INSERT INTO role_permissions (role_id, permission_id)
+VALUES ((SELECT id FROM roles WHERE name = 'IT_ADMIN'), (SELECT id FROM permissions WHERE name = 'AUDIT_READ'))
+ON CONFLICT (role_id, permission_id) DO NOTHING;</sql>
+    </changeSet>
+
+</databaseChangeLog>

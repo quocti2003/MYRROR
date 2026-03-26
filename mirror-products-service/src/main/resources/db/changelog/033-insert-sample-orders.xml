@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="033-insert-sample-orders" author="system">
+        <comment>Seed sample orders for demonstration and testing</comment>
+
+        <!-- Completed order with full history -->
+        <insert tableName="orders">
+            <column name="id" value="ORD000001"/>
+            <column name="user_id" value="1"/>
+            <column name="product_id" value="PRD000001"/>
+            <column name="status" value="COMPLETED"/>
+            <column name="payment_status" value="PAID"/>
+            <column name="payment_terms_type" value="FIXED_SCHEDULE"/>
+            <column name="payment_terms" value="50% deposit, 50% on completion"/>
+            <column name="configuration" value='{"size":6,"metal":"Yellow Gold","stone":"Oval"}'/>
+            <column name="customer_notes" value="Customer requested expedited delivery."/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="customer_name" value="Nguyen Thi Anh"/>
+            <column name="customer_email" value="anh.nguyen@example.com"/>
+            <column name="customer_phone" value="+84-909-123-456"/>
+            <column name="source_channel" value="WEB_PRODUCT_PAGE"/>
+            <column name="payment_outstanding" valueNumeric="0"/>
+            <column name="subtotal_amount" valueNumeric="25000000"/>
+            <column name="total_amount" valueNumeric="25000000"/>
+            <column name="currency" value="VND"/>
+            <column name="notes" value="Order fulfilled and delivered."/>
+            <column name="expected_delivery_date" value="2024-06-20T09:00:00"/>
+            <column name="placed_at" value="2024-06-01T08:15:00"/>
+            <column name="last_status_updated_at" value="2024-06-18T14:30:00"/>
+            <column name="created_at" value="2024-06-01T08:15:00"/>
+            <column name="updated_at" value="2024-06-18T14:30:00"/>
+            <column name="is_deleted" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="order_items">
+            <column name="id" value="ORI000001"/>
+            <column name="order_id" value="ORD000001"/>
+            <column name="product_id" value="PRD000001"/>
+            <column name="product_name" value="Lumina Diamond Ring"/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="unit_price" valueNumeric="25000000"/>
+            <column name="total_price" valueNumeric="25000000"/>
+            <column name="metadata" value='{"ringSize":6}'/>
+            <column name="created_at" value="2024-06-01T08:15:00"/>
+            <column name="updated_at" value="2024-06-18T14:30:00"/>
+            <column name="is_deleted" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="order_payment_schedule">
+            <column name="id" value="OPS000001"/>
+            <column name="order_id" value="ORD000001"/>
+            <column name="due_date" value="2024-06-01T00:00:00"/>
+            <column name="amount_due" valueNumeric="12500000"/>
+            <column name="amount_paid" valueNumeric="12500000"/>
+            <column name="status" value="PAID"/>
+            <column name="paid_at" value="2024-06-01T09:00:00"/>
+            <column name="payment_method" value="BANK_TRANSFER"/>
+            <column name="notes" value="Initial deposit received."/>
+            <column name="created_at" value="2024-06-01T08:15:00"/>
+            <column name="updated_at" value="2024-06-01T09:00:00"/>
+            <column name="is_deleted" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="order_payment_schedule">
+            <column name="id" value="OPS000002"/>
+            <column name="order_id" value="ORD000001"/>
+            <column name="due_date" value="2024-06-15T00:00:00"/>
+            <column name="amount_due" valueNumeric="12500000"/>
+            <column name="amount_paid" valueNumeric="12500000"/>
+            <column name="status" value="PAID"/>
+            <column name="paid_at" value="2024-06-18T10:30:00"/>
+            <column name="payment_method" value="CARD"/>
+            <column name="notes" value="Final balance paid at pickup."/>
+            <column name="created_at" value="2024-06-01T08:15:00"/>
+            <column name="updated_at" value="2024-06-18T10:30:00"/>
+            <column name="is_deleted" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="order_status_history">
+            <column name="id" value="OSH000001"/>
+            <column name="order_id" value="ORD000001"/>
+            <column name="status" value="NEW"/>
+            <column name="note" value="Order placed via web experience."/>
+            <column name="changed_by" value="system"/>
+            <column name="changed_at" value="2024-06-01T08:15:00"/>
+            <column name="created_at" value="2024-06-01T08:15:00"/>
+            <column name="updated_at" value="2024-06-01T08:15:00"/>
+            <column name="is_deleted" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="order_status_history">
+            <column name="id" value="OSH000002"/>
+            <column name="order_id" value="ORD000001"/>
+            <column name="status" value="CONFIRMED"/>
+            <column name="note" value="Sales confirmed deposit and began preparation."/>
+            <column name="changed_by" value="sales.team"/>
+            <column name="changed_at" value="2024-06-02T10:00:00"/>
+            <column name="created_at" value="2024-06-02T10:00:00"/>
+            <column name="updated_at" value="2024-06-02T10:00:00"/>
+            <column name="is_deleted" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="order_status_history">
+            <column name="id" value="OSH000003"/>
+            <column name="order_id" value="ORD000001"/>
+            <column name="status" value="IN_PRODUCTION"/>
+            <column name="note" value="Workshop started crafting the ring."/>
+            <column name="changed_by" value="production.team"/>
+            <column name="changed_at" value="2024-06-05T09:30:00"/>
+            <column name="created_at" value="2024-06-05T09:30:00"/>
+            <column name="updated_at" value="2024-06-05T09:30:00"/>
+            <column name="is_deleted" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="order_status_history">
+            <column name="id" value="OSH000004"/>
+            <column name="order_id" value="ORD000001"/>
+            <column name="status" value="READY_FOR_DELIVERY"/>
+            <column name="note" value="Quality check complete, ready for pickup."/>
+            <column name="changed_by" value="production.team"/>
+            <column name="changed_at" value="2024-06-17T16:45:00"/>
+            <column name="created_at" value="2024-06-17T16:45:00"/>
+            <column name="updated_at" value="2024-06-17T16:45:00"/>
+            <column name="is_deleted" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="order_status_history">
+            <column name="id" value="OSH000005"/>
+            <column name="order_id" value="ORD000001"/>
+            <column name="status" value="COMPLETED"/>
+            <column name="note" value="Customer collected the ring in boutique."/>
+            <column name="changed_by" value="sales.team"/>
+            <column name="changed_at" value="2024-06-18T14:30:00"/>
+            <column name="created_at" value="2024-06-18T14:30:00"/>
+            <column name="updated_at" value="2024-06-18T14:30:00"/>
+            <column name="is_deleted" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <!-- New order awaiting follow-up -->
+        <insert tableName="orders">
+            <column name="id" value="ORD000002"/>
+            <column name="user_id" value="2"/>
+            <column name="product_id" value="PRD000002"/>
+            <column name="status" value="NEW"/>
+            <column name="payment_status" value="PENDING"/>
+            <column name="payment_terms_type" value="FIXED_SCHEDULE"/>
+            <column name="configuration" value='{"size":5,"metal":"Rose Gold","stone":"Pear"}'/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="customer_name" value="Le Minh Khoa"/>
+            <column name="customer_email" value="khoa.le@example.com"/>
+            <column name="customer_phone" value="+84-988-222-333"/>
+            <column name="source_channel" value="WEB_PRODUCT_PAGE"/>
+            <column name="payment_outstanding" valueNumeric="18000000"/>
+            <column name="subtotal_amount" valueNumeric="18000000"/>
+            <column name="total_amount" valueNumeric="18000000"/>
+            <column name="currency" value="VND"/>
+            <column name="placed_at" value="2024-07-05T11:20:00"/>
+            <column name="last_status_updated_at" value="2024-07-05T11:20:00"/>
+            <column name="created_at" value="2024-07-05T11:20:00"/>
+            <column name="updated_at" value="2024-07-05T11:20:00"/>
+            <column name="is_deleted" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="order_items">
+            <column name="id" value="ORI000002"/>
+            <column name="order_id" value="ORD000002"/>
+            <column name="product_id" value="PRD000002"/>
+            <column name="product_name" value="Aurora Pendant"/>
+            <column name="quantity" valueNumeric="1"/>
+            <column name="unit_price" valueNumeric="18000000"/>
+            <column name="total_price" valueNumeric="18000000"/>
+            <column name="created_at" value="2024-07-05T11:20:00"/>
+            <column name="updated_at" value="2024-07-05T11:20:00"/>
+            <column name="is_deleted" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="order_payment_schedule">
+            <column name="id" value="OPS000003"/>
+            <column name="order_id" value="ORD000002"/>
+            <column name="due_date" value="2024-07-12T00:00:00"/>
+            <column name="amount_due" valueNumeric="5000000"/>
+            <column name="amount_paid" valueNumeric="0"/>
+            <column name="status" value="PENDING"/>
+            <column name="notes" value="Deposit to be collected by sales."/>
+            <column name="created_at" value="2024-07-05T11:20:00"/>
+            <column name="updated_at" value="2024-07-05T11:20:00"/>
+            <column name="is_deleted" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="order_status_history">
+            <column name="id" value="OSH000006"/>
+            <column name="order_id" value="ORD000002"/>
+            <column name="status" value="NEW"/>
+            <column name="note" value="New web enquiry awaiting sales follow-up."/>
+            <column name="changed_by" value="system"/>
+            <column name="changed_at" value="2024-07-05T11:20:00"/>
+            <column name="created_at" value="2024-07-05T11:20:00"/>
+            <column name="updated_at" value="2024-07-05T11:20:00"/>
+            <column name="is_deleted" valueBoolean="false"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <!-- Advance sequences to avoid ID collisions -->
+        <sql dbms="postgresql">SELECT setval('order_seq', 2, true);</sql>
+        <sql dbms="postgresql">SELECT setval('order_item_seq', 2, true);</sql>
+        <sql dbms="postgresql">SELECT setval('order_payment_schedule_seq', 3, true);</sql>
+        <sql dbms="postgresql">SELECT setval('order_status_history_seq', 6, true);</sql>
+
+        <sql dbms="h2">ALTER SEQUENCE order_seq RESTART WITH 3;</sql>
+        <sql dbms="h2">ALTER SEQUENCE order_item_seq RESTART WITH 3;</sql>
+        <sql dbms="h2">ALTER SEQUENCE order_payment_schedule_seq RESTART WITH 4;</sql>
+        <sql dbms="h2">ALTER SEQUENCE order_status_history_seq RESTART WITH 7;</sql>
+    </changeSet>
+
+</databaseChangeLog>

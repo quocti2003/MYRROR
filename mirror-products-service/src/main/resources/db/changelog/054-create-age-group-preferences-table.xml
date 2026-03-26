@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="054-1" author="claude">
+        <comment>Create age_group_preferences table - Preferences by age group</comment>
+        <createTable tableName="age_group_preferences">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="age_group_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attribute_type" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="weight" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="054-2" author="claude">
+        <comment>Create age_group_preference_values table - Preferred values for preferences</comment>
+        <createTable tableName="age_group_preference_values">
+            <column name="preference_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="preferred_value" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="054-3" author="claude">
+        <comment>Add foreign key constraints</comment>
+        <addForeignKeyConstraint
+            constraintName="fk_age_group_preferences_age_group"
+            baseTableName="age_group_preferences"
+            baseColumnNames="age_group_id"
+            referencedTableName="age_groups"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+            constraintName="fk_age_group_preference_values_preference"
+            baseTableName="age_group_preference_values"
+            baseColumnNames="preference_id"
+            referencedTableName="age_group_preferences"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="054-4" author="claude">
+        <comment>Create indexes for age_group_preferences</comment>
+        <createIndex tableName="age_group_preferences" indexName="idx_age_group_preferences_age_group_id">
+            <column name="age_group_id"/>
+        </createIndex>
+        <createIndex tableName="age_group_preferences" indexName="idx_age_group_preferences_attribute_type">
+            <column name="attribute_type"/>
+        </createIndex>
+        <createIndex tableName="age_group_preference_values" indexName="idx_age_group_preference_values_preference_id">
+            <column name="preference_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

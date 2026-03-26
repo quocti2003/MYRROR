@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ========================================== -->
+    <!-- 1. ALTER pod_partners: Add franchise fields -->
+    <!-- ========================================== -->
+    <changeSet id="118-01-add-partner-type-fields" author="nam">
+        <comment>Add partner_type and franchise-related fields to pod_partners</comment>
+
+        <sql>
+            ALTER TABLE pod_partners ADD COLUMN IF NOT EXISTS partner_type VARCHAR(20) DEFAULT 'LOCATION' NOT NULL;
+            ALTER TABLE pod_partners ADD COLUMN IF NOT EXISTS wholesale_discount_rate DECIMAL(5,2) DEFAULT 0;
+            ALTER TABLE pod_partners ADD COLUMN IF NOT EXISTS territory VARCHAR(255);
+            ALTER TABLE pod_partners ADD COLUMN IF NOT EXISTS can_set_own_prices BOOLEAN DEFAULT false NOT NULL;
+            ALTER TABLE pod_partners ADD COLUMN IF NOT EXISTS min_markup_percent DECIMAL(5,2);
+            ALTER TABLE pod_partners ADD COLUMN IF NOT EXISTS max_markup_percent DECIMAL(5,2);
+            ALTER TABLE pod_partners ADD COLUMN IF NOT EXISTS contract_start_date DATE;
+            ALTER TABLE pod_partners ADD COLUMN IF NOT EXISTS contract_end_date DATE;
+            ALTER TABLE pod_partners ADD COLUMN IF NOT EXISTS security_deposit DECIMAL(15,2);
+            ALTER TABLE pod_partners ADD COLUMN IF NOT EXISTS bank_account_number VARCHAR(50);
+            ALTER TABLE pod_partners ADD COLUMN IF NOT EXISTS bank_name VARCHAR(100);
+            ALTER TABLE pod_partners ADD COLUMN IF NOT EXISTS bank_branch VARCHAR(100);
+            CREATE INDEX IF NOT EXISTS idx_pod_partners_partner_type ON pod_partners (partner_type);
+        </sql>
+    </changeSet>
+
+    <!-- ========================================== -->
+    <!-- 2. ALTER pods: Map pod_type column          -->
+    <!-- ========================================== -->
+    <changeSet id="118-02-map-pod-type" author="nam">
+        <comment>Set default pod_type for existing pods and make it non-null</comment>
+
+        <sql>
+            UPDATE pods SET pod_type = 'VITRINE' WHERE pod_type IS NULL;
+            ALTER TABLE pods ALTER COLUMN pod_type SET DEFAULT 'VITRINE';
+            ALTER TABLE pods ALTER COLUMN pod_type SET NOT NULL;
+            CREATE INDEX IF NOT EXISTS idx_pods_pod_type ON pods (pod_type);
+        </sql>
+    </changeSet>
+
+    <!-- ========================================== -->
+    <!-- 3. ALTER pod_qr_codes: Add qr_code_type    -->
+    <!-- ========================================== -->
+    <changeSet id="118-03-add-qr-code-type" author="nam">
+        <comment>Add qr_code_type and metadata fields to pod_qr_codes</comment>
+
+        <sql>
+            ALTER TABLE pod_qr_codes ADD COLUMN IF NOT EXISTS qr_code_type VARCHAR(20) DEFAULT 'POD_QR' NOT NULL;
+            ALTER TABLE pod_qr_codes ADD COLUMN IF NOT EXISTS metadata JSONB;
+            CREATE INDEX IF NOT EXISTS idx_pod_qr_codes_type ON pod_qr_codes (qr_code_type);
+        </sql>
+    </changeSet>
+
+    <!-- ========================================== -->
+    <!-- 4. CREATE partner_inventory                 -->
+    <!-- ========================================== -->
+    <changeSet id="118-04-create-partner-inventory" author="nam">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="partner_inventory"/></not>
+        </preConditions>
+
+        <comment>Create partner_inventory table for phygital partner stock management</comment>
+
+        <createTable tableName="partner_inventory">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (PIV prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="partner_id" type="VARCHAR(255)" remarks="Reference to pod_partners">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(255)" remarks="Reference to mirror_products">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity_on_hand" type="INTEGER" defaultValueNumeric="0" remarks="Total physical stock">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity_reserved" type="INTEGER" defaultValueNumeric="0" remarks="Reserved for pending sales">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity_available" type="INTEGER" defaultValueNumeric="0" remarks="Available for sale (on_hand - reserved)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="wholesale_price" type="DECIMAL(15,2)" remarks="Price partner paid for this product">
+                <constraints nullable="false"/>
+            </column>
+            <column name="partner_retail_price" type="DECIMAL(15,2)" remarks="Partner's own retail price (null = use mirror price)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="mirror_retail_price" type="DECIMAL(15,2)" remarks="Mirror's official retail price">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reorder_level" type="INTEGER" defaultValueNumeric="5" remarks="Low stock alert threshold">
+                <constraints nullable="false"/>
+            </column>
+            <column name="max_stock_level" type="INTEGER" defaultValueNumeric="50" remarks="Maximum stock level">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_restocked_at" type="TIMESTAMP" remarks="Last restock timestamp">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="BIGINT" defaultValueNumeric="0" remarks="Optimistic locking version">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint tableName="partner_inventory"
+            columnNames="partner_id,product_id"
+            constraintName="uk_partner_inventory_partner_product"/>
+
+        <addForeignKeyConstraint constraintName="fk_partner_inventory_partner"
+            baseTableName="partner_inventory" baseColumnNames="partner_id"
+            referencedTableName="pod_partners" referencedColumnNames="id"
+            onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint constraintName="fk_partner_inventory_product"
+            baseTableName="partner_inventory" baseColumnNames="product_id"
+            referencedTableName="mirror_products" referencedColumnNames="id"
+            onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <createIndex tableName="partner_inventory" indexName="idx_partner_inventory_partner">
+            <column name="partner_id"/>
+        </createIndex>
+
+        <createIndex tableName="partner_inventory" indexName="idx_partner_inventory_product">
+            <column name="product_id"/>
+        </createIndex>
+
+        <createIndex tableName="partner_inventory" indexName="idx_partner_inventory_low_stock">
+            <column name="partner_id"/>
+            <column name="quantity_available"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- ========================================== -->
+    <!-- 5. CREATE inventory_movements               -->
+    <!-- ========================================== -->
+    <changeSet id="118-05-create-inventory-movements" author="nam">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="inventory_movements"/></not>
+        </preConditions>
+
+        <comment>Create inventory_movements table for tracking stock changes</comment>
+
+        <createTable tableName="inventory_movements">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (IVM prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="inventory_id" type="VARCHAR(255)" remarks="Reference to partner_inventory">
+                <constraints nullable="false"/>
+            </column>
+            <column name="partner_id" type="VARCHAR(255)" remarks="Reference to pod_partners (denormalized)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(255)" remarks="Reference to mirror_products (denormalized)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="movement_type" type="VARCHAR(30)" remarks="WHOLESALE_IN, SALE_OUT, ADJUSTMENT_IN, ADJUSTMENT_OUT, RETURN_IN, TRANSFER_OUT, DAMAGED_OUT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="INTEGER" remarks="Quantity moved">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity_before" type="INTEGER" remarks="Stock before movement">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity_after" type="INTEGER" remarks="Stock after movement">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reference_id" type="VARCHAR(255)" remarks="Reference to wholesale_order or partner_sale ID">
+                <constraints nullable="true"/>
+            </column>
+            <column name="reference_type" type="VARCHAR(30)" remarks="WHOLESALE_ORDER or PARTNER_SALE">
+                <constraints nullable="true"/>
+            </column>
+            <column name="notes" type="TEXT" remarks="Movement notes">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_by" type="VARCHAR(100)" remarks="User who created the movement">
+                <constraints nullable="true"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_inv_movement_inventory"
+            baseTableName="inventory_movements" baseColumnNames="inventory_id"
+            referencedTableName="partner_inventory" referencedColumnNames="id"
+            onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint constraintName="fk_inv_movement_partner"
+            baseTableName="inventory_movements" baseColumnNames="partner_id"
+            referencedTableName="pod_partners" referencedColumnNames="id"
+            onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <createIndex tableName="inventory_movements" indexName="idx_inv_movements_partner_date">
+            <column name="partner_id"/>
+            <column name="created_at"/>
+        </createIndex>
+
+        <createIndex tableName="inventory_movements" indexName="idx_inv_movements_inventory">
+            <column name="inventory_id"/>
+        </createIndex>
+
+        <createIndex tableName="inventory_movements" indexName="idx_inv_movements_product">
+            <column name="product_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- ========================================== -->
+    <!-- 6. CREATE wholesale_orders                  -->
+    <!-- ========================================== -->
+    <changeSet id="118-06-create-wholesale-orders" author="nam">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="wholesale_orders"/></not>
+        </preConditions>
+
+        <comment>Create wholesale_orders table for phygital partner purchase orders</comment>
+
+        <createTable tableName="wholesale_orders">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (WHO prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="order_number" type="VARCHAR(30)" remarks="Human-readable order number">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="partner_id" type="VARCHAR(255)" remarks="Reference to pod_partners">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="DRAFT" remarks="Order status">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subtotal" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Sum of line items">
+                <constraints nullable="false"/>
+            </column>
+            <column name="discount_amount" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Total discount">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tax_amount" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Tax amount">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_amount" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Final total">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(3)" defaultValue="VND" remarks="Currency code">
+                <constraints nullable="false"/>
+            </column>
+            <column name="shipping_address" type="TEXT" remarks="Delivery address">
+                <constraints nullable="true"/>
+            </column>
+            <column name="shipping_method" type="VARCHAR(50)" remarks="Shipping method">
+                <constraints nullable="true"/>
+            </column>
+            <column name="shipping_cost" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Shipping cost">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tracking_number" type="VARCHAR(100)" remarks="Shipment tracking number">
+                <constraints nullable="true"/>
+            </column>
+            <column name="submitted_at" type="TIMESTAMP" remarks="When order was submitted"/>
+            <column name="approved_at" type="TIMESTAMP" remarks="When order was approved"/>
+            <column name="approved_by" type="VARCHAR(100)" remarks="Who approved the order"/>
+            <column name="shipped_at" type="TIMESTAMP" remarks="When order was shipped"/>
+            <column name="delivered_at" type="TIMESTAMP" remarks="When order was delivered"/>
+            <column name="completed_at" type="TIMESTAMP" remarks="When order was completed"/>
+            <column name="cancelled_at" type="TIMESTAMP" remarks="When order was cancelled"/>
+            <column name="cancelled_by" type="VARCHAR(100)" remarks="Who cancelled the order"/>
+            <column name="cancellation_reason" type="TEXT" remarks="Reason for cancellation"/>
+            <column name="payment_method" type="VARCHAR(50)" remarks="Payment method"/>
+            <column name="payment_reference" type="VARCHAR(100)" remarks="Payment reference number"/>
+            <column name="payment_status" type="VARCHAR(20)" defaultValue="UNPAID" remarks="Payment status">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notes" type="TEXT" remarks="Order notes"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_wholesale_order_partner"
+            baseTableName="wholesale_orders" baseColumnNames="partner_id"
+            referencedTableName="pod_partners" referencedColumnNames="id"
+            onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <createIndex tableName="wholesale_orders" indexName="idx_wholesale_orders_partner">
+            <column name="partner_id"/>
+        </createIndex>
+
+        <createIndex tableName="wholesale_orders" indexName="idx_wholesale_orders_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="wholesale_orders" indexName="idx_wholesale_orders_created">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- ========================================== -->
+    <!-- 7. CREATE wholesale_order_items             -->
+    <!-- ========================================== -->
+    <changeSet id="118-07-create-wholesale-order-items" author="nam">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="wholesale_order_items"/></not>
+        </preConditions>
+
+        <comment>Create wholesale_order_items table for order line items</comment>
+
+        <createTable tableName="wholesale_order_items">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (WOI prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="order_id" type="VARCHAR(255)" remarks="Reference to wholesale_orders">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(255)" remarks="Reference to mirror_products">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="INTEGER" remarks="Quantity ordered">
+                <constraints nullable="false"/>
+            </column>
+            <column name="retail_price" type="DECIMAL(15,2)" remarks="Mirror retail price at time of order">
+                <constraints nullable="false"/>
+            </column>
+            <column name="wholesale_price" type="DECIMAL(15,2)" remarks="Wholesale price for partner">
+                <constraints nullable="false"/>
+            </column>
+            <column name="discount_percent" type="DECIMAL(5,2)" defaultValueNumeric="0" remarks="Additional line discount">
+                <constraints nullable="false"/>
+            </column>
+            <column name="line_total" type="DECIMAL(15,2)" remarks="Line total (wholesale_price * quantity - discount)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notes" type="TEXT" remarks="Item notes"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_wo_item_order"
+            baseTableName="wholesale_order_items" baseColumnNames="order_id"
+            referencedTableName="wholesale_orders" referencedColumnNames="id"
+            onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint constraintName="fk_wo_item_product"
+            baseTableName="wholesale_order_items" baseColumnNames="product_id"
+            referencedTableName="mirror_products" referencedColumnNames="id"
+            onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <createIndex tableName="wholesale_order_items" indexName="idx_wo_items_order">
+            <column name="order_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- ========================================== -->
+    <!-- 8. CREATE partner_sales                     -->
+    <!-- ========================================== -->
+    <changeSet id="118-08-create-partner-sales" author="nam">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="partner_sales"/></not>
+        </preConditions>
+
+        <comment>Create partner_sales table for phygital partner sales tracking</comment>
+
+        <createTable tableName="partner_sales">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (PSL prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="sale_number" type="VARCHAR(30)" remarks="Human-readable sale number">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="partner_id" type="VARCHAR(255)" remarks="Reference to pod_partners">
+                <constraints nullable="false"/>
+            </column>
+            <column name="pod_id" type="VARCHAR(255)" remarks="Reference to pods (where the sale happened)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="customer_name" type="VARCHAR(255)" remarks="Customer name"/>
+            <column name="customer_phone" type="VARCHAR(20)" remarks="Customer phone"/>
+            <column name="customer_email" type="VARCHAR(255)" remarks="Customer email"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="PENDING" remarks="Sale status">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subtotal" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Sum of selling prices">
+                <constraints nullable="false"/>
+            </column>
+            <column name="discount_amount" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Sale discount">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tax_amount" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Tax amount">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_amount" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Final total">
+                <constraints nullable="false"/>
+            </column>
+            <column name="cost_of_goods" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Total wholesale cost">
+                <constraints nullable="false"/>
+            </column>
+            <column name="profit_amount" type="DECIMAL(15,2)" defaultValueNumeric="0" remarks="Profit (total - cost)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="profit_margin_percent" type="DECIMAL(5,2)" defaultValueNumeric="0" remarks="Profit margin %">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(3)" defaultValue="VND" remarks="Currency code">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_method" type="VARCHAR(50)" remarks="Payment method"/>
+            <column name="payment_reference" type="VARCHAR(100)" remarks="Payment reference"/>
+            <column name="qr_code_id" type="VARCHAR(255)" remarks="QR code that led to this sale">
+                <constraints nullable="true"/>
+            </column>
+            <column name="notes" type="TEXT" remarks="Sale notes"/>
+            <column name="sold_at" type="TIMESTAMP" remarks="When the sale happened">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_partner_sale_partner"
+            baseTableName="partner_sales" baseColumnNames="partner_id"
+            referencedTableName="pod_partners" referencedColumnNames="id"
+            onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint constraintName="fk_partner_sale_pod"
+            baseTableName="partner_sales" baseColumnNames="pod_id"
+            referencedTableName="pods" referencedColumnNames="id"
+            onDelete="SET NULL" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint constraintName="fk_partner_sale_qr"
+            baseTableName="partner_sales" baseColumnNames="qr_code_id"
+            referencedTableName="pod_qr_codes" referencedColumnNames="id"
+            onDelete="SET NULL" onUpdate="CASCADE"/>
+
+        <createIndex tableName="partner_sales" indexName="idx_partner_sales_partner_date">
+            <column name="partner_id"/>
+            <column name="sold_at"/>
+        </createIndex>
+
+        <createIndex tableName="partner_sales" indexName="idx_partner_sales_status">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- ========================================== -->
+    <!-- 9. CREATE partner_sale_items                -->
+    <!-- ========================================== -->
+    <changeSet id="118-09-create-partner-sale-items" author="nam">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="partner_sale_items"/></not>
+        </preConditions>
+
+        <comment>Create partner_sale_items table for sale line items</comment>
+
+        <createTable tableName="partner_sale_items">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (PSI prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="sale_id" type="VARCHAR(255)" remarks="Reference to partner_sales">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(255)" remarks="Reference to mirror_products">
+                <constraints nullable="false"/>
+            </column>
+            <column name="inventory_id" type="VARCHAR(255)" remarks="Reference to partner_inventory">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="INTEGER" remarks="Quantity sold">
+                <constraints nullable="false"/>
+            </column>
+            <column name="wholesale_cost" type="DECIMAL(15,2)" remarks="Cost per unit (wholesale price)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="selling_price" type="DECIMAL(15,2)" remarks="Selling price per unit">
+                <constraints nullable="false"/>
+            </column>
+            <column name="line_total" type="DECIMAL(15,2)" remarks="Line total (selling_price * quantity)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="profit" type="DECIMAL(15,2)" remarks="Profit on this line item">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint constraintName="fk_sale_item_sale"
+            baseTableName="partner_sale_items" baseColumnNames="sale_id"
+            referencedTableName="partner_sales" referencedColumnNames="id"
+            onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint constraintName="fk_sale_item_product"
+            baseTableName="partner_sale_items" baseColumnNames="product_id"
+            referencedTableName="mirror_products" referencedColumnNames="id"
+            onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint constraintName="fk_sale_item_inventory"
+            baseTableName="partner_sale_items" baseColumnNames="inventory_id"
+            referencedTableName="partner_inventory" referencedColumnNames="id"
+            onDelete="RESTRICT" onUpdate="CASCADE"/>
+
+        <createIndex tableName="partner_sale_items" indexName="idx_sale_items_sale">
+            <column name="sale_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

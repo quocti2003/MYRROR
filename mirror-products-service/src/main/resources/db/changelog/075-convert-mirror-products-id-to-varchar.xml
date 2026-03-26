@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Convert mirror_products.id from bigint to VARCHAR to match Product entity -->
+    <changeSet id="075-1" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_products"/>
+            <tableExists tableName="lab_grown_diamonds"/>
+        </preConditions>
+
+        <comment>Convert id from bigint to VARCHAR(30) to match Product entity's String id</comment>
+
+        <!-- Step 1: Drop foreign key constraint from lab_grown_diamonds -->
+        <dropForeignKeyConstraint
+                baseTableName="lab_grown_diamonds"
+                constraintName="fk_lab_grown_diamonds_mirror_product"/>
+
+        <!-- Step 2: Add temporary VARCHAR columns -->
+        <addColumn tableName="mirror_products">
+            <column name="id_new" type="VARCHAR(30)"/>
+        </addColumn>
+
+        <addColumn tableName="lab_grown_diamonds">
+            <column name="mirror_product_id_new" type="VARCHAR(30)"/>
+        </addColumn>
+
+        <!-- Step 3: Copy bigint IDs as strings -->
+        <sql>
+            UPDATE mirror_products SET id_new = CAST(id AS VARCHAR);
+        </sql>
+
+        <sql>
+            UPDATE lab_grown_diamonds
+            SET mirror_product_id_new = CAST(mirror_product_id AS VARCHAR)
+            WHERE mirror_product_id IS NOT NULL;
+        </sql>
+
+        <!-- Step 4: Drop primary key constraint on mirror_products -->
+        <dropPrimaryKey tableName="mirror_products" constraintName="mirror_products_pkey"/>
+
+        <!-- Step 5: Drop old bigint columns -->
+        <dropColumn tableName="mirror_products" columnName="id"/>
+        <dropColumn tableName="lab_grown_diamonds" columnName="mirror_product_id"/>
+
+        <!-- Step 6: Rename new columns to original names -->
+        <renameColumn tableName="mirror_products"
+                      oldColumnName="id_new"
+                      newColumnName="id"
+                      columnDataType="VARCHAR(30)"/>
+
+        <renameColumn tableName="lab_grown_diamonds"
+                      oldColumnName="mirror_product_id_new"
+                      newColumnName="mirror_product_id"
+                      columnDataType="VARCHAR(30)"/>
+
+        <!-- Step 7: Add NOT NULL and primary key constraints -->
+        <addNotNullConstraint tableName="mirror_products"
+                              columnName="id"
+                              columnDataType="VARCHAR(30)"/>
+
+        <addPrimaryKey tableName="mirror_products"
+                       columnNames="id"
+                       constraintName="mirror_products_pkey"/>
+
+        <!-- Step 8: Recreate foreign key constraint with VARCHAR type -->
+        <addForeignKeyConstraint
+                constraintName="fk_lab_grown_diamonds_mirror_product"
+                baseTableName="lab_grown_diamonds"
+                baseColumnNames="mirror_product_id"
+                referencedTableName="mirror_products"
+                referencedColumnNames="id"
+                onDelete="SET NULL"/>
+
+        <rollback>
+            <comment>Rollback not supported - ID type conversion cannot be safely reversed</comment>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

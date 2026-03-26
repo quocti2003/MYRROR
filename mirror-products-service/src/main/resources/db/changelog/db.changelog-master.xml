@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!-- Include all changelog files here -->
+    <include file="db/changelog/001-create-test-table.xml"/>
+    <include file="db/changelog/002-create-category-system-tables.xml"/>
+<!--    <include file="db/changelog/003-create-id-sequence-tables.xml"/>-->
+    <include file="db/changelog/004-create-sequences.xml"/>
+    <include file="db/changelog/005-drop-old-id-tables.xml"/>
+    <include file="db/changelog/006-drop-todos-table.xml"/>
+    <include file="db/changelog/007-create-s3-files-table.xml"/>
+    <include file="db/changelog/008-add-missing-columns-s3-files.xml"/>
+    <include file="db/changelog/009-create-file-sequence.xml"/>
+    <include file="db/changelog/010-add-folder-path-to-s3-files.xml"/>
+    <include file="db/changelog/014-create-locations-table.xml"/>
+    <include file="db/changelog/015-create-products-table.xml"/>
+    <include file="db/changelog/016-create-collections-table.xml"/>
+    <include file="db/changelog/017-insert-sample-categories.xml"/>
+    <include file="db/changelog/018-update-sample-products.xml"/>
+    <include file="db/changelog/019-insert-sample-collections.xml"/>
+    <include file="db/changelog/020-link-products-to-collections.xml"/>
+    <include file="db/changelog/021-add-missing-columns-collection-products.xml"/>
+    <include file="db/changelog/022-rename-s3-files-primary-key.xml"/>
+    <include file="db/changelog/023-run-data-sql.xml"/>
+    <include file="db/changelog/024-reset-collection-sequence.xml"/>
+    <include file="db/changelog/028-reset-collection-product-sequence.xml"/>
+    <include file="db/changelog/029-create-vendor-tables.xml"/>
+    <include file="db/changelog/030-add-user-relationships.xml"/>
+    <include file="db/changelog/031-create-orders-domain.xml"/>
+    <include file="db/changelog/032-update-orders-enhancements.xml"/>
+    <include file="db/changelog/033-insert-sample-orders.xml"/>
+    <include file="db/changelog/034-add-design-fields-to-products.xml"/>
+    <include file="db/changelog/035-create-designer-tables.xml"/>
+    <include file="db/changelog/036-create-misa-tables.xml"/>
+    <include file="db/changelog/037-create-mirror-inventory-tables.xml"/>
+    <include file="db/changelog/038-update-categories-add-sku-fields.xml"/>
+    <include file="db/changelog/039-update-misa-categories-columns.xml"/>
+    <include file="db/changelog/040-update-misa-categories-status-columns.xml"/>
+    <include file="db/changelog/041-add-misa-category-sync-columns.xml"/>
+    <include file="db/changelog/042-rename-categories-to-skus.xml"/>
+    <include file="db/changelog/043-add-country-origin-and-barcode.xml"/>
+    <include file="db/changelog/044-create-dropdown-configuration-tables.xml"/>
+    <include file="db/changelog/045-seed-dropdown-configuration-data.xml"/>
+    <include file="db/changelog/046-create-material-color-options.xml"/>
+    <include file="db/changelog/047-add-product-status-fields.xml"/>
+    <include file="db/changelog/048-add-sku-misa-sync-fields.xml"/>
+    <include file="db/changelog/049-add-order-workflow-fields.xml"/>
+    <include file="db/changelog/050-update-order-status-values.xml"/>
+    <include file="db/changelog/051-add-vendor-to-orders.xml"/>
+    <!-- LEGACY: Commented out - Internal SKU generation (SKU-RNG-2411-001 format) no longer used -->
+    <!-- <include file="db/changelog/052-seed-product-ops-test-data.xml"/> -->
+    <include file="db/changelog/053-create-age-groups-table.xml"/>
+    <include file="db/changelog/054-create-age-group-preferences-table.xml"/>
+    <include file="db/changelog/055-create-material-inventory-table.xml"/>
+    <include file="db/changelog/056-create-purchase-orders-table.xml"/>
+    <include file="db/changelog/057-create-purchase-order-items-table.xml"/>
+    <include file="db/changelog/058-create-purchase-order-item-variants-table.xml"/>
+    <include file="db/changelog/059-create-purchase-order-age-group-allocations-table.xml"/>
+    <include file="db/changelog/060-seed-procurement-test-data.xml"/>
+    <include file="db/changelog/061-create-collection-plans-table.xml"/>
+    <include file="db/changelog/062-create-collection-plan-items-table.xml"/>
+    <include file="db/changelog/063-create-collection-age-group-allocations-table.xml"/>
+    <include file="db/changelog/064-create-market-trends-table.xml"/>
+    <include file="db/changelog/065-create-lab-grown-diamonds-table.xml"/>
+    <include file="db/changelog/066-seed-lab-grown-diamonds-data.xml"/>
+    <include file="db/changelog/067-fix-orphaned-products-add-skus.xml"/>
+    <include file="db/changelog/068-create-unique-sku-for-prd000009.xml"/>
+    <include file="db/changelog/069-migrate-remaining-products-to-unique-skus.xml"/>
+    <include file="db/changelog/070-add-default-jewelry-images.xml"/>
+    <include file="db/changelog/071-fix-product-categories.xml"/>
+    <include file="db/changelog/072-add-remaining-product-columns.xml"/>
+    <include file="db/changelog/073-migrate-products-to-mirror-products.xml"/>
+    <include file="db/changelog/074-cleanup-duplicate-columns-mirror-products.xml"/>
+    <include file="db/changelog/075-convert-mirror-products-id-to-varchar.xml"/>
+    <include file="db/changelog/076-fix-foreign-keys-to-mirror-products.xml"/>
+    <include file="db/changelog/077-update-mirror-products-ids-to-prd-format.xml"/>
+    <include file="db/changelog/078-create-appointments-table.xml"/>
+    <include file="db/changelog/079-create-certificates-table.xml"/>
+    <include file="db/changelog/080-add-certificate-code-to-mirror-products.xml"/>
+    <include file="db/changelog/081-create-product-certificates-table.xml"/>
+    <include file="db/changelog/082-drop-certificate-code-from-mirror-products.xml"/>
+    <include file="db/changelog/083-enhance-skus-with-product-fields.xml"/>
+    <include file="db/changelog/084-create-blocked-slots-table.xml"/>
+    <include file="db/changelog/083-add-certificates-not-required-column.xml"/>
+    <include file="db/changelog/084-add-model-3d-id-to-mirror-products.xml"/>
+    <include file="db/changelog/085-fix-design-products-fk-to-mirror-products.xml"/>
+    <include file="db/changelog/086-drop-legacy-products-table.xml"/>
+    <include file="db/changelog/085-add-jewelry-specification-fields.xml"/>
+    <include file="db/changelog/086-rename-lab-grown-diamonds-to-mirror-diamonds.xml"/>
+    <include file="db/changelog/087-create-product-units-table.xml"/>
+    <include file="db/changelog/088-migrate-existing-jewelry-to-serialized.xml"/>
+    <include file="db/changelog/089-restructure-sku-barcode-system.xml"/>
+    <include file="db/changelog/090-add-mirror-products-status-index.xml"/>
+    <include file="db/changelog/091-create-stock-reconciliation-records-table.xml"/>
+
+    <!-- Warehouse Management System -->
+    <include file="db/changelog/092-extend-locations-for-warehouses.xml"/>
+    <include file="db/changelog/093-create-warehouse-racks-table.xml"/>
+    <include file="db/changelog/094-create-warehouse-slots-table.xml"/>
+    <include file="db/changelog/095-create-inventory-positions-table.xml"/>
+    <include file="db/changelog/096-create-inventory-position-history-table.xml"/>
+
+    <!-- User Management (Migrated from user-service) -->
+    <include file="db/changelog/097-create-user-tables.xml"/>
+    <include file="db/changelog/098-insert-default-roles-permissions.xml"/>
+    <include file="db/changelog/099-create-audit-log-table.xml"/>
+    <include file="db/changelog/100-add-new-fields-table-user.xml"/>
+    <include file="db/changelog/101-add-designer-role-permissions.xml"/>
+    <include file="db/changelog/102-add-email-verification.xml"/>
+    <include file="db/changelog/103-add-user-otps.xml"/>
+    <include file="db/changelog/104-refactor-user-otps.xml"/>
+    <include file="db/changelog/105-add-department-roles-permissions.xml"/>
+    <include file="db/changelog/106-create-role-matrix-table.xml"/>
+    <include file="db/changelog/107-seed-test-users-per-role.xml"/>
+
+    <!-- PODs (Point of Display) System -->
+    <!-- Sprint 1: Partner Foundation -->
+    <include file="db/changelog/108-create-pod-partners-table.xml"/>
+    <include file="db/changelog/108a-add-missing-pod-partners-columns.xml"/>
+    <include file="db/changelog/114-add-pod-partner-role-permissions.xml"/>
+
+    <!-- Sprint 2: POD Management -->
+    <include file="db/changelog/109-create-pods-table.xml"/>
+    <include file="db/changelog/109a-add-missing-pods-columns.xml"/>
+    <include file="db/changelog/109b-add-pod-commission-rate.xml"/>
+
+    <!-- Sprint 3: QR Code System -->
+    <include file="db/changelog/110-create-pod-qr-codes-table.xml"/>
+    <include file="db/changelog/111-create-pod-qr-scans-table.xml"/>
+
+    <!-- Sprint 4: Attribution Engine -->
+    <include file="db/changelog/112-create-pod-attributions-table.xml"/>
+
+    <!-- Sprint 5: Commission System -->
+    <include file="db/changelog/113-create-pod-commissions-table.xml"/>
+    <include file="db/changelog/113a-add-missing-pod-commissions-columns.xml"/>
+
+    <!-- Sprint 6: POD Location Integration -->
+    <include file="db/changelog/115-add-location-id-to-pods.xml"/>
+
+    <!-- Test Data: Partner user + PODs with coordinates for map testing -->
+    <include file="db/changelog/116-seed-partner-test-pods.xml"/>
+
+    <!-- Sprint 7: User-POD Attribution -->
+    <include file="db/changelog/117-create-pod-user-attributions.xml"/>
+
+    <!-- Sprint 8: Phygital POD (Franchise Partner Model) -->
+    <include file="db/changelog/118-add-phygital-pod-support.xml"/>
+
+    <!-- MISA Order Integration & Cleanup -->
+    <include file="db/changelog/115-add-misa-retry-fields-drop-dead-tables.xml"/>
+
+    <!-- MISA Balance Tracking -->
+    <include file="db/changelog/116-create-misa-balance-trackers-table.xml"/>
+
+    <!-- Consolidate Sku into MirrorProduct + Payment Transactions -->
+    <include file="db/changelog/117-consolidate-sku-into-mirror-product.xml"/>
+
+    <!-- Production Partner Collaboration System -->
+    <!-- Sprint 1: JTRC Foundation + Partner Capabilities -->
+    <include file="db/changelog/118-create-jtrc-tables.xml"/>
+
+    <!-- Sprint 3: Workflow Engine -->
+    <include file="db/changelog/119-create-workflow-template-tables.xml"/>
+
+    <!-- Sprint 4: Production Orders -->
+    <include file="db/changelog/120-create-production-order-tables.xml"/>
+
+    <!-- Sprint 5: Partner Assignment -->
+    <include file="db/changelog/121-add-needs-spec-review-to-production-orders.xml"/>
+
+    <!-- Label Printing System (Master) -->
+    <include file="db/changelog/122-create-label-templates-table.xml"/>
+    <include file="db/changelog/123-alter-label-templates-add-columns.xml"/>
+    <include file="db/changelog/124-cleanup-label-templates-schema.xml"/>
+
+    <!-- Sprint 6: QA Fixes - Optimistic Locking -->
+    <include file="db/changelog/125-add-optimistic-locking-production-plans.xml"/>
+
+    <!-- Sprint 7: Component Ownership Tracking -->
+    <include file="db/changelog/126-create-component-ownership-log.xml"/>
+    <include file="db/changelog/127-create-misa-callback-logs.xml"/>
+
+    <!-- RFID Label Printing System -->
+    <include file="db/changelog/128-create-rfid-label-templates-table.xml"/>
+    <include file="db/changelog/129-create-print-jobs-table.xml"/>
+    <include file="db/changelog/130-create-rfid-tags-table.xml"/>
+    <include file="db/changelog/131-fix-rfid-scan-logs-updated-at.xml"/>
+    <include file="db/changelog/132-fix-zpl-data-column-type.xml"/>
+    <include file="db/changelog/133-fix-epc-column-length.xml"/>
+    <include file="db/changelog/134-fix-rfid-label-templates-columns.xml"/>
+
+    <!-- JTRC Dropdown Configuration (Unified with SKU Generator) -->
+    <include file="db/changelog/135-create-jtrc-dropdown-tables.xml"/>
+    <include file="db/changelog/136-seed-jtrc-dropdown-data.xml"/>
+    <include file="db/changelog/137-migrate-jtrc-values-to-dropdown-codes.xml"/>
+
+</databaseChangeLog>

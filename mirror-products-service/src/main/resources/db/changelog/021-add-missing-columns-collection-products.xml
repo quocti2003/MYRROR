@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="021-add-missing-columns-collection-products" author="system">
+        <comment>Add missing BaseEntity columns to collection_products table</comment>
+        
+        <addColumn tableName="collection_products">
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Is active flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Is deleted flag">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="collection_products">
+                <column name="updated_at"/>
+                <column name="is_active"/>
+                <column name="is_deleted"/>
+            </dropColumn>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

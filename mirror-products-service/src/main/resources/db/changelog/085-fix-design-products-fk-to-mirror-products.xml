@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Fix design_products foreign key to reference mirror_products instead of products -->
+    <changeSet id="079-1" author="system">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="mirror_products"/>
+                <tableExists tableName="design_products"/>
+                <foreignKeyConstraintExists foreignKeyName="fk_design_products_product"/>
+            </and>
+        </preConditions>
+
+        <comment>Fix design_products.product_id foreign key to reference mirror_products</comment>
+
+        <!-- Drop the old foreign key constraint -->
+        <dropForeignKeyConstraint
+                baseTableName="design_products"
+                constraintName="fk_design_products_product"/>
+
+        <!-- Clean up orphaned design_products records that reference non-existent mirror_products -->
+        <sql>
+            DELETE FROM design_products
+            WHERE product_id NOT IN (SELECT id FROM mirror_products);
+        </sql>
+
+        <!-- Add new foreign key constraint to mirror_products -->
+        <addForeignKeyConstraint
+                constraintName="fk_design_products_mirror_product"
+                baseTableName="design_products"
+                baseColumnNames="product_id"
+                referencedTableName="mirror_products"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <rollback>
+            <dropForeignKeyConstraint
+                    baseTableName="design_products"
+                    constraintName="fk_design_products_mirror_product"/>
+            <addForeignKeyConstraint
+                    constraintName="fk_design_products_product"
+                    baseTableName="design_products"
+                    baseColumnNames="product_id"
+                    referencedTableName="products"
+                    referencedColumnNames="id"
+                    onDelete="CASCADE"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

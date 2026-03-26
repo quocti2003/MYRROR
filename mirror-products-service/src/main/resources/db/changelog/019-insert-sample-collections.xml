@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="019-insert-sample-collections-fixed" author="system">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM collections WHERE id = 'COL000001'
+            </sqlCheck>
+        </preConditions>
+        
+        <!-- Insert sample jewelry collections with new ID format -->
+        <sql>
+            INSERT INTO collections (id, name, title, description, season, year, theme, image_url, banner_image_url, image_urls, status, featured, sort_order, start_date, created_at, updated_at, is_active, is_deleted) VALUES 
+            ('COL000001', 'treasure-of-the-orient', 'TREASURE OF THE ORIENT', 'Step into a world where ancient splendor meets modern elegance. The TREASURE OF THE ORIENT collection draws inspiration from the rich cultural heritage, vibrant artistry, and timeless mystique of the East.', 'ALL_SEASON', 2024, 'Oriental Heritage', '/collections/orient-main.png', '/collections/banner-collection-2.png', '["/collections/orient-1.png", "/collections/orient-2.png", "/collections/orient-3.png"]', 'ACTIVE', true, 1, '2024-01-01', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, true, false),
+            ('COL000002', 'whispers-of-kyoto', 'WHISPERS OF KYOTO', 'Delicate pieces inspired by the serene beauty and traditional craftsmanship of ancient Kyoto.', 'SPRING', 2024, 'Japanese Elegance', '/collections/kyoto-main.png', '/collections/banner-collection-3.png', '["/collections/kyoto-1.png", "/collections/kyoto-2.png"]', 'ACTIVE', false, 2, '2024-03-01', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, true, false),
+            ('COL000003', 'oceans-embrace', 'OCEAN''S EMBRACE', 'Flowing designs that capture the eternal dance between land and sea, featuring aquamarine and pearl accents.', 'SUMMER', 2024, 'Marine Beauty', '/collections/ocean-main.png', '/collections/ocean-banner.png', '["/collections/ocean-1.png", "/collections/ocean-2.png"]', 'ACTIVE', false, 3, '2024-06-01', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, true, false),
+            ('COL000004', 'nile-reverie', 'NILE REVERIE', 'Majestic pieces inspired by the grandeur of ancient Egypt, featuring bold geometric patterns and precious stones.', 'AUTUMN', 2024, 'Egyptian Splendor', '/collections/nile-main.png', '/collections/nile-banner.png', '["/collections/nile-1.png"]', 'ACTIVE', false, 4, '2024-09-01', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, true, false),
+            ('COL000005', 'byzantine-bloom', 'BYZANTINE BLOOM', 'Intricate designs celebrating the opulent artistry of the Byzantine Empire, with rich colors and detailed metalwork.', 'WINTER', 2024, 'Byzantine Luxury', '/collections/byzantine-main.png', '/collections/byzantine-banner.png', '["/collections/byzantine-1.png", "/collections/byzantine-2.png"]', 'ACTIVE', false, 5, '2024-12-01', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, true, false);
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE FROM collections WHERE id IN ('COL000001', 'COL000002', 'COL000003', 'COL000004', 'COL000005');
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

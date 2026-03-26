@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!-- Create products table -->
+    <changeSet id="015-create-products-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="products"/>
+            </not>
+        </preConditions>
+        
+        <comment>Create products table for jewelry product catalog</comment>
+        
+        <createTable tableName="products">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(500)" remarks="Product name">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT" remarks="Product description"/>
+            <column name="category_id" type="VARCHAR(255)" remarks="Foreign key to categories table">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sku" type="VARCHAR(100)" remarks="Stock Keeping Unit" />
+            <column name="price" type="DECIMAL(15,2)" remarks="Base price in VND">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(3)" remarks="Price currency" defaultValue="VND">
+                <constraints nullable="false"/>
+            </column>
+            <column name="metal_type" type="VARCHAR(50)" remarks="Metal type (GOLD, SILVER, PLATINUM, etc)"/>
+            <column name="metal_purity" type="VARCHAR(20)" remarks="Metal purity (18K, 24K, 925, etc)"/>
+            <column name="stone_type" type="VARCHAR(50)" remarks="Main stone type"/>
+            <column name="weight_grams" type="DECIMAL(8,3)" remarks="Product weight in grams"/>
+            <column name="dimensions" type="TEXT" remarks="Product dimensions JSON"/>
+            <column name="image_url" type="VARCHAR(1000)" remarks="Main product image URL"/>
+            <column name="image_urls" type="TEXT" remarks="Additional images URLs (JSON array)"/>
+            <column name="tags" type="TEXT" remarks="Product tags (JSON array)"/>
+            <column name="status" type="VARCHAR(20)" remarks="Product status" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="featured" type="BOOLEAN" remarks="Is featured product" defaultValue="false"/>
+            <column name="stock_quantity" type="INTEGER" remarks="Available stock quantity" defaultValue="0"/>
+            <column name="min_stock_level" type="INTEGER" remarks="Minimum stock level" defaultValue="1"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <!-- Add indexes -->
+        <createIndex tableName="products" indexName="idx_products_category_id">
+            <column name="category_id"/>
+        </createIndex>
+        
+        <createIndex tableName="products" indexName="idx_products_status">
+            <column name="status"/>
+        </createIndex>
+        
+        <createIndex tableName="products" indexName="idx_products_featured">
+            <column name="featured"/>
+        </createIndex>
+        
+        <createIndex tableName="products" indexName="idx_products_metal_type">
+            <column name="metal_type"/>
+        </createIndex>
+        
+        <createIndex tableName="products" indexName="idx_products_sku">
+            <column name="sku"/>
+        </createIndex>
+        
+        <!-- Foreign key constraint -->
+        <addForeignKeyConstraint
+            constraintName="fk_products_category"
+            baseTableName="products"
+            baseColumnNames="category_id"
+            referencedTableName="categories"
+            referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- Add Product sequence -->
+<!--    <changeSet id="015-add-product-sequence" author="system">-->
+<!--        <comment>Add Product sequence to id_sequences table</comment>-->
+<!--        -->
+<!--        <insert tableName="id_sequences">-->
+<!--            <column name="entity_name" value="Product"/>-->
+<!--            <column name="prefix" value="PRD"/>-->
+<!--            <column name="current_value" valueNumeric="0"/>-->
+<!--        </insert>-->
+<!--    </changeSet>-->
+
+</databaseChangeLog>

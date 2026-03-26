@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Create label_templates table for storing label design templates -->
+    <changeSet id="120-1" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="label_templates"/>
+            </not>
+        </preConditions>
+        <createTable tableName="label_templates">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="label_width" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label_height" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dpi" type="INTEGER" defaultValue="300">
+                <constraints nullable="false"/>
+            </column>
+            <column name="canvas_json" type="JSONB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="preview_url" type="VARCHAR(500)"/>
+            <column name="is_default" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(50)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(50)"/>
+            <column name="updated_by" type="VARCHAR(50)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="label_templates" indexName="idx_label_templates_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="label_templates" indexName="idx_label_templates_is_default">
+            <column name="is_default"/>
+        </createIndex>
+
+        <createIndex tableName="label_templates" indexName="idx_label_templates_name">
+            <column name="name"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Create id_sequences table if not exists -->
+    <changeSet id="120-2" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="id_sequences"/>
+            </not>
+        </preConditions>
+        <createTable tableName="id_sequences">
+            <column name="entity_type" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="current_value" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Create sequence for label_templates -->
+    <changeSet id="120-3" author="mirror">
+        <sql>
+            INSERT INTO id_sequences (entity_type, current_value)
+            VALUES ('LBT', 0)
+            ON CONFLICT (entity_type) DO NOTHING;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

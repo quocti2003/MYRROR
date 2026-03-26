@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ========================================== -->
+    <!-- Sprint 5: Partner Assignment               -->
+    <!-- P3-10: JTRC to Production Order Link Enhancement -->
+    <!-- ========================================== -->
+
+    <!-- Add needs_spec_review column to production_orders -->
+    <changeSet id="121-01-add-needs-spec-review-column" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="production_orders" columnName="needs_spec_review"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="production_orders">
+            <column name="needs_spec_review" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <comment>
+            P3-10: Add needs_spec_review flag to production_orders table.
+            This flag indicates when linked JTRC specifications have been modified
+            after the production order was created, requiring a review.
+        </comment>
+    </changeSet>
+
+    <!-- Add index for filtering orders that need spec review -->
+    <changeSet id="121-02-add-needs-spec-review-index" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="production_orders" indexName="idx_por_needs_spec_review"/>
+            </not>
+        </preConditions>
+
+        <createIndex tableName="production_orders" indexName="idx_por_needs_spec_review">
+            <column name="needs_spec_review"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

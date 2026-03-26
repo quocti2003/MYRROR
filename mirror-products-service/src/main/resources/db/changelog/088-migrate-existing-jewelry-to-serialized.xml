@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!--
+        Migration: Update existing jewelry products to serialized inventory model
+
+        This migration:
+        1. Sets is_serialized = true for jewelry products (identified by category/prefix)
+        2. Creates one product_unit record for each existing jewelry product with a barcode
+        3. Clears product-level barcode for jewelry (units have their own barcodes now)
+
+        Jewelry categories typically include: RNG, NEC, BRC, EAR, PND, SET, etc.
+        Packaging categories include: BOX, BAG, TAG, CRD, etc.
+    -->
+
+    <!-- Mark existing jewelry products as serialized -->
+    <changeSet id="088-01-set-jewelry-is-serialized" author="mirror">
+        <comment>Set is_serialized = true for existing jewelry products based on category prefix</comment>
+        <sql>
+            UPDATE mirror_products
+            SET is_serialized = true
+            WHERE category IN ('RNG', 'NEC', 'BRC', 'EAR', 'PND', 'SET', 'CHN', 'BNG', 'ANK', 'BRO', 'CUF', 'TIE', 'WTH', 'CLP')
+               OR category LIKE 'RNG%'
+               OR category LIKE 'NEC%'
+               OR category LIKE 'BRC%'
+               OR category LIKE 'EAR%'
+               OR category LIKE 'PND%'
+               OR category LIKE 'SET%'
+               OR mirror_code LIKE 'RNG-%'
+               OR mirror_code LIKE 'NEC-%'
+               OR mirror_code LIKE 'BRC-%'
+               OR mirror_code LIKE 'EAR-%'
+               OR mirror_code LIKE 'PND-%'
+               OR mirror_code LIKE 'SET-%';
+        </sql>
+    </changeSet>
+
+    <!-- Create unit records for existing jewelry products that have barcodes -->
+    <changeSet id="088-02-create-units-for-existing-jewelry" author="mirror">
+        <comment>Create one product_unit for each existing jewelry product with a barcode</comment>
+        <sql>
+            INSERT INTO product_units (id, product_id, unit_barcode, status, location, cost_price, sale_price, purchase_date, created_at, updated_at)
+            SELECT
+                CONCAT('UNIT', LPAD(nextval('product_unit_seq')::text, 6, '0')),
+                mp.id,
+                mp.barcode,
+                'AVAILABLE',
+                mp.location,
+                mp.cost,
+                mp.price,
+                mp.created_at,
+                CURRENT_TIMESTAMP,
+                CURRENT_TIMESTAMP
+            FROM mirror_products mp
+            WHERE mp.is_serialized = true
+              AND mp.barcode IS NOT NULL
+              AND mp.barcode != ''
+              AND NOT EXISTS (
+                  SELECT 1 FROM product_units pu WHERE pu.product_id = mp.id
+              );
+        </sql>
+    </changeSet>
+
+    <!-- Clear product-level barcode for serialized products (units have their own barcodes) -->
+    <changeSet id="088-03-clear-jewelry-product-barcode" author="mirror">
+        <comment>Clear product-level barcode for serialized jewelry (each unit has its own barcode)</comment>
+        <sql>
+            UPDATE mirror_products
+            SET barcode = NULL
+            WHERE is_serialized = true
+              AND id IN (SELECT DISTINCT product_id FROM product_units);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

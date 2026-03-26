@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="094-create-warehouse-slots-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="warehouse_slots"/>
+            </not>
+        </preConditions>
+
+        <comment>Create warehouse slots table - smallest storage unit (1 jewelry item per slot)</comment>
+
+        <createTable tableName="warehouse_slots">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (SLT prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="rack_id" type="VARCHAR(255)" remarks="FK to warehouse_racks table">
+                <constraints nullable="false"/>
+            </column>
+            <column name="slot_code" type="VARCHAR(50)" remarks="Slot identifier code (e.g., 01, 02, A1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="slot_name" type="VARCHAR(255)" remarks="Human-readable slot name or label"/>
+            <column name="slot_type" type="VARCHAR(50)" remarks="Type: JEWELRY, DIAMOND, RING, NECKLACE, BRACELET, EARRING, GENERAL"/>
+            <column name="slot_size" type="VARCHAR(20)" remarks="Size category: SMALL, MEDIUM, LARGE"/>
+            <column name="row_in_rack" type="INTEGER" remarks="Row position within the rack (vertical)"/>
+            <column name="column_in_rack" type="INTEGER" remarks="Column position within the rack (horizontal)"/>
+            <column name="is_occupied" type="BOOLEAN" defaultValueBoolean="false" remarks="Whether slot currently holds an item">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_product_code" type="VARCHAR(30)" remarks="SKU code of item currently in this slot"/>
+            <column name="occupied_at" type="TIMESTAMP" remarks="When the current item was placed"/>
+            <column name="occupied_by" type="VARCHAR(255)" remarks="User ID who placed the item"/>
+            <column name="notes" type="TEXT" remarks="Additional notes"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Foreign key to warehouse_racks -->
+        <addForeignKeyConstraint
+            baseTableName="warehouse_slots"
+            baseColumnNames="rack_id"
+            constraintName="fk_slots_rack"
+            referencedTableName="warehouse_racks"
+            referencedColumnNames="id"
+            onDelete="RESTRICT"
+            onUpdate="CASCADE"/>
+
+        <!-- Unique constraint: slot_code must be unique within a rack -->
+        <addUniqueConstraint
+            tableName="warehouse_slots"
+            columnNames="rack_id, slot_code"
+            constraintName="uk_slot_code_per_rack"/>
+
+        <!-- Indexes -->
+        <createIndex tableName="warehouse_slots" indexName="idx_slots_rack_id">
+            <column name="rack_id"/>
+        </createIndex>
+        <createIndex tableName="warehouse_slots" indexName="idx_slots_slot_code">
+            <column name="slot_code"/>
+        </createIndex>
+        <createIndex tableName="warehouse_slots" indexName="idx_slots_is_occupied">
+            <column name="is_occupied"/>
+        </createIndex>
+        <createIndex tableName="warehouse_slots" indexName="idx_slots_current_product">
+            <column name="current_product_code"/>
+        </createIndex>
+        <createIndex tableName="warehouse_slots" indexName="idx_slots_slot_type">
+            <column name="slot_type"/>
+        </createIndex>
+        <createIndex tableName="warehouse_slots" indexName="idx_slots_is_active">
+            <column name="is_active"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

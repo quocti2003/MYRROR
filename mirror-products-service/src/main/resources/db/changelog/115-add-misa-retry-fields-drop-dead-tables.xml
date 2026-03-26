@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Add MISA retry tracking fields to orders table -->
+    <changeSet id="115-1" author="mirror">
+        <addColumn tableName="orders">
+            <column name="misa_sku_retry_count" type="INTEGER" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="misa_invoice_retry_count" type="INTEGER" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="misa_last_sync_attempt" type="TIMESTAMP"/>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="orders" columnName="misa_sku_retry_count"/>
+            <dropColumn tableName="orders" columnName="misa_invoice_retry_count"/>
+            <dropColumn tableName="orders" columnName="misa_last_sync_attempt"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Drop dead tables: mirror_invoice_items (FK first), mirror_invoices, mirror_inventory_transactions -->
+    <changeSet id="115-2" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_invoice_items"/>
+        </preConditions>
+        <dropTable tableName="mirror_invoice_items"/>
+        <rollback>
+            <createTable tableName="mirror_invoice_items">
+                <column name="id" type="BIGSERIAL" autoIncrement="true">
+                    <constraints primaryKey="true"/>
+                </column>
+                <column name="invoice_id" type="BIGINT">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="product_code" type="VARCHAR(30)">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="quantity" type="INTEGER">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="unit_price" type="DECIMAL(19,2)"/>
+                <column name="discount" type="DECIMAL(19,2)"/>
+                <column name="subtotal" type="DECIMAL(19,2)"/>
+                <column name="notes" type="TEXT"/>
+                <column name="created_at" type="TIMESTAMP"/>
+            </createTable>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="115-3" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_invoices"/>
+        </preConditions>
+        <dropTable tableName="mirror_invoices"/>
+        <rollback>
+            <createTable tableName="mirror_invoices">
+                <column name="id" type="BIGSERIAL" autoIncrement="true">
+                    <constraints primaryKey="true"/>
+                </column>
+                <column name="invoice_number" type="VARCHAR(255)">
+                    <constraints nullable="false" unique="true"/>
+                </column>
+                <column name="invoice_type" type="VARCHAR(20)">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="customer_name" type="VARCHAR(500)"/>
+                <column name="customer_contact" type="VARCHAR(255)"/>
+                <column name="status" type="VARCHAR(20)"/>
+                <column name="total_amount" type="DECIMAL(19,2)"/>
+                <column name="notes" type="TEXT"/>
+                <column name="created_by" type="VARCHAR(255)"/>
+                <column name="completed_by" type="VARCHAR(255)"/>
+                <column name="created_at" type="TIMESTAMP"/>
+                <column name="completed_at" type="TIMESTAMP"/>
+            </createTable>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="115-4" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_inventory_transactions"/>
+        </preConditions>
+        <dropTable tableName="mirror_inventory_transactions"/>
+        <rollback>
+            <createTable tableName="mirror_inventory_transactions">
+                <column name="id" type="BIGSERIAL" autoIncrement="true">
+                    <constraints primaryKey="true"/>
+                </column>
+                <column name="product_code" type="VARCHAR(30)">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="transaction_type" type="VARCHAR(20)">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="quantity_change" type="INTEGER">
+                    <constraints nullable="false"/>
+                </column>
+                <column name="quantity_after" type="INTEGER"/>
+                <column name="reference_type" type="VARCHAR(50)"/>
+                <column name="reference_id" type="VARCHAR(255)"/>
+                <column name="notes" type="TEXT"/>
+                <column name="performed_by" type="VARCHAR(255)"/>
+                <column name="created_at" type="TIMESTAMP"/>
+            </createTable>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

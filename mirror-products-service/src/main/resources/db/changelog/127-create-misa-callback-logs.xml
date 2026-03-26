@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="127-1-create-misa-callback-logs" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="misa_callback_logs"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="misa_callback_logs">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="app_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="org_company_code" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_type" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data_type_name" type="VARCHAR(100)"/>
+            <column name="org_ref_id" type="VARCHAR(255)"/>
+            <column name="org_ref_no" type="VARCHAR(255)"/>
+            <column name="misa_ref_id" type="VARCHAR(255)"/>
+            <column name="misa_ref_no" type="VARCHAR(255)"/>
+            <column name="voucher_type" type="INTEGER"/>
+            <column name="misa_success" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="misa_error_code" type="VARCHAR(255)"/>
+            <column name="misa_error_message" type="TEXT"/>
+            <column name="processed" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="processing_success" type="BOOLEAN"/>
+            <column name="processing_error" type="TEXT"/>
+            <column name="raw_payload" type="TEXT"/>
+            <column name="signature" type="VARCHAR(500)"/>
+            <column name="signature_valid" type="BOOLEAN"/>
+            <column name="received_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="processed_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <createIndex tableName="misa_callback_logs" indexName="idx_callback_data_type">
+            <column name="data_type"/>
+        </createIndex>
+        <createIndex tableName="misa_callback_logs" indexName="idx_callback_org_ref_id">
+            <column name="org_ref_id"/>
+        </createIndex>
+        <createIndex tableName="misa_callback_logs" indexName="idx_callback_received_at">
+            <column name="received_at"/>
+        </createIndex>
+        <createIndex tableName="misa_callback_logs" indexName="idx_callback_processed">
+            <column name="processed"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- If table exists but app_id column is missing, add it -->
+    <changeSet id="127-2-add-app-id-column" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="misa_callback_logs"/>
+            <not>
+                <columnExists tableName="misa_callback_logs" columnName="app_id"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="misa_callback_logs">
+            <column name="app_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

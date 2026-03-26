@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Create test users for each role with default password: MimiMirror@123 -->
+    <!-- BCrypt hash (strength 12): $2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K -->
+
+    <changeSet id="011-seed-test-users" author="claude-code">
+        <comment>Create test users for each role</comment>
+
+        <!-- 1. SUPER_ADMIN user -->
+        <sql>INSERT INTO users (username, email, password, first_name, last_name, enabled, account_non_expired, account_non_locked, credentials_non_expired, failed_login_attempts, email_verified, created_at, updated_at, created_by)
+VALUES ('super.admin', 'super.admin@mirror.vn', '$2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K', 'Super', 'Admin', true, true, true, true, 0, true, NOW(), NOW(), 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;</sql>
+
+        <!-- 2. ADMIN user -->
+        <sql>INSERT INTO users (username, email, password, first_name, last_name, enabled, account_non_expired, account_non_locked, credentials_non_expired, failed_login_attempts, email_verified, created_at, updated_at, created_by)
+VALUES ('admin', 'admin@mirror.vn', '$2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K', 'System', 'Admin', true, true, true, true, 0, true, NOW(), NOW(), 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;</sql>
+
+        <!-- 3. IT_ADMIN user -->
+        <sql>INSERT INTO users (username, email, password, first_name, last_name, enabled, account_non_expired, account_non_locked, credentials_non_expired, failed_login_attempts, email_verified, created_at, updated_at, created_by)
+VALUES ('it.admin', 'it.admin@mirror.vn', '$2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K', 'IT', 'Admin', true, true, true, true, 0, true, NOW(), NOW(), 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;</sql>
+
+        <!-- 4. USER (standard user) -->
+        <sql>INSERT INTO users (username, email, password, first_name, last_name, enabled, account_non_expired, account_non_locked, credentials_non_expired, failed_login_attempts, email_verified, created_at, updated_at, created_by)
+VALUES ('standard.user', 'user@mirror.vn', '$2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K', 'Standard', 'User', true, true, true, true, 0, true, NOW(), NOW(), 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;</sql>
+
+        <!-- 5. CUSTOMER user -->
+        <sql>INSERT INTO users (username, email, password, first_name, last_name, enabled, account_non_expired, account_non_locked, credentials_non_expired, failed_login_attempts, email_verified, created_at, updated_at, created_by)
+VALUES ('customer', 'customer@mirror.vn', '$2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K', 'Test', 'Customer', true, true, true, true, 0, true, NOW(), NOW(), 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;</sql>
+
+        <!-- 6. VENDOR user -->
+        <sql>INSERT INTO users (username, email, password, first_name, last_name, enabled, account_non_expired, account_non_locked, credentials_non_expired, failed_login_attempts, email_verified, created_at, updated_at, created_by)
+VALUES ('vendor', 'vendor@mirror.vn', '$2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K', 'Test', 'Vendor', true, true, true, true, 0, true, NOW(), NOW(), 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;</sql>
+
+        <!-- 7. DESIGNER user -->
+        <sql>INSERT INTO users (username, email, password, first_name, last_name, enabled, account_non_expired, account_non_locked, credentials_non_expired, failed_login_attempts, email_verified, created_at, updated_at, created_by)
+VALUES ('designer', 'designer@mirror.vn', '$2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K', 'Test', 'Designer', true, true, true, true, 0, true, NOW(), NOW(), 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;</sql>
+
+        <!-- 8. CREATIVE_DESIGN user -->
+        <sql>INSERT INTO users (username, email, password, first_name, last_name, enabled, account_non_expired, account_non_locked, credentials_non_expired, failed_login_attempts, email_verified, created_at, updated_at, created_by)
+VALUES ('creative.design', 'creative@mirror.vn', '$2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K', 'Creative', 'Design', true, true, true, true, 0, true, NOW(), NOW(), 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;</sql>
+
+        <!-- 9. MARKETING user -->
+        <sql>INSERT INTO users (username, email, password, first_name, last_name, enabled, account_non_expired, account_non_locked, credentials_non_expired, failed_login_attempts, email_verified, created_at, updated_at, created_by)
+VALUES ('marketing', 'marketing@mirror.vn', '$2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K', 'Test', 'Marketing', true, true, true, true, 0, true, NOW(), NOW(), 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;</sql>
+
+        <!-- 10. PRODUCTION_OPS user -->
+        <sql>INSERT INTO users (username, email, password, first_name, last_name, enabled, account_non_expired, account_non_locked, credentials_non_expired, failed_login_attempts, email_verified, created_at, updated_at, created_by)
+VALUES ('production.ops', 'production@mirror.vn', '$2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K', 'Production', 'Ops', true, true, true, true, 0, true, NOW(), NOW(), 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;</sql>
+
+        <!-- 11. SALES_CUSTOMER_OPS user -->
+        <sql>INSERT INTO users (username, email, password, first_name, last_name, enabled, account_non_expired, account_non_locked, credentials_non_expired, failed_login_attempts, email_verified, created_at, updated_at, created_by)
+VALUES ('sales.ops', 'sales@mirror.vn', '$2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K', 'Sales', 'Ops', true, true, true, true, 0, true, NOW(), NOW(), 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;</sql>
+
+        <!-- 12. FINANCE user -->
+        <sql>INSERT INTO users (username, email, password, first_name, last_name, enabled, account_non_expired, account_non_locked, credentials_non_expired, failed_login_attempts, email_verified, created_at, updated_at, created_by)
+VALUES ('finance', 'finance@mirror.vn', '$2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K', 'Test', 'Finance', true, true, true, true, 0, true, NOW(), NOW(), 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;</sql>
+
+        <!-- 13. LEGAL user -->
+        <sql>INSERT INTO users (username, email, password, first_name, last_name, enabled, account_non_expired, account_non_locked, credentials_non_expired, failed_login_attempts, email_verified, created_at, updated_at, created_by)
+VALUES ('legal', 'legal@mirror.vn', '$2b$12$jht6w7/Z0esejrZCwkwaNuGSc3Sv5EGeL8ZVOkzBKpJy7Wgl9BN.K', 'Test', 'Legal', true, true, true, true, 0, true, NOW(), NOW(), 'SYSTEM')
+ON CONFLICT (username) DO NOTHING;</sql>
+    </changeSet>
+
+    <changeSet id="011-assign-roles-to-test-users" author="claude-code">
+        <comment>Assign roles to test users</comment>
+
+        <!-- 1. SUPER_ADMIN -->
+        <sql>INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'super.admin' AND r.name = 'SUPER_ADMIN'
+ON CONFLICT (user_id, role_id) DO NOTHING;</sql>
+
+        <!-- 2. ADMIN -->
+        <sql>INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'admin' AND r.name = 'ADMIN'
+ON CONFLICT (user_id, role_id) DO NOTHING;</sql>
+
+        <!-- 3. IT_ADMIN -->
+        <sql>INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'it.admin' AND r.name = 'IT_ADMIN'
+ON CONFLICT (user_id, role_id) DO NOTHING;</sql>
+
+        <!-- 4. USER -->
+        <sql>INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'standard.user' AND r.name = 'USER'
+ON CONFLICT (user_id, role_id) DO NOTHING;</sql>
+
+        <!-- 5. CUSTOMER -->
+        <sql>INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'customer' AND r.name = 'CUSTOMER'
+ON CONFLICT (user_id, role_id) DO NOTHING;</sql>
+
+        <!-- 6. VENDOR -->
+        <sql>INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'vendor' AND r.name = 'VENDOR'
+ON CONFLICT (user_id, role_id) DO NOTHING;</sql>
+
+        <!-- 7. DESIGNER -->
+        <sql>INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'designer' AND r.name = 'DESIGNER'
+ON CONFLICT (user_id, role_id) DO NOTHING;</sql>
+
+        <!-- 8. CREATIVE_DESIGN -->
+        <sql>INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'creative.design' AND r.name = 'CREATIVE_DESIGN'
+ON CONFLICT (user_id, role_id) DO NOTHING;</sql>
+
+        <!-- 9. MARKETING -->
+        <sql>INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'marketing' AND r.name = 'MARKETING'
+ON CONFLICT (user_id, role_id) DO NOTHING;</sql>
+
+        <!-- 10. PRODUCTION_OPS -->
+        <sql>INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'production.ops' AND r.name = 'PRODUCTION_OPS'
+ON CONFLICT (user_id, role_id) DO NOTHING;</sql>
+
+        <!-- 11. SALES_CUSTOMER_OPS -->
+        <sql>INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'sales.ops' AND r.name = 'SALES_CUSTOMER_OPS'
+ON CONFLICT (user_id, role_id) DO NOTHING;</sql>
+
+        <!-- 12. FINANCE -->
+        <sql>INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'finance' AND r.name = 'FINANCE'
+ON CONFLICT (user_id, role_id) DO NOTHING;</sql>
+
+        <!-- 13. LEGAL -->
+        <sql>INSERT INTO user_roles (user_id, role_id)
+SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'legal' AND r.name = 'LEGAL'
+ON CONFLICT (user_id, role_id) DO NOTHING;</sql>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="064-1" author="claude">
+        <comment>Create market_trends table - Market intelligence and trend tracking for jewelry industry</comment>
+        <createTable tableName="market_trends">
+            <column name="id" type="BIGSERIAL" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="trend_code" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="trend_name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="trend_name_vn" type="VARCHAR(200)"/>
+            <column name="trend_type" type="VARCHAR(50)"/>
+            <column name="trend_subtype" type="VARCHAR(100)"/>
+            <column name="trend_period_start" type="DATE"/>
+            <column name="trend_period_end" type="DATE"/>
+            <column name="impact_score" type="INTEGER"/>
+            <column name="confidence_level" type="VARCHAR(50)"/>
+            <column name="age_group_relevance" type="TEXT"/>
+            <column name="geographic_relevance" type="TEXT"/>
+            <column name="applicable_categories" type="TEXT"/>
+            <column name="style_attributes" type="TEXT"/>
+            <column name="price_impact_percentage" type="DECIMAL(5,2)"/>
+            <column name="volume_impact_percentage" type="DECIMAL(5,2)"/>
+            <column name="source" type="VARCHAR(50)"/>
+            <column name="source_url" type="VARCHAR(500)"/>
+            <column name="related_trends" type="TEXT"/>
+            <column name="seasonal_pattern" type="VARCHAR(50)"/>
+            <column name="adoption_stage" type="VARCHAR(50)"/>
+            <column name="active" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="description" type="TEXT"/>
+            <column name="description_vn" type="TEXT"/>
+            <column name="implementation_notes" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="market_trends"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="064-2" author="claude">
+        <comment>Create indexes on market_trends table</comment>
+        <createIndex tableName="market_trends" indexName="idx_market_trends_trend_code">
+            <column name="trend_code"/>
+        </createIndex>
+        <createIndex tableName="market_trends" indexName="idx_market_trends_trend_type">
+            <column name="trend_type"/>
+        </createIndex>
+        <createIndex tableName="market_trends" indexName="idx_market_trends_active">
+            <column name="active"/>
+        </createIndex>
+        <createIndex tableName="market_trends" indexName="idx_market_trends_confidence_level">
+            <column name="confidence_level"/>
+        </createIndex>
+        <createIndex tableName="market_trends" indexName="idx_market_trends_adoption_stage">
+            <column name="adoption_stage"/>
+        </createIndex>
+        <createIndex tableName="market_trends" indexName="idx_market_trends_period">
+            <column name="trend_period_start"/>
+            <column name="trend_period_end"/>
+        </createIndex>
+        <rollback>
+            <dropIndex tableName="market_trends" indexName="idx_market_trends_trend_code"/>
+            <dropIndex tableName="market_trends" indexName="idx_market_trends_trend_type"/>
+            <dropIndex tableName="market_trends" indexName="idx_market_trends_active"/>
+            <dropIndex tableName="market_trends" indexName="idx_market_trends_confidence_level"/>
+            <dropIndex tableName="market_trends" indexName="idx_market_trends_adoption_stage"/>
+            <dropIndex tableName="market_trends" indexName="idx_market_trends_period"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

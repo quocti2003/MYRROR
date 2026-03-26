@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="109-create-pods-table" author="system">
+        <!-- Accept old checksum after file modification -->
+        <validCheckSum>9:ba20f8b219381d969f82d59cb0b2244d</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="pods"/>
+            </not>
+        </preConditions>
+
+        <comment>Create pods table for Point of Display units</comment>
+
+        <createTable tableName="pods">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (POD prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="partner_id" type="VARCHAR(255)" remarks="Reference to pod_partners">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)" remarks="Display name for the POD">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT" remarks="POD description"/>
+            <column name="location_name" type="VARCHAR(255)" remarks="Physical location name"/>
+            <column name="address_line1" type="VARCHAR(255)" remarks="Address line 1"/>
+            <column name="address_line2" type="VARCHAR(255)" remarks="Address line 2"/>
+            <column name="city" type="VARCHAR(100)" remarks="City"/>
+            <column name="state" type="VARCHAR(100)" remarks="State/Province"/>
+            <column name="postal_code" type="VARCHAR(20)" remarks="Postal/ZIP code"/>
+            <column name="country" type="VARCHAR(100)" remarks="Country"/>
+            <column name="latitude" type="DECIMAL(10,8)" remarks="GPS latitude"/>
+            <column name="longitude" type="DECIMAL(11,8)" remarks="GPS longitude"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="DRAFT" remarks="POD status (DRAFT, ACTIVE, MAINTENANCE, INACTIVE)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="display_capacity" type="INTEGER" defaultValueNumeric="10" remarks="Maximum number of products that can be displayed"/>
+            <column name="installation_date" type="DATE" remarks="Date when POD was installed"/>
+            <column name="last_maintenance_date" type="DATE" remarks="Last maintenance date"/>
+            <column name="next_maintenance_date" type="DATE" remarks="Scheduled next maintenance"/>
+            <column name="notes" type="TEXT" remarks="Internal notes"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Indexes -->
+        <createIndex tableName="pods" indexName="idx_pod_partner">
+            <column name="partner_id"/>
+        </createIndex>
+
+        <createIndex tableName="pods" indexName="idx_pod_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="pods" indexName="idx_pod_city">
+            <column name="city"/>
+        </createIndex>
+
+        <!-- Foreign key to pod_partners -->
+        <addForeignKeyConstraint
+            baseTableName="pods"
+            baseColumnNames="partner_id"
+            constraintName="fk_pod_partner"
+            referencedTableName="pod_partners"
+            referencedColumnNames="id"
+            onDelete="RESTRICT"
+            onUpdate="CASCADE"/>
+    </changeSet>
+
+    <!-- Create pod_products join table -->
+    <changeSet id="109-create-pod-products-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="pod_products"/>
+            </not>
+        </preConditions>
+
+        <comment>Create pod_products join table for POD-Product relationship</comment>
+
+        <createTable tableName="pod_products">
+            <column name="pod_id" type="VARCHAR(255)" remarks="Reference to pods">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(255)" remarks="Reference to mirror_products">
+                <constraints nullable="false"/>
+            </column>
+            <column name="display_order" type="INTEGER" defaultValueNumeric="0" remarks="Display order in POD"/>
+            <column name="added_at" type="TIMESTAMP" remarks="When product was added to POD">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="pod_products" columnNames="pod_id, product_id" constraintName="pk_pod_products"/>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_products"
+            baseColumnNames="pod_id"
+            constraintName="fk_pod_products_pod"
+            referencedTableName="pods"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_products"
+            baseColumnNames="product_id"
+            constraintName="fk_pod_products_product"
+            referencedTableName="mirror_products"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

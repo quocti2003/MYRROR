@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="108-create-pod-partners-table" author="system">
+        <!-- Accept old checksum after file modification -->
+        <validCheckSum>9:5658d65cb0582b6302f20f465f7157a2</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="pod_partners"/>
+            </not>
+        </preConditions>
+
+        <comment>Create pod_partners table for POD partner management</comment>
+
+        <createTable tableName="pod_partners">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (PTN prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="business_name" type="VARCHAR(255)" remarks="Partner business name">
+                <constraints nullable="false"/>
+            </column>
+            <column name="business_type" type="VARCHAR(50)" remarks="Type of business (SPA, HOTEL, SALON, RETAIL, OTHER)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="contact_name" type="VARCHAR(100)" remarks="Primary contact person name">
+                <constraints nullable="false"/>
+            </column>
+            <column name="contact_email" type="VARCHAR(255)" remarks="Primary contact email">
+                <constraints nullable="false"/>
+            </column>
+            <column name="contact_phone" type="VARCHAR(50)" remarks="Primary contact phone"/>
+            <column name="business_license" type="VARCHAR(100)" remarks="Business license number"/>
+            <column name="tax_id" type="VARCHAR(50)" remarks="Tax identification number"/>
+            <column name="address_line1" type="VARCHAR(255)" remarks="Address line 1"/>
+            <column name="address_line2" type="VARCHAR(255)" remarks="Address line 2"/>
+            <column name="city" type="VARCHAR(100)" remarks="City"/>
+            <column name="state" type="VARCHAR(100)" remarks="State/Province"/>
+            <column name="postal_code" type="VARCHAR(20)" remarks="Postal/ZIP code"/>
+            <column name="country" type="VARCHAR(100)" remarks="Country"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="PENDING" remarks="Partner status (PENDING, APPROVED, ACTIVE, SUSPENDED, TERMINATED)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tier" type="VARCHAR(20)" defaultValue="BRONZE" remarks="Partner tier (BRONZE, SILVER, GOLD, PLATINUM)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="commission_rate" type="DECIMAL(5,2)" defaultValueNumeric="5.00" remarks="Default commission rate percentage">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT" remarks="Reference to users table for portal access"/>
+            <column name="notes" type="TEXT" remarks="Internal notes"/>
+            <column name="approved_at" type="TIMESTAMP" remarks="Timestamp when partner was approved"/>
+            <column name="approved_by" type="VARCHAR(100)" remarks="User who approved the partner"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Indexes -->
+        <createIndex tableName="pod_partners" indexName="idx_pod_partner_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="pod_partners" indexName="idx_pod_partner_tier">
+            <column name="tier"/>
+        </createIndex>
+
+        <createIndex tableName="pod_partners" indexName="idx_pod_partner_business_type">
+            <column name="business_type"/>
+        </createIndex>
+
+        <createIndex tableName="pod_partners" indexName="idx_pod_partner_email" unique="true">
+            <column name="contact_email"/>
+        </createIndex>
+
+        <!-- Foreign key to users table -->
+        <addForeignKeyConstraint
+            baseTableName="pod_partners"
+            baseColumnNames="user_id"
+            constraintName="fk_pod_partner_user"
+            referencedTableName="users"
+            referencedColumnNames="id"
+            onDelete="SET NULL"
+            onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

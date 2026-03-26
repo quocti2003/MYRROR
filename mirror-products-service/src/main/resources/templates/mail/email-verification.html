@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Verify Your Email Address - Mirror</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #fafafa;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        h2 {
+            color: #1a1a1a;
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .content {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .button-container {
+            text-align: center;
+            margin: 35px 0;
+        }
+        .verify-button {
+            display: inline-block;
+            padding: 16px 40px;
+            background-color: #1a1a1a;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: normal;
+            letter-spacing: 1px;
+            transition: background-color 0.3s;
+        }
+        .verify-button:hover {
+            background-color: #333;
+        }
+        .expiration-notice {
+            text-align: center;
+            font-size: 13px;
+            color: #999;
+            margin-top: 20px;
+            font-style: italic;
+        }
+        .alternative-link {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #666;
+            word-break: break-all;
+        }
+        .alternative-link p {
+            margin: 0 0 10px 0;
+        }
+        .alternative-link a {
+            color: #1a1a1a;
+            text-decoration: underline;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+        }
+        .signature {
+            margin-top: 40px;
+            font-style: italic;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Verify Your Email Address</h2>
+
+        <p class="greeting">Hello <span th:text="${username}">User</span>,</p>
+
+        <p class="content">
+            Thank you for creating an account with Mirror. To complete your registration and ensure the security of your account, please verify your email address.
+        </p>
+
+        <p class="content">
+            Click the button below to verify your email:
+        </p>
+
+        <div class="button-container">
+            <a th:href="${verificationUrl}" class="verify-button">Verify Email Address</a>
+        </div>
+
+        <p class="expiration-notice">
+            This verification link will expire in 24 hours.
+        </p>
+
+        <div class="alternative-link">
+            <p><strong>Button not working?</strong></p>
+            <p>Copy and paste this link into your browser:</p>
+            <a th:href="${verificationUrl}" th:text="${verificationUrl}">verification-link</a>
+        </div>
+
+        <p class="content" style="margin-top: 30px;">
+            If you did not create an account with Mirror, please disregard this email. No further action is required.
+        </p>
+
+        <div class="signature">
+            <p>Best regards,<br/>
+            The Mirror Team</p>
+        </div>
+
+        <div class="footer">
+            <p>Mirror - Future Diamond</p>
+            <p>This is an automated message, please do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html>

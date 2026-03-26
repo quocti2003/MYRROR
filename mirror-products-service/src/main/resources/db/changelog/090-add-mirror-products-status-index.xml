@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="090-add-status-index" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_products"/>
+            <not>
+                <indexExists tableName="mirror_products" indexName="idx_mirror_products_status"/>
+            </not>
+        </preConditions>
+        <comment>Add index on status column for mirror_products table to improve query performance</comment>
+
+        <createIndex tableName="mirror_products" indexName="idx_mirror_products_status">
+            <column name="status"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="mirror_products" indexName="idx_mirror_products_status"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="090-add-is-active-index" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_products"/>
+            <columnExists tableName="mirror_products" columnName="is_active"/>
+            <not>
+                <indexExists tableName="mirror_products" indexName="idx_mirror_products_is_active"/>
+            </not>
+        </preConditions>
+        <comment>Add index on is_active column for mirror_products table</comment>
+
+        <createIndex tableName="mirror_products" indexName="idx_mirror_products_is_active">
+            <column name="is_active"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="mirror_products" indexName="idx_mirror_products_is_active"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

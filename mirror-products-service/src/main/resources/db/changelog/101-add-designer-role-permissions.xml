@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="005-add-designer-permissions" author="claude-code">
+        <comment>Add designer-specific permissions</comment>
+
+        <!-- Add DESIGN permissions -->
+        <insert tableName="permissions">
+            <column name="name" value="DESIGN_READ"/>
+            <column name="description" value="Read design information"/>
+            <column name="resource" value="DESIGN"/>
+            <column name="action" value="READ"/>
+            <column name="created_at" valueDate="2024-10-01T00:00:00"/>
+            <column name="updated_at" valueDate="2024-10-01T00:00:00"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="DESIGN_MODIFY"/>
+            <column name="description" value="Modify design information"/>
+            <column name="resource" value="DESIGN"/>
+            <column name="action" value="modify"/>
+            <column name="created_at" valueDate="2024-10-01T00:00:00"/>
+            <column name="updated_at" valueDate="2024-10-01T00:00:00"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="DESIGN_CREATE"/>
+            <column name="description" value="Create new designs"/>
+            <column name="resource" value="DESIGN"/>
+            <column name="action" value="create"/>
+            <column name="created_at" valueDate="2024-10-01T00:00:00"/>
+            <column name="updated_at" valueDate="2024-10-01T00:00:00"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="DESIGN_COMMISSION_READ"/>
+            <column name="description" value="Read design commission information"/>
+            <column name="resource" value="DESIGN_COMMISSION"/>
+            <column name="action" value="read"/>
+            <column name="created_at" valueDate="2024-10-01T00:00:00"/>
+            <column name="updated_at" valueDate="2024-10-01T00:00:00"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="DESIGN_SALES_READ"/>
+            <column name="description" value="Read design sales information"/>
+            <column name="resource" value="DESIGN_SALES"/>
+            <column name="action" value="read"/>
+            <column name="created_at" valueDate="2024-10-01T00:00:00"/>
+            <column name="updated_at" valueDate="2024-10-01T00:00:00"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="005-add-designer-role" author="claude-code">
+        <comment>Add DESIGNER role</comment>
+
+        <insert tableName="roles">
+            <column name="name" value="DESIGNER"/>
+            <column name="description" value="Designer partner role"/>
+            <column name="active" valueBoolean="true"/>
+            <column name="created_at" valueDate="2024-10-01T00:00:00"/>
+            <column name="updated_at" valueDate="2024-10-01T00:00:00"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="005-assign-designer-permissions" author="claude-code">
+        <comment>Assign permissions to DESIGNER role</comment>
+
+        <!-- DESIGNER role permissions -->
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'DESIGNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_READ')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'DESIGNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_MODIFY')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'DESIGNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'DESIGN_READ')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'DESIGNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'DESIGN_MODIFY')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'DESIGNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'DESIGN_CREATE')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'DESIGNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'DESIGN_COMMISSION_READ')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'DESIGNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'DESIGN_SALES_READ')"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

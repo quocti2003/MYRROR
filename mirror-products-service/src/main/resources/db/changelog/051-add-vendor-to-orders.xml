@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="051-add-vendor-to-orders" author="claude-code">
+        <addColumn tableName="orders">
+            <column name="vendor_id" type="VARCHAR(50)"/>
+        </addColumn>
+
+        <addForeignKeyConstraint constraintName="fk_orders_vendor"
+                                  baseTableName="orders"
+                                  baseColumnNames="vendor_id"
+                                  referencedTableName="vendors"
+                                  referencedColumnNames="id"
+                                  deferrable="false"
+                                  initiallyDeferred="false"
+                                  onDelete="SET NULL"/>
+
+        <createIndex indexName="idx_orders_vendor_id" tableName="orders">
+            <column name="vendor_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

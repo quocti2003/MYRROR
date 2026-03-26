@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ========================================== -->
+    <!-- Final cleanup for label_templates table   -->
+    <!-- Removes unused columns from other dev's schema -->
+    <!-- ========================================== -->
+
+    <!-- Drop canvas_json column - not needed in final schema -->
+    <changeSet id="124-01-drop-canvas-json" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="canvas_json"/>
+        </preConditions>
+        <dropColumn tableName="label_templates" columnName="canvas_json"/>
+    </changeSet>
+
+    <!-- Drop label_width if still exists -->
+    <changeSet id="124-02-drop-label-width" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="label_width"/>
+        </preConditions>
+        <dropColumn tableName="label_templates" columnName="label_width"/>
+    </changeSet>
+
+    <!-- Drop label_height if still exists -->
+    <changeSet id="124-03-drop-label-height" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="label_height"/>
+        </preConditions>
+        <dropColumn tableName="label_templates" columnName="label_height"/>
+    </changeSet>
+
+    <!-- Ensure name index exists -->
+    <changeSet id="124-04-add-name-index" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <indexExists indexName="idx_lbt_name"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="label_templates" indexName="idx_lbt_name">
+            <column name="name"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Ensure is_active index exists -->
+    <changeSet id="124-05-add-is-active-index" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <indexExists indexName="idx_lbt_is_active"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="label_templates" indexName="idx_lbt_is_active">
+            <column name="is_active"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Add label_type check constraint -->
+    <changeSet id="124-06a-add-label-type-constraint" author="backend-developer" dbms="postgresql">
+        <preConditions onFail="MARK_RAN" onError="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="label_type"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM pg_constraint WHERE conname = 'chk_lbt_label_type'</sqlCheck>
+        </preConditions>
+        <sql>ALTER TABLE label_templates ADD CONSTRAINT chk_lbt_label_type CHECK (label_type IN ('JEWELRY_TAG', 'BUTTERFLY_TAG', 'PRODUCT_LABEL', 'QR_CODE', 'BARCODE', 'PRICE_TAG'))</sql>
+    </changeSet>
+
+    <!-- Add dpi positive constraint -->
+    <changeSet id="124-06b-add-dpi-constraint" author="backend-developer" dbms="postgresql">
+        <preConditions onFail="MARK_RAN" onError="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="dpi"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM pg_constraint WHERE conname = 'chk_lbt_dpi_positive'</sqlCheck>
+        </preConditions>
+        <sql>ALTER TABLE label_templates ADD CONSTRAINT chk_lbt_dpi_positive CHECK (dpi > 0)</sql>
+    </changeSet>
+
+    <!-- Add width positive constraint -->
+    <changeSet id="124-06c-add-width-constraint" author="backend-developer" dbms="postgresql">
+        <preConditions onFail="MARK_RAN" onError="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="width_mm"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM pg_constraint WHERE conname = 'chk_lbt_width_positive'</sqlCheck>
+        </preConditions>
+        <sql>ALTER TABLE label_templates ADD CONSTRAINT chk_lbt_width_positive CHECK (width_mm IS NULL OR width_mm > 0)</sql>
+    </changeSet>
+
+    <!-- Add height positive constraint -->
+    <changeSet id="124-06d-add-height-constraint" author="backend-developer" dbms="postgresql">
+        <preConditions onFail="MARK_RAN" onError="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="height_mm"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM pg_constraint WHERE conname = 'chk_lbt_height_positive'</sqlCheck>
+        </preConditions>
+        <sql>ALTER TABLE label_templates ADD CONSTRAINT chk_lbt_height_positive CHECK (height_mm IS NULL OR height_mm > 0)</sql>
+    </changeSet>
+
+    <!-- Ensure unique constraint on name exists -->
+    <changeSet id="124-07-add-name-unique-constraint" author="backend-developer" dbms="postgresql">
+        <preConditions onFail="MARK_RAN" onError="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM pg_constraint WHERE conname IN ('uk_label_template_name', 'label_templates_name_key')</sqlCheck>
+        </preConditions>
+        <addUniqueConstraint tableName="label_templates" columnNames="name" constraintName="uk_label_template_name"/>
+    </changeSet>
+
+</databaseChangeLog>

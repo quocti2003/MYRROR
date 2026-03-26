@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="084-add-model-3d-id-column" author="mirror">
+        <comment>Add model_3d_id column to mirror_products table for iJewel Drive 3D viewer integration</comment>
+
+        <addColumn tableName="mirror_products">
+            <column name="model_3d_id" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="084-add-model-3d-not-required-column" author="mirror">
+        <comment>Add model_3d_not_required column to mirror_products table to flag products that don't need 3D model</comment>
+
+        <addColumn tableName="mirror_products">
+            <column name="model_3d_not_required" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="063-1" author="claude">
+        <comment>Create collection_age_group_allocations table - Allocate collection quantities by demographics</comment>
+        <createTable tableName="collection_age_group_allocations">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="collection_plan_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="age_group_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="allocation_percentage" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="target_quantity" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="collection_age_group_allocations"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="063-2" author="claude">
+        <comment>Add foreign keys from collection_age_group_allocations</comment>
+        <addForeignKeyConstraint
+                constraintName="fk_collection_age_group_allocations_collection_plan"
+                baseTableName="collection_age_group_allocations"
+                baseColumnNames="collection_plan_id"
+                referencedTableName="collection_plans"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+        <addForeignKeyConstraint
+                constraintName="fk_collection_age_group_allocations_age_group"
+                baseTableName="collection_age_group_allocations"
+                baseColumnNames="age_group_id"
+                referencedTableName="age_groups"
+                referencedColumnNames="id"
+                onDelete="RESTRICT"/>
+        <rollback>
+            <dropForeignKeyConstraint
+                    baseTableName="collection_age_group_allocations"
+                    constraintName="fk_collection_age_group_allocations_collection_plan"/>
+            <dropForeignKeyConstraint
+                    baseTableName="collection_age_group_allocations"
+                    constraintName="fk_collection_age_group_allocations_age_group"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="063-3" author="claude">
+        <comment>Create indexes on collection_age_group_allocations table</comment>
+        <createIndex tableName="collection_age_group_allocations" indexName="idx_collection_age_group_allocations_collection_plan_id">
+            <column name="collection_plan_id"/>
+        </createIndex>
+        <createIndex tableName="collection_age_group_allocations" indexName="idx_collection_age_group_allocations_age_group_id">
+            <column name="age_group_id"/>
+        </createIndex>
+        <rollback>
+            <dropIndex tableName="collection_age_group_allocations" indexName="idx_collection_age_group_allocations_collection_plan_id"/>
+            <dropIndex tableName="collection_age_group_allocations" indexName="idx_collection_age_group_allocations_age_group_id"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

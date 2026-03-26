@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="020-link-products-to-collections-fixed" author="system">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM collection_products WHERE id = 'CPR000001'
+            </sqlCheck>
+        </preConditions>
+        
+        <!-- Link sample products to Treasure of the Orient collection -->
+        <sql>
+            INSERT INTO collection_products (id, collection_id, product_id, sort_order, is_hero_product, created_at) VALUES 
+            ('CPR000001', 'COL000001', 'PRD000002', 1, true, CURRENT_TIMESTAMP),
+            ('CPR000002', 'COL000001', 'PRD000003', 2, false, CURRENT_TIMESTAMP),
+            ('CPR000003', 'COL000001', 'PRD000004', 3, false, CURRENT_TIMESTAMP);
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE FROM collection_products WHERE id IN ('CPR000001', 'CPR000002', 'CPR000003');
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

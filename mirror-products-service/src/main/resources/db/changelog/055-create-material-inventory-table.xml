@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="055-1" author="claude">
+        <comment>Create material_inventory table - Raw materials and components for jewelry production</comment>
+        <createTable tableName="material_inventory">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(200)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="vendor_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="base_price" type="DECIMAL(10,2)"/>
+            <column name="market_price" type="DECIMAL(10,2)"/>
+            <column name="currency" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tax_customs_percent" type="DECIMAL(5,2)"/>
+            <column name="assembly_cost_local" type="DECIMAL(10,2)"/>
+            <column name="delivery_lead_time_days" type="INTEGER"/>
+            <column name="production_lead_time_days" type="INTEGER"/>
+            <column name="assembly_lead_time_days" type="INTEGER"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="055-2" author="claude">
+        <comment>Add foreign key constraint for vendor</comment>
+        <addForeignKeyConstraint
+            constraintName="fk_material_inventory_vendor"
+            baseTableName="material_inventory"
+            baseColumnNames="vendor_id"
+            referencedTableName="vendors"
+            referencedColumnNames="id"
+            onDelete="RESTRICT"/>
+    </changeSet>
+
+    <changeSet id="055-3" author="claude">
+        <comment>Create indexes for material_inventory</comment>
+        <createIndex tableName="material_inventory" indexName="idx_material_inventory_name">
+            <column name="name"/>
+        </createIndex>
+        <createIndex tableName="material_inventory" indexName="idx_material_inventory_type">
+            <column name="type"/>
+        </createIndex>
+        <createIndex tableName="material_inventory" indexName="idx_material_inventory_vendor_id">
+            <column name="vendor_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

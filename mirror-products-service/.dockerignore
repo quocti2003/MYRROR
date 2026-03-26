@@ -1,0 +1,78 @@
+# Git files
+.git
+.gitignore
+.github/
+
+# IDE files
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+.settings/
+.project
+.classpath
+
+# Documentation
+README.md
+*.md
+docs/
+
+# Test files
+src/test/
+*.test.js
+*.spec.js
+
+# Build artifacts (not needed in Docker)
+target/
+build/
+dist/
+*.jar
+*.war
+*.ear
+
+# Environment files (should not be in Docker image)
+.env
+.env.local
+.env.example
+*.env
+
+# Application properties (local development)
+application-local.properties
+application-dev.properties
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Maven wrapper (already installed in Docker)
+.mvn/
+mvnw
+mvnw.cmd
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Node modules (if any frontend)
+node_modules/
+
+# Scripts (not needed in runtime)
+*.sh
+*.sql
+
+# Docker files (prevent recursion)
+Dockerfile
+docker-compose*.yml
+.dockerignore

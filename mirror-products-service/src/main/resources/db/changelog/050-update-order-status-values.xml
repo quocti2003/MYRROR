@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Update old READY_FOR_DELIVERY status to SHIPPED -->
+    <changeSet id="050-1" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="orders"/>
+            <columnExists tableName="orders" columnName="status"/>
+        </preConditions>
+
+        <sql>
+            UPDATE orders
+            SET status = 'SHIPPED'
+            WHERE status = 'READY_FOR_DELIVERY';
+        </sql>
+
+        <rollback>
+            <sql>
+                UPDATE orders SET status = 'READY_FOR_DELIVERY' WHERE status = 'SHIPPED';
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <!-- Update order_status_history table if it exists -->
+    <changeSet id="050-2" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="order_status_history"/>
+            <columnExists tableName="order_status_history" columnName="status"/>
+        </preConditions>
+
+        <sql>
+            UPDATE order_status_history
+            SET status = 'SHIPPED'
+            WHERE status = 'READY_FOR_DELIVERY';
+        </sql>
+
+        <rollback>
+            <sql>
+                UPDATE order_status_history SET status = 'READY_FOR_DELIVERY' WHERE status = 'SHIPPED';
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

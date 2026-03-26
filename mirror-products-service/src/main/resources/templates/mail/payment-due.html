@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Payment Reminder</title>
+</head>
+<body>
+<p>Hello <span th:text="${customerName}">Customer</span>,</p>
+<p>This is a reminder that payment of <strong th:text="${amountDue}">$0.00</strong> for order <span th:text="${orderNumber}">ORDER-12345</span> is due on <span th:text="${dueDate}">DATE</span>.</p>
+<p>Please complete your payment using your preferred method.</p>
+</body>
+</html>

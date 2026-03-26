@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Extend epc column to handle longer EPC formats -->
+    <changeSet id="125-1" author="system">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="print_job_items"/>
+        </preConditions>
+        <modifyDataType tableName="print_job_items" columnName="epc" newDataType="VARCHAR(50)"/>
+    </changeSet>
+
+    <!-- Also extend in rfid_tags table if exists -->
+    <changeSet id="125-2" author="system">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="rfid_tags"/>
+        </preConditions>
+        <modifyDataType tableName="rfid_tags" columnName="epc" newDataType="VARCHAR(50)"/>
+    </changeSet>
+
+</databaseChangeLog>

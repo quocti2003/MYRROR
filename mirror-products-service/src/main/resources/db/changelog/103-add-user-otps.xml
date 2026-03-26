@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Create user_otps table for password reset and future OTP use cases -->
+    <changeSet id="007-1" author="nam">
+        <createTable tableName="user_otps">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_user_otp_user"
+                             references="users(id)"
+                             deleteCascade="true"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="otp" type="varchar(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expires_at" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="verified_at" type="timestamp"/>
+            <column name="attempt_count" type="int" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create indexes for user_otps -->
+    <changeSet id="007-2" author="nam">
+        <createIndex indexName="idx_otp_email_type" tableName="user_otps">
+            <column name="email"/>
+            <column name="type"/>
+            <column name="verified_at"/>
+        </createIndex>
+
+        <createIndex indexName="idx_otp_user_pending" tableName="user_otps">
+            <column name="user_id"/>
+            <column name="type"/>
+            <column name="verified_at"/>
+        </createIndex>
+
+        <createIndex indexName="idx_otp_cleanup" tableName="user_otps">
+            <column name="expires_at"/>
+            <column name="verified_at"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

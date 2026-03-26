@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="093-create-warehouse-racks-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="warehouse_racks"/>
+            </not>
+        </preConditions>
+
+        <comment>Create warehouse racks table for hierarchical storage (warehouse - rack - slot)</comment>
+
+        <createTable tableName="warehouse_racks">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (RAK prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="warehouse_id" type="VARCHAR(255)" remarks="FK to locations table (WAREHOUSE type)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rack_code" type="VARCHAR(50)" remarks="Rack identifier code (e.g., A1, B2, C3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rack_name" type="VARCHAR(255)" remarks="Human-readable rack name"/>
+            <column name="floor_level" type="INTEGER" defaultValueNumeric="1" remarks="Floor level (1 = ground floor)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="row_position" type="VARCHAR(10)" remarks="Row position identifier (e.g., A, B, C)"/>
+            <column name="column_position" type="VARCHAR(10)" remarks="Column position identifier (e.g., 1, 2, 3)"/>
+            <column name="description" type="TEXT" remarks="Additional description or notes"/>
+            <column name="slot_capacity" type="INTEGER" remarks="Maximum number of slots this rack can hold"/>
+            <column name="current_slot_count" type="INTEGER" defaultValueNumeric="0" remarks="Current number of slots">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rack_type" type="VARCHAR(50)" remarks="Type: JEWELRY, DIAMOND, GENERAL, MIXED"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Foreign key to locations -->
+        <addForeignKeyConstraint
+            baseTableName="warehouse_racks"
+            baseColumnNames="warehouse_id"
+            constraintName="fk_racks_warehouse"
+            referencedTableName="locations"
+            referencedColumnNames="id"
+            onDelete="RESTRICT"
+            onUpdate="CASCADE"/>
+
+        <!-- Unique constraint: rack_code must be unique within a warehouse -->
+        <addUniqueConstraint
+            tableName="warehouse_racks"
+            columnNames="warehouse_id, rack_code"
+            constraintName="uk_rack_code_per_warehouse"/>
+
+        <!-- Indexes -->
+        <createIndex tableName="warehouse_racks" indexName="idx_racks_warehouse_id">
+            <column name="warehouse_id"/>
+        </createIndex>
+        <createIndex tableName="warehouse_racks" indexName="idx_racks_rack_code">
+            <column name="rack_code"/>
+        </createIndex>
+        <createIndex tableName="warehouse_racks" indexName="idx_racks_floor_level">
+            <column name="floor_level"/>
+        </createIndex>
+        <createIndex tableName="warehouse_racks" indexName="idx_racks_is_active">
+            <column name="is_active"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

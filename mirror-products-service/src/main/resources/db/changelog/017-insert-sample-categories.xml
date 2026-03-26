@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="017-insert-sample-categories-fixed" author="system">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM categories WHERE id = 'CAT000001'
+            </sqlCheck>
+        </preConditions>
+        
+        <!-- Insert sample categories with new sequence-based ID format -->
+        <sql>
+            INSERT INTO categories (id, category_name, description, created_at, updated_at, is_active, is_deleted) VALUES 
+            ('CAT000001', 'Rings', 'Elegant rings collection including engagement rings, wedding bands, and fashion rings', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, true, false),
+            ('CAT000002', 'Necklaces', 'Beautiful necklaces and pendants for all occasions', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, true, false),
+            ('CAT000003', 'Earrings', 'Stunning earrings collection from studs to chandelier designs', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, true, false),
+            ('CAT000004', 'Bracelets', 'Elegant bracelets and bangles collection', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, true, false),
+            ('CAT000005', 'Watches', 'Luxury timepieces and fashion watches', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, true, false);
+        </sql>
+
+        <rollback>
+            <sql>
+                DELETE FROM categories WHERE id IN ('CAT000001', 'CAT000002', 'CAT000003', 'CAT000004', 'CAT000005');
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

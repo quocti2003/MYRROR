@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Create print_jobs table for tracking print jobs -->
+    <changeSet id="121-1" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="print_jobs"/>
+            </not>
+        </preConditions>
+        <createTable tableName="print_jobs">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="template_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(50)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_labels" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="printed_labels" type="INTEGER" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="failed_labels" type="INTEGER" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="printer_name" type="VARCHAR(255)"/>
+            <column name="print_method" type="VARCHAR(50)"/>
+            <column name="zpl_data" type="TEXT"/>
+            <column name="error_message" type="TEXT"/>
+            <column name="options" type="JSONB"/>
+            <column name="started_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="completed_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(50)"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+            baseTableName="print_jobs"
+            baseColumnNames="template_id"
+            constraintName="fk_print_jobs_template"
+            referencedTableName="label_templates"
+            referencedColumnNames="id"/>
+
+        <createIndex tableName="print_jobs" indexName="idx_print_jobs_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="print_jobs" indexName="idx_print_jobs_template">
+            <column name="template_id"/>
+        </createIndex>
+
+        <createIndex tableName="print_jobs" indexName="idx_print_jobs_created_at">
+            <column name="created_at" descending="true"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Create print_job_items table -->
+    <changeSet id="121-2" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="print_job_items"/>
+            </not>
+        </preConditions>
+        <createTable tableName="print_job_items">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="print_job_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="epc" type="VARCHAR(24)"/>
+            <column name="zpl_data" type="TEXT"/>
+            <column name="status" type="VARCHAR(50)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="error_message" type="TEXT"/>
+            <column name="printed_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+            baseTableName="print_job_items"
+            baseColumnNames="print_job_id"
+            constraintName="fk_print_job_items_job"
+            referencedTableName="print_jobs"
+            referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+            baseTableName="print_job_items"
+            baseColumnNames="product_id"
+            constraintName="fk_print_job_items_product"
+            referencedTableName="mirror_products"
+            referencedColumnNames="id"/>
+
+        <createIndex tableName="print_job_items" indexName="idx_print_job_items_job">
+            <column name="print_job_id"/>
+        </createIndex>
+
+        <createIndex tableName="print_job_items" indexName="idx_print_job_items_product">
+            <column name="product_id"/>
+        </createIndex>
+
+        <createIndex tableName="print_job_items" indexName="idx_print_job_items_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="print_job_items" indexName="idx_print_job_items_epc">
+            <column name="epc"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Create sequences -->
+    <changeSet id="121-3" author="mirror">
+        <sql>
+            INSERT INTO id_sequences (entity_type, current_value)
+            VALUES ('PJB', 0), ('PJI', 0)
+            ON CONFLICT (entity_type) DO NOTHING;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

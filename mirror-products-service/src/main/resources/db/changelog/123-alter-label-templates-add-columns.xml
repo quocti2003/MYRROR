@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add missing columns to label_templates table - Each column has its own precondition -->
+
+    <changeSet id="123-00-add-zpl-content" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="zpl_content"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="zpl_content" type="TEXT" defaultValue="^XA^XZ">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="123-01-add-label-type-column" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="label_type"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="label_type" type="VARCHAR(50)" defaultValue="JEWELRY_TAG">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!-- Rename label_width to width_mm if label_width exists and width_mm doesn't -->
+    <changeSet id="123-02a-rename-label-width" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="label_width"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="width_mm"/>
+            </not>
+        </preConditions>
+        <renameColumn tableName="label_templates" oldColumnName="label_width" newColumnName="width_mm" columnDataType="INTEGER"/>
+    </changeSet>
+
+    <!-- Drop label_width if both columns exist -->
+    <changeSet id="123-02b-drop-label-width" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="label_width"/>
+            <columnExists tableName="label_templates" columnName="width_mm"/>
+        </preConditions>
+        <dropColumn tableName="label_templates" columnName="label_width"/>
+    </changeSet>
+
+    <changeSet id="123-02-add-width-mm" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="width_mm"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="width_mm" type="INTEGER"/>
+        </addColumn>
+    </changeSet>
+
+    <!-- Rename label_height to height_mm if label_height exists and height_mm doesn't -->
+    <changeSet id="123-03a-rename-label-height" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="label_height"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="height_mm"/>
+            </not>
+        </preConditions>
+        <renameColumn tableName="label_templates" oldColumnName="label_height" newColumnName="height_mm" columnDataType="INTEGER"/>
+    </changeSet>
+
+    <!-- Drop label_height if both columns exist -->
+    <changeSet id="123-03b-drop-label-height" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="label_height"/>
+            <columnExists tableName="label_templates" columnName="height_mm"/>
+        </preConditions>
+        <dropColumn tableName="label_templates" columnName="label_height"/>
+    </changeSet>
+
+    <changeSet id="123-03-add-height-mm" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="height_mm"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="height_mm" type="INTEGER"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="123-04-add-dpi" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="dpi"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="dpi" type="INTEGER" defaultValueNumeric="203">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="123-05-add-variables" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="variables"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="variables" type="TEXT"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="123-06-add-preview-image-url" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="preview_image_url"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="preview_image_url" type="VARCHAR(500)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="123-07-add-is-default" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <not>
+                <columnExists tableName="label_templates" columnName="is_default"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="label_templates">
+            <column name="is_default" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!-- Make canvas_json nullable if it exists -->
+    <changeSet id="123-10-make-canvas-json-nullable" author="backend-developer" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="canvas_json"/>
+        </preConditions>
+        <sql>ALTER TABLE label_templates ALTER COLUMN canvas_json DROP NOT NULL</sql>
+    </changeSet>
+
+    <!-- Create indexes if they don't exist -->
+    <changeSet id="123-08-add-label-type-index" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="label_type"/>
+            <not>
+                <indexExists indexName="idx_lbt_label_type"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="label_templates" indexName="idx_lbt_label_type">
+            <column name="label_type"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="123-09-add-is-default-index" author="backend-developer">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="label_templates"/>
+            <columnExists tableName="label_templates" columnName="is_default"/>
+            <not>
+                <indexExists indexName="idx_lbt_is_default"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="label_templates" indexName="idx_lbt_is_default">
+            <column name="is_default"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

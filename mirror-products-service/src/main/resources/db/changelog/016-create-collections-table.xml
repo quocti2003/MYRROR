@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!-- Create collections table -->
+    <changeSet id="016-create-collections-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="collections"/>
+            </not>
+        </preConditions>
+        
+        <comment>Create collections table for jewelry collections</comment>
+        
+        <createTable tableName="collections">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(500)" remarks="Collection name">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(500)" remarks="Display title">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT" remarks="Collection description"/>
+            <column name="season" type="VARCHAR(50)" remarks="Target season"/>
+            <column name="year" type="INTEGER" remarks="Collection year"/>
+            <column name="theme" type="VARCHAR(200)" remarks="Collection theme"/>
+            <column name="image_url" type="VARCHAR(1000)" remarks="Main collection image"/>
+            <column name="banner_image_url" type="VARCHAR(1000)" remarks="Banner/hero image"/>
+            <column name="image_urls" type="TEXT" remarks="Additional images (JSON array)"/>
+            <column name="status" type="VARCHAR(20)" remarks="Collection status" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="featured" type="BOOLEAN" remarks="Is featured collection" defaultValue="false"/>
+            <column name="sort_order" type="INTEGER" remarks="Display order" defaultValue="0"/>
+            <column name="start_date" type="DATE" remarks="Collection launch date"/>
+            <column name="end_date" type="DATE" remarks="Collection end date"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        
+        <!-- Add indexes -->
+        <createIndex tableName="collections" indexName="idx_collections_status">
+            <column name="status"/>
+        </createIndex>
+        
+        <createIndex tableName="collections" indexName="idx_collections_featured">
+            <column name="featured"/>
+        </createIndex>
+        
+        <createIndex tableName="collections" indexName="idx_collections_season_year">
+            <column name="season"/>
+            <column name="year"/>
+        </createIndex>
+        
+        <createIndex tableName="collections" indexName="idx_collections_sort_order">
+            <column name="sort_order"/>
+        </createIndex>
+        
+    </changeSet>
+
+    <!-- Create collection_products junction table -->
+    <changeSet id="016-create-collection-products-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="collection_products"/>
+            </not>
+        </preConditions>
+        
+        <comment>Create collection_products junction table</comment>
+        
+        <createTable tableName="collection_products">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="collection_id" type="VARCHAR(255)" remarks="Foreign key to collections">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(255)" remarks="Foreign key to products">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sort_order" type="INTEGER" remarks="Product order in collection" defaultValue="0"/>
+            <column name="is_hero_product" type="BOOLEAN" remarks="Is this the hero product" defaultValue="false"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <createIndex tableName="collection_products" indexName="idx_collection_products_collection_id">
+            <column name="collection_id"/>
+        </createIndex>
+        
+        <createIndex tableName="collection_products" indexName="idx_collection_products_product_id">
+            <column name="product_id"/>
+        </createIndex>
+        
+        <!-- Foreign key constraints -->
+        <addForeignKeyConstraint
+            constraintName="fk_collection_products_collection"
+            baseTableName="collection_products"
+            baseColumnNames="collection_id"
+            referencedTableName="collections"
+            referencedColumnNames="id"/>
+            
+        <addForeignKeyConstraint
+            constraintName="fk_collection_products_product"
+            baseTableName="collection_products"
+            baseColumnNames="product_id"
+            referencedTableName="products"
+            referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- Add Collection sequence -->
+<!--    <changeSet id="016-add-collection-sequences" author="system">-->
+<!--        <comment>Add Collection sequences to id_sequences table</comment>-->
+<!--        -->
+<!--        <insert tableName="id_sequences">-->
+<!--            <column name="entity_name" value="Collection"/>-->
+<!--            <column name="prefix" value="COL"/>-->
+<!--            <column name="current_value" valueNumeric="0"/>-->
+<!--        </insert>-->
+<!--        -->
+<!--        <insert tableName="id_sequences">-->
+<!--            <column name="entity_name" value="CollectionProduct"/>-->
+<!--            <column name="prefix" value="CP"/>-->
+<!--            <column name="current_value" valueNumeric="0"/>-->
+<!--        </insert>-->
+<!--    </changeSet>-->
+
+</databaseChangeLog>

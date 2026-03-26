@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="042-rename-categories-to-skus" author="assistant">
+        <comment>Rename categories domain to SKU definitions</comment>
+
+        <!-- Rename categories table to skus -->
+        <renameTable oldTableName="categories" newTableName="skus"/>
+
+        <!-- Rename primary columns -->
+        <renameColumn tableName="skus"
+                      oldColumnName="category_name"
+                      newColumnName="sku_name"
+                      columnDataType="VARCHAR(255)"/>
+
+        <renameColumn tableName="skus"
+                      oldColumnName="category_code"
+                      newColumnName="sku_code"
+                      columnDataType="VARCHAR(255)"/>
+
+        <!-- Refresh indexes on skus table -->
+        <dropIndex indexName="idx_categories_name_active" tableName="skus"/>
+        <dropIndex indexName="idx_categories_misa_category_id" tableName="skus"/>
+
+        <createIndex indexName="idx_skus_name_active" tableName="skus">
+            <column name="sku_name"/>
+            <column name="is_active"/>
+            <column name="is_deleted"/>
+        </createIndex>
+
+        <createIndex indexName="idx_skus_misa_category_id" tableName="skus">
+            <column name="misa_category_id"/>
+        </createIndex>
+
+        <!-- Update components to reference skus -->
+        <dropForeignKeyConstraint baseTableName="components" constraintName="fk_component_category"/>
+        <dropIndex indexName="idx_components_name_category_active" tableName="components"/>
+
+        <renameColumn tableName="components"
+                      oldColumnName="category_id"
+                      newColumnName="sku_id"
+                      columnDataType="VARCHAR(255)"/>
+
+        <createIndex indexName="idx_components_name_sku_active" tableName="components">
+            <column name="component_name"/>
+            <column name="sku_id"/>
+            <column name="is_active"/>
+            <column name="is_deleted"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseTableName="components"
+                                 baseColumnNames="sku_id"
+                                 constraintName="fk_component_sku"
+                                 referencedTableName="skus"
+                                 referencedColumnNames="id"/>
+
+        <!-- Update products to reference skus -->
+        <dropForeignKeyConstraint baseTableName="products" constraintName="fk_products_category"/>
+        <dropIndex indexName="idx_products_category_id" tableName="products"/>
+
+        <renameColumn tableName="products"
+                      oldColumnName="category_id"
+                      newColumnName="sku_id"
+                      columnDataType="VARCHAR(255)"/>
+
+        <createIndex indexName="idx_products_sku_id" tableName="products">
+            <column name="sku_id"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseTableName="products"
+                                 baseColumnNames="sku_id"
+                                 constraintName="fk_products_sku"
+                                 referencedTableName="skus"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Fix orders.product_id foreign key to reference mirror_products -->
+    <changeSet id="086-1" author="system">
+        <preConditions onFail="MARK_RAN">
+            <foreignKeyConstraintExists foreignKeyName="fk_orders_product"/>
+        </preConditions>
+
+        <comment>Fix orders.product_id FK to reference mirror_products instead of products</comment>
+
+        <!-- Drop the old foreign key -->
+        <dropForeignKeyConstraint
+                baseTableName="orders"
+                constraintName="fk_orders_product"/>
+
+        <!-- Delete orphaned orders with invalid product_id -->
+        <sql>
+            DELETE FROM orders
+            WHERE product_id IS NOT NULL
+            AND product_id NOT IN (SELECT id FROM mirror_products);
+        </sql>
+
+        <!-- Add new FK to mirror_products -->
+        <addForeignKeyConstraint
+                constraintName="fk_orders_mirror_product"
+                baseTableName="orders"
+                baseColumnNames="product_id"
+                referencedTableName="mirror_products"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+    </changeSet>
+
+    <!-- Drop legacy products table -->
+    <changeSet id="086-2" author="system">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="products"/>
+        </preConditions>
+
+        <comment>Drop legacy products table - all data and relationships now use mirror_products</comment>
+
+        <!-- Use CASCADE to drop any remaining dependent objects -->
+        <sql>DROP TABLE IF EXISTS products CASCADE;</sql>
+
+        <rollback>
+            <comment>Cannot recreate products table with original data - manual restore required</comment>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

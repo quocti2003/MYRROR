@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Step 1: Add MISA columns to mirror_products -->
+    <changeSet id="117-01-add-misa-columns-to-mirror-products" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <not><columnExists tableName="mirror_products" columnName="misa_category_id"/></not>
+        </preConditions>
+        <addColumn tableName="mirror_products">
+            <column name="misa_category_id" type="VARCHAR(255)"/>
+            <column name="misa_category_code" type="VARCHAR(255)"/>
+            <column name="misa_category_name" type="VARCHAR(255)"/>
+            <column name="misa_inventory_id" type="VARCHAR(100)"/>
+            <column name="misa_synced" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="misa_sync_date" type="TIMESTAMP"/>
+            <column name="misa_last_synced_at" type="TIMESTAMP"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="117-02-add-misa-indexes-to-mirror-products" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <not><indexExists indexName="idx_mirror_products_misa_category_id"/></not>
+        </preConditions>
+        <createIndex indexName="idx_mirror_products_misa_category_id" tableName="mirror_products">
+            <column name="misa_category_id"/>
+        </createIndex>
+        <createIndex indexName="idx_mirror_products_misa_inventory_id" tableName="mirror_products">
+            <column name="misa_inventory_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Step 2: Migrate data from skus to mirror_products MISA fields -->
+    <changeSet id="117-03-migrate-sku-misa-data-to-mirror-products" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="skus"/>
+        </preConditions>
+        <sql>
+            UPDATE mirror_products mp
+            SET misa_category_id = s.misa_category_id,
+                misa_category_code = s.misa_category_code,
+                misa_category_name = s.misa_category_name,
+                misa_inventory_id = s.misa_inventory_id,
+                misa_synced = COALESCE(s.misa_synced, false),
+                misa_sync_date = s.misa_sync_date,
+                misa_last_synced_at = s.misa_last_synced_at
+            FROM skus s
+            WHERE mp.mirror_code = s.sku_code
+              AND s.misa_category_id IS NOT NULL;
+        </sql>
+    </changeSet>
+
+    <!-- Step 3: Re-point components FK from sku_id to product_id -->
+    <changeSet id="117-04-repoint-components-fk-to-mirror-products" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="components" columnName="sku_id"/>
+        </preConditions>
+        <!-- Drop existing FK constraint if it exists -->
+        <sql>
+            ALTER TABLE components DROP CONSTRAINT IF EXISTS fk_component_sku;
+            ALTER TABLE components DROP CONSTRAINT IF EXISTS fkm5im4gg6gr4lrxgvvbhq2oiqh;
+        </sql>
+        <!-- Rename column -->
+        <renameColumn tableName="components" oldColumnName="sku_id" newColumnName="product_id" columnDataType="VARCHAR(255)"/>
+        <!-- Clean up orphan rows that reference non-existent mirror_products -->
+        <sql>
+            DELETE FROM component_optionals WHERE component_id IN (
+              SELECT id FROM components WHERE product_id IS NOT NULL
+                AND product_id NOT IN (SELECT id FROM mirror_products)
+            );
+            DELETE FROM components WHERE product_id IS NOT NULL
+              AND product_id NOT IN (SELECT id FROM mirror_products);
+        </sql>
+        <!-- Add new FK -->
+        <addForeignKeyConstraint
+            baseTableName="components"
+            baseColumnNames="product_id"
+            referencedTableName="mirror_products"
+            referencedColumnNames="id"
+            constraintName="fk_component_product"/>
+    </changeSet>
+
+    <!-- Step 4: Drop skus table -->
+    <changeSet id="117-05-drop-skus-table" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="skus"/>
+        </preConditions>
+        <dropTable tableName="skus"/>
+    </changeSet>
+
+    <!-- Step 5: Remove SKU from id_sequences -->
+    <changeSet id="117-06-remove-sku-from-id-sequences" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="id_sequences"/>
+        </preConditions>
+        <sql>
+            DELETE FROM id_sequences WHERE prefix = 'SKU';
+        </sql>
+    </changeSet>
+
+    <!-- Step 6: Create order_payment_transactions table -->
+    <changeSet id="117-07-create-order-payment-transactions-table" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <not><tableExists tableName="order_payment_transactions"/></not>
+        </preConditions>
+        <createTable tableName="order_payment_transactions">
+            <column name="id" type="VARCHAR(30)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="schedule_id" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_id" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="amount" type="DECIMAL(15,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_method" type="VARCHAR(100)"/>
+            <column name="paid_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recorded_by" type="VARCHAR(255)"/>
+            <column name="notes" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+            baseTableName="order_payment_transactions"
+            baseColumnNames="schedule_id"
+            referencedTableName="order_payment_schedule"
+            referencedColumnNames="id"
+            constraintName="fk_payment_transaction_schedule"/>
+
+        <addForeignKeyConstraint
+            baseTableName="order_payment_transactions"
+            baseColumnNames="order_id"
+            referencedTableName="orders"
+            referencedColumnNames="id"
+            constraintName="fk_payment_transaction_order"/>
+
+        <createIndex indexName="idx_payment_transactions_schedule_id" tableName="order_payment_transactions">
+            <column name="schedule_id"/>
+        </createIndex>
+
+        <createIndex indexName="idx_payment_transactions_order_id" tableName="order_payment_transactions">
+            <column name="order_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Step 7: Add PTX to id_sequences -->
+    <changeSet id="117-08-add-ptx-to-id-sequences" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="id_sequences"/>
+        </preConditions>
+        <sql>
+            INSERT INTO id_sequences (prefix, current_value)
+            SELECT 'PTX', 0
+            WHERE NOT EXISTS (SELECT 1 FROM id_sequences WHERE prefix = 'PTX');
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

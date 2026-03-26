@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Material Color Options Table -->
+    <changeSet id="046-1" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="material_color_options"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="material_color_options">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="color_code" type="VARCHAR(20)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="color_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="display_order" type="INT" defaultValue="0"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="material_color_options"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Seed Material Color Options -->
+    <changeSet id="046-2" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="material_color_options"/>
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM material_color_options</sqlCheck>
+        </preConditions>
+
+        <insert tableName="material_color_options">
+            <column name="color_code" value="WHITE"/>
+            <column name="color_name" value="White"/>
+            <column name="description" value="White gold or white metal color"/>
+            <column name="display_order" valueNumeric="1"/>
+        </insert>
+        <insert tableName="material_color_options">
+            <column name="color_code" value="YELLOW"/>
+            <column name="color_name" value="Yellow"/>
+            <column name="description" value="Yellow gold color"/>
+            <column name="display_order" valueNumeric="2"/>
+        </insert>
+        <insert tableName="material_color_options">
+            <column name="color_code" value="ROSE"/>
+            <column name="color_name" value="Rose"/>
+            <column name="description" value="Rose gold or pink gold color"/>
+            <column name="display_order" valueNumeric="3"/>
+        </insert>
+        <insert tableName="material_color_options">
+            <column name="color_code" value="TWOTONE"/>
+            <column name="color_name" value="Two Tone"/>
+            <column name="description" value="Combination of two metal colors"/>
+            <column name="display_order" valueNumeric="4"/>
+        </insert>
+        <insert tableName="material_color_options">
+            <column name="color_code" value="TRITONE"/>
+            <column name="color_name" value="Tri Tone"/>
+            <column name="description" value="Combination of three metal colors"/>
+            <column name="display_order" valueNumeric="5"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="material_color_options"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

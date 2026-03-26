@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Migrate JTRC categories: full names → prefix codes -->
+    <changeSet id="137-1" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="jewelry_technical_reports"/>
+        </preConditions>
+
+        <sql>UPDATE jewelry_technical_reports SET category = 'RNG' WHERE UPPER(category) IN ('RING');</sql>
+        <sql>UPDATE jewelry_technical_reports SET category = 'NCK' WHERE UPPER(category) IN ('NECKLACE');</sql>
+        <sql>UPDATE jewelry_technical_reports SET category = 'EAR' WHERE UPPER(category) IN ('EARRINGS', 'EARRING');</sql>
+        <sql>UPDATE jewelry_technical_reports SET category = 'BRC' WHERE UPPER(category) IN ('BRACELET');</sql>
+        <sql>UPDATE jewelry_technical_reports SET category = 'PDT' WHERE UPPER(category) IN ('PENDANT');</sql>
+
+        <rollback>
+            <sql>UPDATE jewelry_technical_reports SET category = 'RING' WHERE category = 'RNG';</sql>
+            <sql>UPDATE jewelry_technical_reports SET category = 'NECKLACE' WHERE category = 'NCK';</sql>
+            <sql>UPDATE jewelry_technical_reports SET category = 'EARRINGS' WHERE category = 'EAR';</sql>
+            <sql>UPDATE jewelry_technical_reports SET category = 'BRACELET' WHERE category = 'BRC';</sql>
+            <sql>UPDATE jewelry_technical_reports SET category = 'PENDANT' WHERE category = 'PDT';</sql>
+        </rollback>
+    </changeSet>
+
+    <!-- Migrate metal types: remove underscores, uppercase -->
+    <changeSet id="137-2" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="jtrc_metal_components"/>
+        </preConditions>
+
+        <sql>UPDATE jtrc_metal_components SET metal_type = 'WHITEGOLD' WHERE metal_type IN ('WHITE_GOLD', 'White Gold');</sql>
+        <sql>UPDATE jtrc_metal_components SET metal_type = 'YELLOWGOLD' WHERE metal_type IN ('YELLOW_GOLD', 'Yellow Gold');</sql>
+        <sql>UPDATE jtrc_metal_components SET metal_type = 'ROSEGOLD' WHERE metal_type IN ('ROSE_GOLD', 'Rose Gold');</sql>
+        <sql>UPDATE jtrc_metal_components SET metal_type = 'PLATINUM' WHERE metal_type IN ('Platinum');</sql>
+        <sql>UPDATE jtrc_metal_components SET metal_type = 'SILVER' WHERE metal_type IN ('Silver');</sql>
+
+        <rollback>
+            <sql>UPDATE jtrc_metal_components SET metal_type = 'White Gold' WHERE metal_type = 'WHITEGOLD';</sql>
+            <sql>UPDATE jtrc_metal_components SET metal_type = 'Yellow Gold' WHERE metal_type = 'YELLOWGOLD';</sql>
+            <sql>UPDATE jtrc_metal_components SET metal_type = 'Rose Gold' WHERE metal_type = 'ROSEGOLD';</sql>
+        </rollback>
+    </changeSet>
+
+    <!-- Migrate stone types: remove underscores -->
+    <changeSet id="137-3" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="jtrc_stone_components"/>
+        </preConditions>
+
+        <sql>UPDATE jtrc_stone_components SET stone_type = 'LABDIAMOND' WHERE stone_type IN ('LAB_DIAMOND', 'Lab Diamond');</sql>
+        <sql>UPDATE jtrc_stone_components SET stone_type = 'NATURALDIAMOND' WHERE stone_type IN ('NATURAL_DIAMOND', 'Natural Diamond');</sql>
+        <sql>UPDATE jtrc_stone_components SET stone_type = 'MOISSANITE' WHERE stone_type IN ('Moissanite');</sql>
+        <sql>UPDATE jtrc_stone_components SET stone_type = 'RUBY' WHERE stone_type IN ('Ruby');</sql>
+        <sql>UPDATE jtrc_stone_components SET stone_type = 'SAPPHIRE' WHERE stone_type IN ('Sapphire');</sql>
+        <sql>UPDATE jtrc_stone_components SET stone_type = 'EMERALD' WHERE stone_type IN ('Emerald') AND stone_type != 'EMERALD';</sql>
+
+        <rollback>
+            <sql>UPDATE jtrc_stone_components SET stone_type = 'Lab Diamond' WHERE stone_type = 'LABDIAMOND';</sql>
+            <sql>UPDATE jtrc_stone_components SET stone_type = 'Natural Diamond' WHERE stone_type = 'NATURALDIAMOND';</sql>
+        </rollback>
+    </changeSet>
+
+    <!-- Migrate stone shapes: align to SKU codes -->
+    <changeSet id="137-4" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="jtrc_stone_components"/>
+        </preConditions>
+
+        <sql>UPDATE jtrc_stone_components SET shape = 'EMERALD' WHERE shape IN ('EMERALD_CUT', 'Emerald Cut');</sql>
+        <sql>UPDATE jtrc_stone_components SET shape = 'ROUND' WHERE shape IN ('Round Brilliant');</sql>
+        <sql>UPDATE jtrc_stone_components SET shape = 'PRINCESS' WHERE shape IN ('Princess');</sql>
+        <sql>UPDATE jtrc_stone_components SET shape = 'CUSHION' WHERE shape IN ('Cushion');</sql>
+        <sql>UPDATE jtrc_stone_components SET shape = 'OVAL' WHERE shape IN ('Oval');</sql>
+        <sql>UPDATE jtrc_stone_components SET shape = 'PEAR' WHERE shape IN ('Pear');</sql>
+        <sql>UPDATE jtrc_stone_components SET shape = 'MARQUISE' WHERE shape IN ('Marquise');</sql>
+        <sql>UPDATE jtrc_stone_components SET shape = 'RADIANT' WHERE shape IN ('Radiant');</sql>
+        <sql>UPDATE jtrc_stone_components SET shape = 'ASSCHER' WHERE shape IN ('Asscher');</sql>
+        <sql>UPDATE jtrc_stone_components SET shape = 'HEART' WHERE shape IN ('Heart');</sql>
+
+        <rollback>
+            <sql>UPDATE jtrc_stone_components SET shape = 'Round Brilliant' WHERE shape = 'ROUND';</sql>
+            <sql>UPDATE jtrc_stone_components SET shape = 'Emerald Cut' WHERE shape = 'EMERALD';</sql>
+        </rollback>
+    </changeSet>
+
+    <!-- Migrate stone roles: align to backend StoneRole enum -->
+    <changeSet id="137-5" author="codex">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="jtrc_stone_components"/>
+        </preConditions>
+
+        <sql>UPDATE jtrc_stone_components SET stone_role = 'MELEE' WHERE stone_role IN ('ACCENT', 'HALO', 'PAVÉ', 'PAVE');</sql>
+
+        <rollback/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="034-add-design-fields-to-products" author="claude-code">
+        <comment>Add design_id and designer_id fields to products table for design tracking</comment>
+
+        <addColumn tableName="products">
+            <column name="design_id" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="designer_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <createIndex tableName="products" indexName="idx_products_design_id">
+            <column name="design_id"/>
+        </createIndex>
+
+        <createIndex tableName="products" indexName="idx_products_designer_id">
+            <column name="designer_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

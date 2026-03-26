@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!--
+        Migration: Restructure SKU/Barcode System
+
+        Changes:
+        1. Add descriptive_code column to store the descriptive SKU (e.g., RNG-18KWG-W-2.09-LG-RD-1.29-N)
+        2. Copy existing sku_code to descriptive_code
+        3. Update sku_code to use barcode (unique identifier)
+        4. Drop product_units table (no longer needed - each product is unique)
+        5. Remove is_serialized column (no longer needed)
+
+        New model:
+        - sku_code = unique barcode (e.g., MIR2512301234567) - primary identifier
+        - descriptive_code = product specs (e.g., RNG-18KWG-W-2.09-LG-RD-1.29-N) - for display/search
+        - barcode = same as sku_code (kept for compatibility)
+    -->
+
+    <!-- Step 1: Add descriptive_code column -->
+    <changeSet id="089-01-add-descriptive-code-column" author="mirror">
+        <comment>Add descriptive_code column to store the descriptive SKU format</comment>
+        <addColumn tableName="mirror_products">
+            <column name="descriptive_code" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!-- Step 2: Copy existing mirror_code to descriptive_code -->
+    <changeSet id="089-02-migrate-sku-to-descriptive-code" author="mirror">
+        <comment>Copy existing mirror_code values to descriptive_code</comment>
+        <sql>
+            UPDATE mirror_products
+            SET descriptive_code = mirror_code
+            WHERE mirror_code IS NOT NULL;
+        </sql>
+    </changeSet>
+
+    <!-- Step 3: For products with barcodes, update mirror_code to use barcode -->
+    <changeSet id="089-03-update-sku-code-to-barcode" author="mirror">
+        <comment>Update mirror_code to use barcode value for products that have barcodes</comment>
+        <sql>
+            UPDATE mirror_products
+            SET mirror_code = barcode
+            WHERE barcode IS NOT NULL AND barcode != '';
+        </sql>
+    </changeSet>
+
+    <!-- Step 4: Drop product_units table (no longer needed) -->
+    <changeSet id="089-04-drop-product-units-table" author="mirror">
+        <comment>Drop product_units table - each product is now unique with its own barcode</comment>
+        <dropTable tableName="product_units" cascadeConstraints="true"/>
+    </changeSet>
+
+    <!-- Step 5: Drop product_unit_seq sequence -->
+    <changeSet id="089-05-drop-product-unit-sequence" author="mirror">
+        <comment>Drop product_unit_seq sequence</comment>
+        <sql>
+            DROP SEQUENCE IF EXISTS product_unit_seq;
+        </sql>
+    </changeSet>
+
+    <!-- Step 6: Remove is_serialized column (no longer needed) -->
+    <changeSet id="089-06-drop-is-serialized-column" author="mirror">
+        <comment>Drop is_serialized column - no longer needed in new model</comment>
+        <dropColumn tableName="mirror_products" columnName="is_serialized"/>
+    </changeSet>
+
+    <!-- Step 7: Add index on descriptive_code for search performance -->
+    <changeSet id="089-07-add-descriptive-code-index" author="mirror">
+        <comment>Add index on descriptive_code for search performance</comment>
+        <createIndex tableName="mirror_products" indexName="idx_mirror_products_descriptive_code">
+            <column name="descriptive_code"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

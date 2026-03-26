@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="116-create-misa-balance-trackers-table" author="system">
+        <createTable tableName="misa_balance_trackers">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="inventory_item_code" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="inventory_item_id" type="VARCHAR(100)"/>
+            <column name="stock_id" type="VARCHAR(100)"/>
+            <column name="org_ref_id" type="VARCHAR(255)"/>
+            <column name="org_ref_no" type="VARCHAR(255)"/>
+            <column name="voucher_type" type="INT"/>
+            <column name="quantity_before" type="INT"/>
+            <column name="expected_quantity_after" type="INT"/>
+            <column name="quantity_change" type="INT"/>
+            <column name="actual_quantity_after" type="INT"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="submitted_at" type="TIMESTAMP"/>
+            <column name="confirmed_at" type="TIMESTAMP"/>
+            <column name="timeout_at" type="TIMESTAMP"/>
+            <column name="poll_attempts" type="INT" defaultValueNumeric="0"/>
+            <column name="last_polled_at" type="TIMESTAMP"/>
+            <column name="notes" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex tableName="misa_balance_trackers" indexName="idx_balance_tracker_status">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="misa_balance_trackers" indexName="idx_balance_tracker_item_code">
+            <column name="inventory_item_code"/>
+        </createIndex>
+        <createIndex tableName="misa_balance_trackers" indexName="idx_balance_tracker_org_ref_id">
+            <column name="org_ref_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

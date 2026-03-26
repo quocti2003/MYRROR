@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="035-1" author="claude">
+        <comment>Create sequences for Designer and DesignProduct</comment>
+        <createSequence sequenceName="designer_seq" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="design_product_seq" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="design_sale_transaction_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="035-2" author="claude">
+        <comment>Create designers table</comment>
+        <createTable tableName="designers">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owner_user_id" type="VARCHAR(255)"/>
+            <column name="brand_name" type="VARCHAR(200)"/>
+            <column name="specialty" type="VARCHAR(200)"/>
+            <column name="years_experience" type="INTEGER"/>
+            <column name="design_style" type="VARCHAR(100)"/>
+            <column name="default_commission_percent" type="DECIMAL(5,2)"/>
+            <column name="default_loyalty_percent" type="DECIMAL(5,2)"/>
+            <column name="total_designs_created" type="INTEGER" defaultValue="0"/>
+            <column name="total_products_sold" type="INTEGER" defaultValue="0"/>
+            <column name="total_earnings" type="DECIMAL(15,2)" defaultValue="0.00"/>
+            <column name="join_date" type="TIMESTAMP"/>
+            <column name="last_design_date" type="TIMESTAMP"/>
+            <column name="contact_email" type="VARCHAR(200)"/>
+            <column name="contact_phone" type="VARCHAR(50)"/>
+            <column name="website" type="VARCHAR(500)"/>
+            <column name="social_media_links" type="TEXT"/>
+            <column name="bio" type="TEXT"/>
+            <column name="portfolio_url" type="VARCHAR(500)"/>
+            <column name="verified" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="featured" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rating" type="DECIMAL(3,2)"/>
+            <column name="review_count" type="INTEGER" defaultValue="0"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="035-3" author="claude">
+        <comment>Create design_products table</comment>
+        <createTable tableName="design_products">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="designer_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="commission_percentage" type="DECIMAL(5,2)"/>
+            <column name="loyalty_percentage" type="DECIMAL(5,2)"/>
+            <column name="design_name" type="VARCHAR(200)"/>
+            <column name="design_description" type="TEXT"/>
+            <column name="design_concept" type="TEXT"/>
+            <column name="design_inspiration" type="VARCHAR(500)"/>
+            <column name="design_created_date" type="TIMESTAMP"/>
+            <column name="product_conversion_date" type="TIMESTAMP"/>
+            <column name="total_sales_count" type="INTEGER" defaultValue="0"/>
+            <column name="total_sales_amount" type="DECIMAL(15,2)" defaultValue="0.00"/>
+            <column name="total_commission_earned" type="DECIMAL(15,2)" defaultValue="0.00"/>
+            <column name="total_loyalty_earned" type="DECIMAL(15,2)" defaultValue="0.00"/>
+            <column name="design_status" type="VARCHAR(50)" defaultValue="ACTIVE"/>
+            <column name="featured_design" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="average_rating" type="DECIMAL(3,2)"/>
+            <column name="review_count" type="INTEGER" defaultValue="0"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="035-4" author="claude">
+        <comment>Create design_sale_transactions table</comment>
+        <createTable tableName="design_sale_transactions">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="design_product_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sale_amount" type="DECIMAL(15,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="commission_amount" type="DECIMAL(15,2)" defaultValue="0.00"/>
+            <column name="loyalty_amount" type="DECIMAL(15,2)" defaultValue="0.00"/>
+            <column name="commission_percentage" type="DECIMAL(5,2)" defaultValue="0.00"/>
+            <column name="loyalty_percentage" type="DECIMAL(5,2)" defaultValue="0.00"/>
+            <column name="currency" type="VARCHAR(3)" defaultValue="VND">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="INTEGER" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sale_date" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="processed" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="customer_rating" type="DECIMAL(3,2)"/>
+            <column name="customer_review" type="TEXT"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="035-5" author="claude">
+        <comment>Add foreign key constraints for design_products</comment>
+        <addForeignKeyConstraint
+            constraintName="fk_design_products_designer"
+            baseTableName="design_products"
+            baseColumnNames="designer_id"
+            referencedTableName="designers"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+            constraintName="fk_design_products_product"
+            baseTableName="design_products"
+            baseColumnNames="product_id"
+            referencedTableName="products"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+            constraintName="fk_design_sale_transactions_design_product"
+            baseTableName="design_sale_transactions"
+            baseColumnNames="design_product_id"
+            referencedTableName="design_products"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="035-6" author="claude">
+        <comment>Create indexes for better performance</comment>
+        <createIndex tableName="designers" indexName="idx_designers_code">
+            <column name="code"/>
+        </createIndex>
+        <createIndex tableName="designers" indexName="idx_designers_owner_user_id">
+            <column name="owner_user_id"/>
+        </createIndex>
+        <createIndex tableName="designers" indexName="idx_designers_specialty">
+            <column name="specialty"/>
+        </createIndex>
+        <createIndex tableName="designers" indexName="idx_designers_verified_featured">
+            <column name="verified"/>
+            <column name="featured"/>
+        </createIndex>
+        <createIndex tableName="designers" indexName="idx_designers_active_deleted">
+            <column name="is_active"/>
+            <column name="is_deleted"/>
+        </createIndex>
+        <createIndex tableName="design_products" indexName="idx_design_products_designer_id">
+            <column name="designer_id"/>
+        </createIndex>
+        <createIndex tableName="design_products" indexName="idx_design_products_product_id">
+            <column name="product_id"/>
+        </createIndex>
+        <createIndex tableName="design_products" indexName="idx_design_products_status">
+            <column name="design_status"/>
+        </createIndex>
+        <createIndex tableName="design_products" indexName="idx_design_products_featured">
+            <column name="featured_design"/>
+        </createIndex>
+        <createIndex tableName="design_sale_transactions" indexName="idx_design_sale_transactions_design_product_id">
+            <column name="design_product_id"/>
+        </createIndex>
+        <createIndex tableName="design_sale_transactions" indexName="idx_design_sale_transactions_order_id">
+            <column name="order_id"/>
+        </createIndex>
+        <createIndex tableName="design_sale_transactions" indexName="idx_design_sale_transactions_sale_date">
+            <column name="sale_date"/>
+        </createIndex>
+        <createIndex tableName="design_sale_transactions" indexName="idx_design_sale_transactions_processed">
+            <column name="processed"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

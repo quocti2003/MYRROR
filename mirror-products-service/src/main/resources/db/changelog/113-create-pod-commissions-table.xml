@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="113-create-pod-commissions-table" author="system">
+        <!-- Accept old checksum after file modification -->
+        <validCheckSum>9:8240725f6fbde82dbe11dbecae0b5775</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="pod_commissions"/>
+            </not>
+        </preConditions>
+
+        <comment>Create pod_commissions table for partner commission tracking</comment>
+
+        <createTable tableName="pod_commissions">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (PCM prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="partner_id" type="VARCHAR(255)" remarks="Reference to pod_partners">
+                <constraints nullable="false"/>
+            </column>
+            <column name="period_start" type="DATE" remarks="Commission period start date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="period_end" type="DATE" remarks="Commission period end date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_orders" type="INTEGER" defaultValueNumeric="0" remarks="Number of attributed orders in period">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_order_amount" type="DECIMAL(15,2)" defaultValueNumeric="0.00" remarks="Total order value in period">
+                <constraints nullable="false"/>
+            </column>
+            <column name="attributed_amount" type="DECIMAL(15,2)" defaultValueNumeric="0.00" remarks="Total attributed amount (after weighting)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="commission_rate" type="DECIMAL(5,2)" remarks="Commission rate applied">
+                <constraints nullable="false"/>
+            </column>
+            <column name="commission_amount" type="DECIMAL(15,2)" remarks="Calculated commission amount">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(3)" defaultValue="VND" remarks="Currency code">
+                <constraints nullable="false"/>
+            </column>
+            <column name="adjustments" type="DECIMAL(15,2)" defaultValueNumeric="0.00" remarks="Manual adjustments (bonus/deduction)"/>
+            <column name="adjustment_reason" type="TEXT" remarks="Reason for adjustments"/>
+            <column name="final_amount" type="DECIMAL(15,2)" remarks="Final amount after adjustments">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(20)" defaultValue="PENDING" remarks="Commission status (PENDING, APPROVED, PAID, CANCELLED)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="approved_at" type="TIMESTAMP" remarks="Approval timestamp"/>
+            <column name="approved_by" type="VARCHAR(100)" remarks="User who approved"/>
+            <column name="paid_at" type="TIMESTAMP" remarks="Payment timestamp"/>
+            <column name="payment_reference" type="VARCHAR(100)" remarks="Payment reference number"/>
+            <column name="payment_method" type="VARCHAR(50)" remarks="Payment method (BANK_TRANSFER, etc.)"/>
+            <column name="bank_account" type="VARCHAR(50)" remarks="Partner bank account for payment"/>
+            <column name="bank_name" type="VARCHAR(100)" remarks="Bank name"/>
+            <column name="notes" type="TEXT" remarks="Internal notes"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Indexes -->
+        <createIndex tableName="pod_commissions" indexName="idx_commission_partner">
+            <column name="partner_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_commissions" indexName="idx_commission_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="pod_commissions" indexName="idx_commission_period">
+            <column name="period_start"/>
+            <column name="period_end"/>
+        </createIndex>
+
+        <createIndex tableName="pod_commissions" indexName="idx_commission_partner_period" unique="true">
+            <column name="partner_id"/>
+            <column name="period_start"/>
+            <column name="period_end"/>
+        </createIndex>
+
+        <!-- Foreign key to pod_partners -->
+        <addForeignKeyConstraint
+            baseTableName="pod_commissions"
+            baseColumnNames="partner_id"
+            constraintName="fk_commission_partner"
+            referencedTableName="pod_partners"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+    </changeSet>
+
+    <!-- Add commission_id foreign key to pod_attributions -->
+    <changeSet id="113-add-attribution-commission-fk" author="system">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="pod_attributions" columnName="commission_id"/>
+            <tableExists tableName="pod_commissions"/>
+        </preConditions>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_attributions"
+            baseColumnNames="commission_id"
+            constraintName="fk_attribution_commission"
+            referencedTableName="pod_commissions"
+            referencedColumnNames="id"
+            onDelete="SET NULL"
+            onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

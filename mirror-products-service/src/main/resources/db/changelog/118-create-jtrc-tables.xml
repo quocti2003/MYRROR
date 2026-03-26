@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ========================================== -->
+    <!-- JTRC (Jewelry Technical Report Card) System -->
+    <!-- Sprint 1: Foundation Entities              -->
+    <!-- ========================================== -->
+
+    <!-- Sequence for JTRC entities -->
+    <changeSet id="118-01-create-jtrc-sequences" author="backend-developer">
+        <createSequence sequenceName="jtrc_seq" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="jtrc_metal_component_seq" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="jtrc_stone_component_seq" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="jtrc_labor_component_seq" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="partner_capability_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <!-- Main JTRC Table -->
+    <changeSet id="118-02-create-jewelry-technical-reports-table" author="backend-developer">
+        <createTable tableName="jewelry_technical_reports">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <!-- Report Identification -->
+            <column name="report_number" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <!-- Foreign Keys -->
+            <column name="collection_plan_item_id" type="VARCHAR(36)"/>
+            <column name="product_id" type="VARCHAR(36)"/>
+
+            <!-- Status & Version -->
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INTEGER" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Admin Header -->
+            <column name="collection" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="season" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_id" type="VARCHAR(50)"/>
+            <column name="category" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="source" type="VARCHAR(100)"/>
+            <column name="entry_date" type="DATE"/>
+
+            <!-- Pricing Snapshot -->
+            <column name="gold_price_per_gram" type="DECIMAL(15,2)"/>
+            <column name="exchange_rate_usd" type="DECIMAL(15,2)"/>
+
+            <!-- Calculated Cost Totals -->
+            <column name="total_metal_cost" type="DECIMAL(15,2)"/>
+            <column name="total_stone_cost" type="DECIMAL(15,2)"/>
+            <column name="total_labor_cost" type="DECIMAL(15,2)"/>
+            <column name="total_cogs_vnd" type="DECIMAL(15,2)"/>
+            <column name="total_cogs_usd" type="DECIMAL(15,2)"/>
+
+            <!-- Production Metrics -->
+            <column name="production_difficulty" type="INTEGER"/>
+            <column name="estimated_lead_time_days" type="INTEGER"/>
+            <column name="casting_status" type="VARCHAR(50)"/>
+            <column name="production_notes" type="TEXT"/>
+
+            <!-- Visual Assets (S3 URLs) -->
+            <column name="render_3d_url" type="VARCHAR(500)"/>
+            <column name="stone_map_url" type="VARCHAR(500)"/>
+            <column name="technical_drawing_url" type="VARCHAR(500)"/>
+
+            <!-- Audit Fields -->
+            <column name="created_by" type="VARCHAR(100)"/>
+            <column name="updated_by" type="VARCHAR(100)"/>
+
+            <!-- Base Entity Fields -->
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Indexes -->
+        <createIndex tableName="jewelry_technical_reports" indexName="idx_jtrc_report_number">
+            <column name="report_number"/>
+        </createIndex>
+        <createIndex tableName="jewelry_technical_reports" indexName="idx_jtrc_collection">
+            <column name="collection"/>
+        </createIndex>
+        <createIndex tableName="jewelry_technical_reports" indexName="idx_jtrc_status">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="jewelry_technical_reports" indexName="idx_jtrc_category">
+            <column name="category"/>
+        </createIndex>
+        <createIndex tableName="jewelry_technical_reports" indexName="idx_jtrc_product_id">
+            <column name="product_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- JTRC Metal Component Table -->
+    <changeSet id="118-03-create-jtrc-metal-components-table" author="backend-developer">
+        <createTable tableName="jtrc_metal_components">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="jtrc_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Metal Specifications -->
+            <column name="metal_type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="metal_purity" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="weight_grams" type="DECIMAL(10,3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="loss_rate_percent" type="DECIMAL(5,2)"/>
+            <column name="price_per_gram" type="DECIMAL(15,2)"/>
+
+            <!-- Calculated Costs -->
+            <column name="metal_cost" type="DECIMAL(15,2)"/>
+            <column name="loss_cost" type="DECIMAL(15,2)"/>
+            <column name="total_cost" type="DECIMAL(15,2)"/>
+
+            <!-- Base Entity Fields -->
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Foreign Key -->
+        <addForeignKeyConstraint
+            baseTableName="jtrc_metal_components"
+            baseColumnNames="jtrc_id"
+            constraintName="fk_jtrc_metal_jtrc"
+            referencedTableName="jewelry_technical_reports"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <!-- Index -->
+        <createIndex tableName="jtrc_metal_components" indexName="idx_jtrc_metal_jtrc_id">
+            <column name="jtrc_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- JTRC Stone Component Table -->
+    <changeSet id="118-04-create-jtrc-stone-components-table" author="backend-developer">
+        <createTable tableName="jtrc_stone_components">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="jtrc_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Stone Role & Type -->
+            <column name="stone_role" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stone_type" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="stone_detail" type="VARCHAR(200)"/>
+            <column name="shape" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Color Classification -->
+            <column name="color_category" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="color_grade" type="VARCHAR(10)"/>
+            <column name="color_intensity" type="VARCHAR(50)"/>
+            <column name="color_name" type="VARCHAR(50)"/>
+
+            <!-- Stone Properties -->
+            <column name="clarity" type="VARCHAR(20)"/>
+            <column name="size_mm" type="VARCHAR(50)"/>
+            <column name="weight_carat" type="DECIMAL(10,3)"/>
+            <column name="quantity" type="INTEGER" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Pricing -->
+            <column name="unit_price" type="DECIMAL(15,2)"/>
+            <column name="total_price" type="DECIMAL(15,2)"/>
+
+            <column name="notes" type="TEXT"/>
+
+            <!-- Base Entity Fields -->
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Foreign Key -->
+        <addForeignKeyConstraint
+            baseTableName="jtrc_stone_components"
+            baseColumnNames="jtrc_id"
+            constraintName="fk_jtrc_stone_jtrc"
+            referencedTableName="jewelry_technical_reports"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <!-- Indexes -->
+        <createIndex tableName="jtrc_stone_components" indexName="idx_jtrc_stone_jtrc_id">
+            <column name="jtrc_id"/>
+        </createIndex>
+        <createIndex tableName="jtrc_stone_components" indexName="idx_jtrc_stone_role">
+            <column name="stone_role"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- JTRC Labor Component Table -->
+    <changeSet id="118-05-create-jtrc-labor-components-table" author="backend-developer">
+        <createTable tableName="jtrc_labor_components">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="jtrc_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="labor_type" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(500)"/>
+            <column name="cost" type="DECIMAL(15,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="notes" type="TEXT"/>
+
+            <!-- Base Entity Fields -->
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Foreign Key -->
+        <addForeignKeyConstraint
+            baseTableName="jtrc_labor_components"
+            baseColumnNames="jtrc_id"
+            constraintName="fk_jtrc_labor_jtrc"
+            referencedTableName="jewelry_technical_reports"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <!-- Indexes -->
+        <createIndex tableName="jtrc_labor_components" indexName="idx_jtrc_labor_jtrc_id">
+            <column name="jtrc_id"/>
+        </createIndex>
+        <createIndex tableName="jtrc_labor_components" indexName="idx_jtrc_labor_type">
+            <column name="labor_type"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Partner Capability Table -->
+    <changeSet id="118-06-create-partner-capabilities-table" author="backend-developer">
+        <createTable tableName="partner_capabilities">
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="vendor_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="capability_type" type="VARCHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lead_time_days" type="INTEGER"/>
+            <column name="cost_per_piece" type="DECIMAL(15,2)"/>
+            <column name="cost_per_gram" type="DECIMAL(15,2)"/>
+            <column name="quality_rating" type="INTEGER"/>
+            <column name="notes" type="TEXT"/>
+
+            <!-- Base Entity Fields -->
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Foreign Key -->
+        <addForeignKeyConstraint
+            baseTableName="partner_capabilities"
+            baseColumnNames="vendor_id"
+            constraintName="fk_partner_cap_vendor"
+            referencedTableName="vendors"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <!-- Unique Constraint: One capability type per vendor -->
+        <addUniqueConstraint
+            tableName="partner_capabilities"
+            columnNames="vendor_id, capability_type"
+            constraintName="uk_vendor_capability"/>
+
+        <!-- Indexes -->
+        <createIndex tableName="partner_capabilities" indexName="idx_partner_cap_vendor">
+            <column name="vendor_id"/>
+        </createIndex>
+        <createIndex tableName="partner_capabilities" indexName="idx_partner_cap_type">
+            <column name="capability_type"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Add check constraint for production_difficulty -->
+    <changeSet id="118-07-add-jtrc-check-constraints" author="backend-developer" dbms="postgresql">
+        <sql>
+            ALTER TABLE jewelry_technical_reports
+            ADD CONSTRAINT chk_jtrc_difficulty
+            CHECK (production_difficulty IS NULL OR (production_difficulty >= 1 AND production_difficulty &lt;= 5));
+
+            ALTER TABLE partner_capabilities
+            ADD CONSTRAINT chk_partner_quality_rating
+            CHECK (quality_rating IS NULL OR (quality_rating >= 1 AND quality_rating &lt;= 5));
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

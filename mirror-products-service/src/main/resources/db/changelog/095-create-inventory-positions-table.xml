@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="095-create-inventory-positions-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="inventory_positions"/>
+            </not>
+        </preConditions>
+
+        <comment>Create inventory positions table to track product locations in warehouse hierarchy</comment>
+
+        <createTable tableName="inventory_positions">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (INP prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="product_code" type="VARCHAR(30)" remarks="SKU code from mirror_products">
+                <constraints nullable="false"/>
+            </column>
+            <column name="warehouse_id" type="VARCHAR(255)" remarks="FK to locations (WAREHOUSE type) - required when qty > 0"/>
+            <column name="rack_id" type="VARCHAR(255)" remarks="FK to warehouse_racks - optional"/>
+            <column name="slot_id" type="VARCHAR(255)" remarks="FK to warehouse_slots - optional but recommended"/>
+            <column name="quantity" type="INTEGER" defaultValueNumeric="0" remarks="Quantity at this position">
+                <constraints nullable="false"/>
+            </column>
+            <column name="position_status" type="VARCHAR(30)" remarks="Status: PLACED, PENDING_PLACEMENT, UNASSIGNED, IN_TRANSIT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="assigned_at" type="TIMESTAMP" remarks="When item was assigned to this position"/>
+            <column name="assigned_by" type="VARCHAR(255)" remarks="User ID who assigned the position"/>
+            <column name="last_verified_at" type="TIMESTAMP" remarks="Last physical verification timestamp"/>
+            <column name="last_verified_by" type="VARCHAR(255)" remarks="User ID who last verified"/>
+            <column name="reference_type" type="VARCHAR(50)" remarks="Source: STOCK_INWARD, TRANSFER, ADJUSTMENT, RECONCILIATION"/>
+            <column name="reference_id" type="VARCHAR(255)" remarks="Reference document ID"/>
+            <column name="notes" type="TEXT" remarks="Additional notes"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Foreign keys -->
+        <addForeignKeyConstraint
+            baseTableName="inventory_positions"
+            baseColumnNames="warehouse_id"
+            constraintName="fk_positions_warehouse"
+            referencedTableName="locations"
+            referencedColumnNames="id"
+            onDelete="SET NULL"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="inventory_positions"
+            baseColumnNames="rack_id"
+            constraintName="fk_positions_rack"
+            referencedTableName="warehouse_racks"
+            referencedColumnNames="id"
+            onDelete="SET NULL"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="inventory_positions"
+            baseColumnNames="slot_id"
+            constraintName="fk_positions_slot"
+            referencedTableName="warehouse_slots"
+            referencedColumnNames="id"
+            onDelete="SET NULL"
+            onUpdate="CASCADE"/>
+
+        <!-- Unique constraint: one position record per product (for serialized jewelry) -->
+        <addUniqueConstraint
+            tableName="inventory_positions"
+            columnNames="product_code"
+            constraintName="uk_position_product_code"/>
+
+        <!-- Indexes -->
+        <createIndex tableName="inventory_positions" indexName="idx_positions_product_code">
+            <column name="product_code"/>
+        </createIndex>
+        <createIndex tableName="inventory_positions" indexName="idx_positions_warehouse_id">
+            <column name="warehouse_id"/>
+        </createIndex>
+        <createIndex tableName="inventory_positions" indexName="idx_positions_rack_id">
+            <column name="rack_id"/>
+        </createIndex>
+        <createIndex tableName="inventory_positions" indexName="idx_positions_slot_id">
+            <column name="slot_id"/>
+        </createIndex>
+        <createIndex tableName="inventory_positions" indexName="idx_positions_status">
+            <column name="position_status"/>
+        </createIndex>
+        <createIndex tableName="inventory_positions" indexName="idx_positions_is_active">
+            <column name="is_active"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

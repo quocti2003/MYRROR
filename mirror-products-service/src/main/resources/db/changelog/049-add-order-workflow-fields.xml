@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add order workflow status field -->
+    <changeSet id="049-1" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="orders"/>
+                <not>
+                    <columnExists tableName="orders" columnName="status"/>
+                </not>
+            </and>
+        </preConditions>
+
+        <addColumn tableName="orders">
+            <column name="status" type="VARCHAR(30)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <createIndex tableName="orders" indexName="idx_order_status">
+            <column name="status"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="orders" indexName="idx_order_status"/>
+            <dropColumn tableName="orders" columnName="status"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Add order workflow timestamps -->
+    <changeSet id="049-2" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="orders"/>
+        </preConditions>
+
+        <addColumn tableName="orders">
+            <column name="confirmed_at" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="production_started_at" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="shipped_at" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="completed_at" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="orders" columnName="confirmed_at"/>
+            <dropColumn tableName="orders" columnName="production_started_at"/>
+            <dropColumn tableName="orders" columnName="shipped_at"/>
+            <dropColumn tableName="orders" columnName="completed_at"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Add payment tracking fields -->
+    <changeSet id="049-3" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="orders"/>
+        </preConditions>
+
+        <addColumn tableName="orders">
+            <column name="final_payment_received" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="final_payment_date" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="orders" columnName="final_payment_received"/>
+            <dropColumn tableName="orders" columnName="final_payment_date"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Add MISA integration tracking fields -->
+    <changeSet id="049-4" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="orders"/>
+        </preConditions>
+
+        <addColumn tableName="orders">
+            <column name="misa_item_created" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="misa_sale_recorded" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="misa_item_id" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="misa_invoice_id" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <createIndex tableName="orders" indexName="idx_order_misa_item_created">
+            <column name="misa_item_created"/>
+        </createIndex>
+        <createIndex tableName="orders" indexName="idx_order_misa_sale_recorded">
+            <column name="misa_sale_recorded"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="orders" indexName="idx_order_misa_item_created"/>
+            <dropIndex tableName="orders" indexName="idx_order_misa_sale_recorded"/>
+            <dropColumn tableName="orders" columnName="misa_item_created"/>
+            <dropColumn tableName="orders" columnName="misa_sale_recorded"/>
+            <dropColumn tableName="orders" columnName="misa_item_id"/>
+            <dropColumn tableName="orders" columnName="misa_invoice_id"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Add invoice forwarding tracking fields -->
+    <changeSet id="049-5" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="orders"/>
+        </preConditions>
+
+        <addColumn tableName="orders">
+            <column name="invoice_forwarded" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="invoice_forwarded_date" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <createIndex tableName="orders" indexName="idx_order_invoice_forwarded">
+            <column name="invoice_forwarded"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="orders" indexName="idx_order_invoice_forwarded"/>
+            <dropColumn tableName="orders" columnName="invoice_forwarded"/>
+            <dropColumn tableName="orders" columnName="invoice_forwarded_date"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

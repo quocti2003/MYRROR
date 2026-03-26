@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="010-create-role-matrix-table" author="claude-code">
+        <createTable tableName="role_matrix">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_role_matrix"/>
+            </column>
+            <column name="role_name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="uk_role_matrix_role_name"/>
+            </column>
+            <column name="purpose" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ui_tabs" type="TEXT"/>
+            <column name="key_actions" type="TEXT"/>
+            <column name="last_updated" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="010-seed-role-matrix" author="claude-code">
+        <insert tableName="role_matrix">
+            <column name="role_name" value="CUSTOMER"/>
+            <column name="purpose" value="Shop, purchase, track"/>
+            <column name="ui_tabs" value="Storefront, Profile/Orders"/>
+            <column name="key_actions" value="Browse, AR try-on, checkout, view/track orders, request return, leave review"/>
+        </insert>
+        <insert tableName="role_matrix">
+            <column name="role_name" value="VENDOR"/>
+            <column name="purpose" value="Execute production orders"/>
+            <column name="ui_tabs" value="Vendor Dashboard"/>
+            <column name="key_actions" value="View assigned orders, acknowledge, update status/ETA, upload docs, mark shipped"/>
+        </insert>
+        <insert tableName="role_matrix">
+            <column name="role_name" value="CREATIVE_DESIGN"/>
+            <column name="purpose" value="Design → SKU → product readiness"/>
+            <column name="ui_tabs" value="Products, SKU Codes, Product Fulfillment"/>
+            <column name="key_actions" value="Create/edit designs, generate SKU, create drafts, upload assets/content, mark ready"/>
+        </insert>
+        <insert tableName="role_matrix">
+            <column name="role_name" value="MARKETING"/>
+            <column name="purpose" value="Content quality and go-live"/>
+            <column name="ui_tabs" value="Product Fulfillment, Categories, Collections"/>
+            <column name="key_actions" value="Edit copy/SEO, manage categories/collections, approve/schedule/publish, update media"/>
+        </insert>
+        <insert tableName="role_matrix">
+            <column name="role_name" value="PRODUCTION_OPS"/>
+            <column name="purpose" value="Plan/assign/track production &amp; QC"/>
+            <column name="ui_tabs" value="Order Workflow, Vendors, Vendor Matching/Optimization/Selection, Purchase Orders, Product Fulfillment"/>
+            <column name="key_actions" value="Confirm production start, assign vendors, track status, record QC, mark warehouse arrival, manage POs"/>
+        </insert>
+        <insert tableName="role_matrix">
+            <column name="role_name" value="SALES_CUSTOMER_OPS"/>
+            <column name="purpose" value="Order intake and customer handling"/>
+            <column name="ui_tabs" value="Orders, Order Workflow, Payment Schedules, Users (read), Tracking"/>
+            <column name="key_actions" value="Confirm orders, update status/notes, check/mark payments, resend confirmations, initiate returns/exchanges"/>
+        </insert>
+        <insert tableName="role_matrix">
+            <column name="role_name" value="FINANCE"/>
+            <column name="purpose" value="Payments, invoices, reconciliation"/>
+            <column name="ui_tabs" value="Payment Schedules, Orders (read), Currency Calculator/Costing, Invoice/MISA status (future)"/>
+            <column name="key_actions" value="Verify/mark payments, review invoices, trigger/monitor MISA invoice sync, check SKU/item sync flags"/>
+        </insert>
+        <insert tableName="role_matrix">
+            <column name="role_name" value="LEGAL"/>
+            <column name="purpose" value="Compliance/contracts oversight"/>
+            <column name="ui_tabs" value="Read-only legal/compliance views (future)"/>
+            <column name="key_actions" value="Review contracts/compliance artifacts (read-only until UI exists)"/>
+        </insert>
+        <insert tableName="role_matrix">
+            <column name="role_name" value="IT_ADMIN"/>
+            <column name="purpose" value="Platform administration"/>
+            <column name="ui_tabs" value="All admin tabs; Users/Roles management"/>
+            <column name="key_actions" value="Manage users/roles, configure integrations/CORS, troubleshoot jobs, view audit logs"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

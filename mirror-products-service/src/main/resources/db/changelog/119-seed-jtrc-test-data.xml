@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="119-seed-jtrc-test-data" author="system">
+        <comment>
+            Sprint 1-3 Test Data Seed for Production Partner Collaboration Workflow
+
+            This changeset creates comprehensive test data for:
+            - Vendors with production capabilities
+            - JTRCs in various statuses (DRAFT, APPROVED, ARCHIVED)
+            - Workflow templates for different jewelry categories
+            - Production plans linked to workflow templates
+
+            Note: This is TEST DATA only. Load manually or via test profile.
+            Do NOT include in master changelog for production deployments.
+        </comment>
+
+        <!-- ============================================================ -->
+        <!-- VENDORS WITH PRODUCTION CAPABILITIES                          -->
+        <!-- ============================================================ -->
+
+        <comment>Vendor 1: Diamond Excellence Ltd - Specialized in stone sourcing and cutting</comment>
+        <insert tableName="vendors">
+            <column name="id" value="11111111-1111-1111-1111-111111111111"/>
+            <column name="name" value="Diamond Excellence Ltd"/>
+            <column name="contact_person" value="David Chen"/>
+            <column name="email" value="david.chen@diamondexcellence.com"/>
+            <column name="phone" value="+84-28-3829-1111"/>
+            <column name="address" value="Diamond District, Ho Chi Minh City, Vietnam"/>
+            <column name="business_registration" value="BRN-DE-2020-001"/>
+            <column name="tax_code" value="TAX-DE-987654321"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-01-15T08:00:00"/>
+            <column name="updated_at" valueDate="2026-01-15T08:00:00"/>
+        </insert>
+
+        <insert tableName="vendor_capabilities">
+            <column name="id" value="11111111-1111-2222-1111-111111111111"/>
+            <column name="vendor_id" value="11111111-1111-1111-1111-111111111111"/>
+            <column name="capability_type" value="STONE_SOURCING"/>
+            <column name="lead_time_days" valueNumeric="14"/>
+            <column name="cost_per_piece" valueNumeric="500000"/>
+            <column name="quality_rating" valueNumeric="4.8"/>
+            <column name="description" value="Premium diamond and gemstone sourcing from certified suppliers"/>
+        </insert>
+
+        <insert tableName="vendor_capabilities">
+            <column name="id" value="11111111-1111-2222-2222-111111111111"/>
+            <column name="vendor_id" value="11111111-1111-1111-1111-111111111111"/>
+            <column name="capability_type" value="STONE_CUTTING"/>
+            <column name="lead_time_days" valueNumeric="10"/>
+            <column name="cost_per_piece" valueNumeric="800000"/>
+            <column name="quality_rating" valueNumeric="4.9"/>
+            <column name="description" value="Expert stone cutting and polishing with precision equipment"/>
+        </insert>
+
+        <comment>Vendor 2: GoldWorks Manufacturing - Metal casting and finishing specialist</comment>
+        <insert tableName="vendors">
+            <column name="id" value="22222222-2222-2222-2222-222222222222"/>
+            <column name="name" value="GoldWorks Manufacturing"/>
+            <column name="contact_person" value="Maria Nguyen"/>
+            <column name="email" value="maria.nguyen@goldworks.vn"/>
+            <column name="phone" value="+84-28-3829-2222"/>
+            <column name="address" value="Industrial Zone 3, Binh Duong Province, Vietnam"/>
+            <column name="business_registration" value="BRN-GW-2019-045"/>
+            <column name="tax_code" value="TAX-GW-876543210"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-01-16T09:00:00"/>
+            <column name="updated_at" valueDate="2026-01-16T09:00:00"/>
+        </insert>
+
+        <insert tableName="vendor_capabilities">
+            <column name="id" value="22222222-2222-3333-1111-222222222222"/>
+            <column name="vendor_id" value="22222222-2222-2222-2222-222222222222"/>
+            <column name="capability_type" value="METAL_CASTING"/>
+            <column name="lead_time_days" valueNumeric="7"/>
+            <column name="cost_per_piece" valueNumeric="1200000"/>
+            <column name="quality_rating" valueNumeric="4.7"/>
+            <column name="description" value="High-precision metal casting for gold, silver, and platinum"/>
+        </insert>
+
+        <insert tableName="vendor_capabilities">
+            <column name="id" value="22222222-2222-3333-2222-222222222222"/>
+            <column name="vendor_id" value="22222222-2222-2222-2222-222222222222"/>
+            <column name="capability_type" value="METAL_FINISHING"/>
+            <column name="lead_time_days" valueNumeric="5"/>
+            <column name="cost_per_piece" valueNumeric="600000"/>
+            <column name="quality_rating" valueNumeric="4.6"/>
+            <column name="description" value="Professional polishing, plating, and surface finishing"/>
+        </insert>
+
+        <comment>Vendor 3: Premium Assembly Co - Final assembly and setting specialist</comment>
+        <insert tableName="vendors">
+            <column name="id" value="33333333-3333-3333-3333-333333333333"/>
+            <column name="name" value="Premium Assembly Co"/>
+            <column name="contact_person" value="James Park"/>
+            <column name="email" value="james.park@premiumassembly.com"/>
+            <column name="phone" value="+84-28-3829-3333"/>
+            <column name="address" value="Jewelry Quarter, District 1, Ho Chi Minh City, Vietnam"/>
+            <column name="business_registration" value="BRN-PA-2021-089"/>
+            <column name="tax_code" value="TAX-PA-765432109"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-01-17T10:00:00"/>
+            <column name="updated_at" valueDate="2026-01-17T10:00:00"/>
+        </insert>
+
+        <insert tableName="vendor_capabilities">
+            <column name="id" value="33333333-3333-4444-1111-333333333333"/>
+            <column name="vendor_id" value="33333333-3333-3333-3333-333333333333"/>
+            <column name="capability_type" value="SETTING"/>
+            <column name="lead_time_days" valueNumeric="6"/>
+            <column name="cost_per_piece" valueNumeric="900000"/>
+            <column name="quality_rating" valueNumeric="4.9"/>
+            <column name="description" value="Expert stone setting with prong, bezel, and pave techniques"/>
+        </insert>
+
+        <insert tableName="vendor_capabilities">
+            <column name="id" value="33333333-3333-4444-2222-333333333333"/>
+            <column name="vendor_id" value="33333333-3333-3333-3333-333333333333"/>
+            <column name="capability_type" value="ASSEMBLY"/>
+            <column name="lead_time_days" valueNumeric="4"/>
+            <column name="cost_per_piece" valueNumeric="700000"/>
+            <column name="quality_rating" valueNumeric="4.8"/>
+            <column name="description" value="Final assembly, quality control, and finishing touches"/>
+        </insert>
+
+        <!-- ============================================================ -->
+        <!-- JTRCs (JEWELRY TECHNICAL REQUIREMENT CARDS)                   -->
+        <!-- ============================================================ -->
+
+        <comment>JTRC 1: DRAFT Ring with full component specifications</comment>
+        <insert tableName="jtrcs">
+            <column name="id" value="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"/>
+            <column name="jtrc_code" value="JTRC-2026-001"/>
+            <column name="name" value="Classic Solitaire Engagement Ring"/>
+            <column name="category" value="RING"/>
+            <column name="status" value="DRAFT"/>
+            <column name="design_description" value="Elegant solitaire ring with 1.5ct round brilliant diamond, platinum band with hidden halo detail"/>
+            <column name="metal_type" value="PLATINUM"/>
+            <column name="metal_weight" valueNumeric="5.5"/>
+            <column name="metal_purity" value="PT950"/>
+            <column name="metal_cost" valueNumeric="8500000"/>
+            <column name="stone_type_main" value="DIAMOND"/>
+            <column name="stone_weight_main" valueNumeric="1.5"/>
+            <column name="stone_cost_main" valueNumeric="85000000"/>
+            <column name="stone_type_side" value="DIAMOND"/>
+            <column name="stone_weight_side" valueNumeric="0.3"/>
+            <column name="stone_cost_side" valueNumeric="4500000"/>
+            <column name="labor_cost_casting" valueNumeric="2000000"/>
+            <column name="labor_cost_setting" valueNumeric="3500000"/>
+            <column name="total_cost" valueNumeric="103500000"/>
+            <column name="ring_size" value="6"/>
+            <column name="created_at" valueDate="2026-01-20T14:30:00"/>
+            <column name="updated_at" valueDate="2026-01-20T14:30:00"/>
+        </insert>
+
+        <comment>JTRC 2: APPROVED Necklace with full component specifications</comment>
+        <insert tableName="jtrcs">
+            <column name="id" value="bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"/>
+            <column name="jtrc_code" value="JTRC-2026-002"/>
+            <column name="name" value="Emerald Pendant Necklace"/>
+            <column name="category" value="NECKLACE"/>
+            <column name="status" value="APPROVED"/>
+            <column name="design_description" value="18K yellow gold necklace with emerald-cut emerald pendant surrounded by diamond halo"/>
+            <column name="metal_type" value="GOLD"/>
+            <column name="metal_weight" valueNumeric="12.8"/>
+            <column name="metal_purity" value="18K"/>
+            <column name="metal_cost" valueNumeric="9600000"/>
+            <column name="stone_type_main" value="EMERALD"/>
+            <column name="stone_weight_main" valueNumeric="2.5"/>
+            <column name="stone_cost_main" valueNumeric="45000000"/>
+            <column name="stone_type_side" value="DIAMOND"/>
+            <column name="stone_weight_side" valueNumeric="0.8"/>
+            <column name="stone_cost_side" valueNumeric="12000000"/>
+            <column name="labor_cost_casting" valueNumeric="2500000"/>
+            <column name="labor_cost_setting" valueNumeric="4000000"/>
+            <column name="total_cost" valueNumeric="73100000"/>
+            <column name="necklace_length" valueNumeric="45.0"/>
+            <column name="created_at" valueDate="2026-01-18T11:15:00"/>
+            <column name="updated_at" valueDate="2026-01-22T16:45:00"/>
+            <column name="approved_at" valueDate="2026-01-22T16:45:00"/>
+        </insert>
+
+        <comment>JTRC 3: ARCHIVED Earring with minimal components (testing historical data)</comment>
+        <insert tableName="jtrcs">
+            <column name="id" value="cccccccc-cccc-cccc-cccc-cccccccccccc"/>
+            <column name="jtrc_code" value="JTRC-2026-003"/>
+            <column name="name" value="Simple Gold Stud Earrings"/>
+            <column name="category" value="EARRING"/>
+            <column name="status" value="ARCHIVED"/>
+            <column name="design_description" value="Classic 14K white gold ball stud earrings, 6mm diameter"/>
+            <column name="metal_type" value="GOLD"/>
+            <column name="metal_weight" valueNumeric="2.4"/>
+            <column name="metal_purity" value="14K"/>
+            <column name="metal_cost" valueNumeric="1440000"/>
+            <column name="labor_cost_casting" valueNumeric="800000"/>
+            <column name="total_cost" valueNumeric="2240000"/>
+            <column name="earring_style" value="STUD"/>
+            <column name="created_at" valueDate="2025-12-10T09:00:00"/>
+            <column name="updated_at" valueDate="2026-01-05T10:30:00"/>
+            <column name="approved_at" valueDate="2025-12-15T14:00:00"/>
+        </insert>
+
+        <comment>JTRC 4: DRAFT Ring with minimal fields (testing sparse data scenarios)</comment>
+        <insert tableName="jtrcs">
+            <column name="id" value="dddddddd-dddd-dddd-dddd-dddddddddddd"/>
+            <column name="jtrc_code" value="JTRC-2026-004"/>
+            <column name="name" value="Custom Band Ring - Design In Progress"/>
+            <column name="category" value="RING"/>
+            <column name="status" value="DRAFT"/>
+            <column name="design_description" value="Custom wedding band design - specifications to be finalized"/>
+            <column name="metal_type" value="GOLD"/>
+            <column name="ring_size" value="7"/>
+            <column name="created_at" valueDate="2026-01-25T08:00:00"/>
+            <column name="updated_at" valueDate="2026-01-25T08:00:00"/>
+        </insert>
+
+        <comment>JTRC 5: DRAFT Bracelet with multiple stone types (testing complex stone specifications)</comment>
+        <insert tableName="jtrcs">
+            <column name="id" value="eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"/>
+            <column name="jtrc_code" value="JTRC-2026-005"/>
+            <column name="name" value="Luxury Tennis Bracelet"/>
+            <column name="category" value="BRACELET"/>
+            <column name="status" value="DRAFT"/>
+            <column name="design_description" value="18K white gold tennis bracelet with graduated diamond sizes and sapphire accents"/>
+            <column name="metal_type" value="GOLD"/>
+            <column name="metal_weight" valueNumeric="18.5"/>
+            <column name="metal_purity" value="18K"/>
+            <column name="metal_cost" valueNumeric="13875000"/>
+            <column name="stone_type_main" value="DIAMOND"/>
+            <column name="stone_weight_main" valueNumeric="5.0"/>
+            <column name="stone_cost_main" valueNumeric="125000000"/>
+            <column name="stone_type_main_2" value="DIAMOND"/>
+            <column name="stone_weight_main_2" valueNumeric="3.0"/>
+            <column name="stone_cost_main_2" valueNumeric="60000000"/>
+            <column name="stone_type_side" value="SAPPHIRE"/>
+            <column name="stone_weight_side" valueNumeric="1.2"/>
+            <column name="stone_cost_side" valueNumeric="18000000"/>
+            <column name="stone_type_melee" value="DIAMOND"/>
+            <column name="stone_weight_melee" valueNumeric="0.5"/>
+            <column name="stone_cost_melee" valueNumeric="5000000"/>
+            <column name="labor_cost_casting" valueNumeric="3000000"/>
+            <column name="labor_cost_setting" valueNumeric="8000000"/>
+            <column name="total_cost" valueNumeric="232875000"/>
+            <column name="bracelet_length" valueNumeric="18.0"/>
+            <column name="created_at" valueDate="2026-01-28T15:20:00"/>
+            <column name="updated_at" valueDate="2026-01-28T15:20:00"/>
+        </insert>
+
+        <!-- ============================================================ -->
+        <!-- WORKFLOW TEMPLATES                                            -->
+        <!-- ============================================================ -->
+
+        <comment>Workflow Template 1: Standard Ring Production (5 stages, ACTIVE, default for RING)</comment>
+        <insert tableName="workflow_templates">
+            <column name="id" value="f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1"/>
+            <column name="name" value="Standard Ring Production"/>
+            <column name="description" value="Complete production workflow for rings from stone sourcing to final assembly"/>
+            <column name="category" value="RING"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="is_default" valueBoolean="true"/>
+            <column name="estimated_duration_days" valueNumeric="46"/>
+            <column name="created_at" valueDate="2026-01-10T10:00:00"/>
+            <column name="updated_at" valueDate="2026-01-10T10:00:00"/>
+        </insert>
+
+        <insert tableName="workflow_stages">
+            <column name="id" value="f1f1f1f1-f1f1-1111-1111-f1f1f1f1f1f1"/>
+            <column name="workflow_template_id" value="f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1"/>
+            <column name="stage_order" valueNumeric="1"/>
+            <column name="stage_name" value="Stone Sourcing"/>
+            <column name="stage_type" value="STONE_SOURCING"/>
+            <column name="description" value="Source and verify main and side stones from certified suppliers"/>
+            <column name="estimated_duration_days" valueNumeric="14"/>
+            <column name="is_required" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="workflow_stages">
+            <column name="id" value="f1f1f1f1-f1f1-2222-2222-f1f1f1f1f1f1"/>
+            <column name="workflow_template_id" value="f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1"/>
+            <column name="stage_order" valueNumeric="2"/>
+            <column name="stage_name" value="Stone Cutting"/>
+            <column name="stage_type" value="STONE_CUTTING"/>
+            <column name="description" value="Cut and polish stones to exact specifications"/>
+            <column name="estimated_duration_days" valueNumeric="10"/>
+            <column name="is_required" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="workflow_stages">
+            <column name="id" value="f1f1f1f1-f1f1-3333-3333-f1f1f1f1f1f1"/>
+            <column name="workflow_template_id" value="f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1"/>
+            <column name="stage_order" valueNumeric="3"/>
+            <column name="stage_name" value="Metal Casting"/>
+            <column name="stage_type" value="METAL_CASTING"/>
+            <column name="description" value="Cast ring band according to design specifications"/>
+            <column name="estimated_duration_days" valueNumeric="7"/>
+            <column name="is_required" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="workflow_stages">
+            <column name="id" value="f1f1f1f1-f1f1-4444-4444-f1f1f1f1f1f1"/>
+            <column name="workflow_template_id" value="f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1"/>
+            <column name="stage_order" valueNumeric="4"/>
+            <column name="stage_name" value="Stone Setting"/>
+            <column name="stage_type" value="SETTING"/>
+            <column name="description" value="Set all stones securely into the ring using appropriate techniques"/>
+            <column name="estimated_duration_days" valueNumeric="6"/>
+            <column name="is_required" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="workflow_stages">
+            <column name="id" value="f1f1f1f1-f1f1-5555-5555-f1f1f1f1f1f1"/>
+            <column name="workflow_template_id" value="f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1"/>
+            <column name="stage_order" valueNumeric="5"/>
+            <column name="stage_name" value="Final Assembly"/>
+            <column name="stage_type" value="ASSEMBLY"/>
+            <column name="description" value="Final polishing, quality control, and packaging"/>
+            <column name="estimated_duration_days" valueNumeric="4"/>
+            <column name="is_required" valueBoolean="true"/>
+        </insert>
+
+        <comment>Workflow Template 2: Simple Earring Production (3 stages, DRAFT status)</comment>
+        <insert tableName="workflow_templates">
+            <column name="id" value="f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f2f2"/>
+            <column name="name" value="Simple Earring Production"/>
+            <column name="description" value="Streamlined workflow for basic earring production without stone work"/>
+            <column name="category" value="EARRING"/>
+            <column name="status" value="DRAFT"/>
+            <column name="is_default" valueBoolean="false"/>
+            <column name="estimated_duration_days" valueNumeric="16"/>
+            <column name="created_at" valueDate="2026-01-15T14:00:00"/>
+            <column name="updated_at" valueDate="2026-01-15T14:00:00"/>
+        </insert>
+
+        <insert tableName="workflow_stages">
+            <column name="id" value="f2f2f2f2-f2f2-1111-1111-f2f2f2f2f2f2"/>
+            <column name="workflow_template_id" value="f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f2f2"/>
+            <column name="stage_order" valueNumeric="1"/>
+            <column name="stage_name" value="Metal Casting"/>
+            <column name="stage_type" value="METAL_CASTING"/>
+            <column name="description" value="Cast earring components according to design"/>
+            <column name="estimated_duration_days" valueNumeric="7"/>
+            <column name="is_required" valueBoolean="true"/>
+        </insert>
+
+        <insert tableName="workflow_stages">
+            <column name="id" value="f2f2f2f2-f2f2-2222-2222-f2f2f2f2f2f2"/>
+            <column name="workflow_template_id" value="f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f2f2"/>
+            <column name="stage_order" valueNumeric="2"/>
+            <column name="stage_name" value="Setting"/>
+            <column name="stage_type" value="SETTING"/>
+            <column name="description" value="Optional stone setting if required"/>
+            <column name="estimated_duration_days" valueNumeric="5"/>
+            <column name="is_required" valueBoolean="false"/>
+        </insert>
+
+        <insert tableName="workflow_stages">
+            <column name="id" value="f2f2f2f2-f2f2-3333-3333-f2f2f2f2f2f2"/>
+            <column name="workflow_template_id" value="f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f2f2"/>
+            <column name="stage_order" valueNumeric="3"/>
+            <column name="stage_name" value="Assembly"/>
+            <column name="stage_type" value="ASSEMBLY"/>
+            <column name="description" value="Final assembly, polishing, and quality check"/>
+            <column name="estimated_duration_days" valueNumeric="4"/>
+            <column name="is_required" valueBoolean="true"/>
+        </insert>
+
+        <!-- ============================================================ -->
+        <!-- PRODUCTION PLAN                                               -->
+        <!-- ============================================================ -->
+
+        <comment>Production Plan 1: Linked to Standard Ring Production template</comment>
+        <insert tableName="production_plans">
+            <column name="id" value="99999999-9999-9999-9999-999999999999"/>
+            <column name="jtrc_id" value="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"/>
+            <column name="workflow_template_id" value="f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1"/>
+            <column name="plan_name" value="Classic Solitaire Ring Production Plan"/>
+            <column name="status" value="DRAFT"/>
+            <column name="target_start_date" valueDate="2026-02-10"/>
+            <column name="target_completion_date" valueDate="2026-03-28"/>
+            <column name="notes" value="High priority order for engagement season. Ensure platinum quality is verified before casting."/>
+            <column name="created_at" valueDate="2026-01-29T09:00:00"/>
+            <column name="updated_at" valueDate="2026-01-29T09:00:00"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="production_plans">
+                <where>id = '99999999-9999-9999-9999-999999999999'</where>
+            </delete>
+
+            <delete tableName="workflow_stages">
+                <where>workflow_template_id IN ('f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f2f2')</where>
+            </delete>
+
+            <delete tableName="workflow_templates">
+                <where>id IN ('f1f1f1f1-f1f1-f1f1-f1f1-f1f1f1f1f1f1', 'f2f2f2f2-f2f2-f2f2-f2f2-f2f2f2f2f2f2')</where>
+            </delete>
+
+            <delete tableName="jtrcs">
+                <where>id IN ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'cccccccc-cccc-cccc-cccc-cccccccccccc', 'dddddddd-dddd-dddd-dddd-dddddddddddd', 'eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee')</where>
+            </delete>
+
+            <delete tableName="vendor_capabilities">
+                <where>vendor_id IN ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333333')</where>
+            </delete>
+
+            <delete tableName="vendors">
+                <where>id IN ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', '33333333-3333-3333-3333-333333333333')</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

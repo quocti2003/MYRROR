@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="079-create-certificates-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="certificates"/>
+            </not>
+        </preConditions>
+
+        <comment>Create certificates table for diamond certification management</comment>
+
+        <createTable tableName="certificates">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (CER prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="certificate_code" type="VARCHAR(255)" remarks="Certificate identification code">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="certificate_type" type="VARCHAR(50)" remarks="Type of certificate (IGI, etc.)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="certificate_url" type="VARCHAR(500)" remarks="URL to certificate document"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Add indexes for common queries -->
+        <createIndex tableName="certificates" indexName="idx_certificate_code">
+            <column name="certificate_code"/>
+        </createIndex>
+
+        <createIndex tableName="certificates" indexName="idx_certificate_type">
+            <column name="certificate_type"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="079-create-certificate-sequence" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="certificate_seq"/>
+            </not>
+        </preConditions>
+
+        <comment>Create sequence for certificate ID generation</comment>
+
+        <createSequence sequenceName="certificate_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+</databaseChangeLog>

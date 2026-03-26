@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Thank You for Your Submission – Reflections of Tomorrow</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            line-height: 1.8;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #fafafa;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        h2 {
+            color: #1a1a1a;
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .content {
+            font-size: 15px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        ul {
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 12px;
+            color: #666;
+        }
+        .signature {
+            margin-top: 40px;
+            font-style: italic;
+            color: #888;
+        }
+        .image-section {
+            text-align: left;
+            margin: 30px 0;
+        }
+        .image-section img {
+            max-width: 1000px;
+            width: 100%;
+            height: auto;
+        }
+        .tagline {
+            text-align: center;
+            font-style: italic;
+            color: #999;
+            margin: 30px 0;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #999;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Thank You for Your Submission <br><em>"Reflections of Tomorrow – Be a Creative Partner with Mirror"</em></h2>
+
+        <p class="greeting">Dear <span th:text="${name}">Name</span>,</p>
+
+        <p class="content">
+            Thank you for submitting your portfolio. We truly appreciate the time and creativity you've shared with us.
+        </p>
+
+        <p class="content">
+            Your work is now part of our collaborator archive, which the Mirror Curatorial Team reviews when exploring future campaigns, design initiatives, and partnership opportunities. While not every submission can be activated immediately, selected collaborators will be contacted for upcoming projects, such as:
+        </p>
+
+        <ul>
+            <li>Showcasing in the Mirror Virtual Showroom</li>
+            <li>Being featured in the Mirror Journal &amp; Campaign 2026</li>
+            <li>Exploring exclusive design collaborations with retail partners</li>
+            <li>Opportunities for exposure across our media and global design network</li>
+        </ul>
+
+        <p class="content">
+            We'll be in touch with shortlisted collaborators as new opportunities unfold.
+        </p>
+
+        <p class="content">
+            Once again, thank you for joining us in reimagining the future of luxury jewelry. We look forward to the possibility of creating something extraordinary together.
+        </p>
+
+        <div class="image-section">
+            <img src="https://mirror-storage.s3.ap-southeast-1.amazonaws.com/public/9ca65bc1-3091-4d76-a7a3-b36e68d1414e_THANK_U_FOR_CREATIVE_PARTNER.png" alt="Thank You for Creative Partnership" />
+        </div>
+
+        <div class="tagline">
+            "Your Design. Our Future Diamond. Together, we awaken luxury."
+        </div>
+
+        <div class="signature">
+            <p>Warm regards,<br/>
+            The Mirror Team</p>
+        </div>
+    </div>
+</body>
+</html>

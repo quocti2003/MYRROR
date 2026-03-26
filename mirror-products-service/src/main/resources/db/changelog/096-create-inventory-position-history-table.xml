@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="096-create-inventory-position-history-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="inventory_position_history"/>
+            </not>
+        </preConditions>
+
+        <comment>Create inventory position history table to track all position changes</comment>
+
+        <createTable tableName="inventory_position_history">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (IPH prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="position_id" type="VARCHAR(255)" remarks="FK to inventory_positions">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_code" type="VARCHAR(30)" remarks="SKU code (denormalized for query performance)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="action_type" type="VARCHAR(30)" remarks="Action: PLACED, MOVED, REMOVED, STATUS_CHANGED, VERIFIED">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Previous location -->
+            <column name="from_warehouse_id" type="VARCHAR(255)" remarks="Previous warehouse"/>
+            <column name="from_warehouse_name" type="VARCHAR(255)" remarks="Previous warehouse name (denormalized)"/>
+            <column name="from_rack_id" type="VARCHAR(255)" remarks="Previous rack"/>
+            <column name="from_rack_code" type="VARCHAR(50)" remarks="Previous rack code (denormalized)"/>
+            <column name="from_slot_id" type="VARCHAR(255)" remarks="Previous slot"/>
+            <column name="from_slot_code" type="VARCHAR(50)" remarks="Previous slot code (denormalized)"/>
+
+            <!-- New location -->
+            <column name="to_warehouse_id" type="VARCHAR(255)" remarks="New warehouse"/>
+            <column name="to_warehouse_name" type="VARCHAR(255)" remarks="New warehouse name (denormalized)"/>
+            <column name="to_rack_id" type="VARCHAR(255)" remarks="New rack"/>
+            <column name="to_rack_code" type="VARCHAR(50)" remarks="New rack code (denormalized)"/>
+            <column name="to_slot_id" type="VARCHAR(255)" remarks="New slot"/>
+            <column name="to_slot_code" type="VARCHAR(50)" remarks="New slot code (denormalized)"/>
+
+            <!-- Status change -->
+            <column name="from_status" type="VARCHAR(30)" remarks="Previous position status"/>
+            <column name="to_status" type="VARCHAR(30)" remarks="New position status"/>
+
+            <!-- Quantity change -->
+            <column name="quantity_before" type="INTEGER" remarks="Quantity before change"/>
+            <column name="quantity_after" type="INTEGER" remarks="Quantity after change"/>
+
+            <!-- Reference -->
+            <column name="reference_type" type="VARCHAR(50)" remarks="Source: STOCK_INWARD, TRANSFER, ADJUSTMENT, RECONCILIATION, MANUAL"/>
+            <column name="reference_id" type="VARCHAR(255)" remarks="Reference document ID"/>
+
+            <!-- Audit -->
+            <column name="performed_by" type="VARCHAR(255)" remarks="User ID who performed the action">
+                <constraints nullable="false"/>
+            </column>
+            <column name="performed_by_name" type="VARCHAR(255)" remarks="User name (denormalized)"/>
+            <column name="performed_at" type="TIMESTAMP" remarks="When the action was performed">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reason" type="TEXT" remarks="Reason for the change"/>
+            <column name="notes" type="TEXT" remarks="Additional notes"/>
+
+            <column name="created_at" type="TIMESTAMP" remarks="Record creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Foreign key to inventory_positions -->
+        <addForeignKeyConstraint
+            baseTableName="inventory_position_history"
+            baseColumnNames="position_id"
+            constraintName="fk_position_history_position"
+            referencedTableName="inventory_positions"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+
+        <!-- Indexes for common queries -->
+        <createIndex tableName="inventory_position_history" indexName="idx_pos_history_position_id">
+            <column name="position_id"/>
+        </createIndex>
+        <createIndex tableName="inventory_position_history" indexName="idx_pos_history_product_code">
+            <column name="product_code"/>
+        </createIndex>
+        <createIndex tableName="inventory_position_history" indexName="idx_pos_history_action_type">
+            <column name="action_type"/>
+        </createIndex>
+        <createIndex tableName="inventory_position_history" indexName="idx_pos_history_performed_at">
+            <column name="performed_at"/>
+        </createIndex>
+        <createIndex tableName="inventory_position_history" indexName="idx_pos_history_performed_by">
+            <column name="performed_by"/>
+        </createIndex>
+        <createIndex tableName="inventory_position_history" indexName="idx_pos_history_to_warehouse">
+            <column name="to_warehouse_id"/>
+        </createIndex>
+        <createIndex tableName="inventory_position_history" indexName="idx_pos_history_reference">
+            <column name="reference_type"/>
+            <column name="reference_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

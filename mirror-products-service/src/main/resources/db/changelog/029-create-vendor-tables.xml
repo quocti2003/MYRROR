@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="029-1" author="claude">
+        <comment>Create vendors table</comment>
+        <createTable tableName="vendors">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country_of_origin" type="VARCHAR(100)"/>
+            <column name="payment_terms" type="VARCHAR(200)"/>
+            <column name="commission_term" type="TEXT"/>
+            <column name="import_tax_percent" type="DECIMAL(5,2)"/>
+            <column name="vat_tax_percent" type="DECIMAL(5,2)"/>
+            <column name="tax_customs_percent" type="DECIMAL(5,2)"/>
+            <column name="shipping_fee" type="DECIMAL(10,2)"/>
+            <column name="avg_labor_cost_per_piece" type="DECIMAL(10,2)"/>
+            <column name="avg_product_cost" type="DECIMAL(10,2)"/>
+            <column name="last_quote_date" type="TIMESTAMP"/>
+            <column name="production_lead_time_days" type="INTEGER"/>
+            <column name="vendor_type" type="VARCHAR(50)"/>
+            <column name="labor_cost_factors" type="TEXT"/>
+            <column name="contact_person" type="VARCHAR(200)"/>
+            <column name="contact_email" type="VARCHAR(200)"/>
+            <column name="contact_phone" type="VARCHAR(50)"/>
+            <column name="address" type="TEXT"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="029-2" author="claude">
+        <comment>Create vendor_products table</comment>
+        <createTable tableName="vendor_products">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="vendor_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="commission_term" type="TEXT"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="029-3" author="claude">
+        <comment>Add foreign key constraints for vendor_products</comment>
+        <addForeignKeyConstraint
+            constraintName="fk_vendor_products_vendor"
+            baseTableName="vendor_products"
+            baseColumnNames="vendor_id"
+            referencedTableName="vendors"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+            
+        <addForeignKeyConstraint
+            constraintName="fk_vendor_products_product"
+            baseTableName="vendor_products"
+            baseColumnNames="product_id"
+            referencedTableName="products"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+    </changeSet>
+
+    <changeSet id="029-4" author="claude">
+        <comment>Create indexes for better performance</comment>
+        <createIndex tableName="vendors" indexName="idx_vendors_code">
+            <column name="code"/>
+        </createIndex>
+        <createIndex tableName="vendors" indexName="idx_vendors_country">
+            <column name="country"/>
+        </createIndex>
+        <createIndex tableName="vendors" indexName="idx_vendors_vendor_type">
+            <column name="vendor_type"/>
+        </createIndex>
+        <createIndex tableName="vendors" indexName="idx_vendors_active_deleted">
+            <column name="is_active"/>
+            <column name="is_deleted"/>
+        </createIndex>
+        <createIndex tableName="vendor_products" indexName="idx_vendor_products_vendor_id">
+            <column name="vendor_id"/>
+        </createIndex>
+        <createIndex tableName="vendor_products" indexName="idx_vendor_products_product_id">
+            <column name="product_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

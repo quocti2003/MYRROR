@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+<!--    <changeSet id="005-drop-old-id-tables" author="system">-->
+<!--        <comment>Drop old ID generator tables as they are replaced by PostgreSQL sequences</comment>-->
+<!--        -->
+<!--        &lt;!&ndash; Drop old id_sequences table &ndash;&gt;-->
+<!--        <dropTable tableName="id_sequences" cascadeConstraints="true"/>-->
+<!--        -->
+<!--    </changeSet>-->
+
+</databaseChangeLog>

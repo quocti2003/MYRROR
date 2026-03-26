@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="065-1" author="mirror">
+        <comment>Create lab_grown_diamonds table for diamond inventory with Mirror SKU format</comment>
+        <createTable tableName="lab_grown_diamonds">
+            <column name="id" type="VARCHAR(255)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <!-- Mirror SKU Code (extended length for diamonds) -->
+            <column name="sku_code" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <!-- Diamond Specifications -->
+            <column name="color" type="VARCHAR(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="clarity" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="carat_weight" type="DECIMAL(5,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="shape" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+
+            <!-- Origin & Manufacturer -->
+            <column name="origin_country" type="VARCHAR(2)"/>
+            <column name="manufacturer_code" type="VARCHAR(10)"/>
+            <column name="manufacturer_name" type="VARCHAR(200)"/>
+            <column name="manufacturer_serial" type="VARCHAR(50)"/>
+
+            <!-- Certification -->
+            <column name="cert_number" type="VARCHAR(20)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="cert_lab" type="VARCHAR(20)"/>
+            <column name="cert_url" type="VARCHAR(500)"/>
+
+            <!-- Pricing -->
+            <column name="unit_price_usd" type="DECIMAL(10,2)"/>
+            <column name="total_price_usd" type="DECIMAL(10,2)"/>
+
+            <!-- Import Information -->
+            <column name="invoice_number" type="VARCHAR(50)"/>
+            <column name="invoice_date" type="DATE"/>
+            <column name="customs_declaration" type="VARCHAR(50)"/>
+            <column name="import_date" type="DATE"/>
+
+            <!-- Status -->
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="location" type="VARCHAR(100)"/>
+
+            <!-- Link to unified inventory -->
+            <column name="mirror_product_id" type="BIGINT"/>
+
+            <!-- Metadata -->
+            <column name="notes" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+        </createTable>
+        <rollback>
+            <dropTable tableName="lab_grown_diamonds"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="065-2" author="mirror">
+        <comment>Create indexes on lab_grown_diamonds table</comment>
+
+        <!-- Primary search indexes -->
+        <createIndex tableName="lab_grown_diamonds" indexName="idx_lgd_sku_code">
+            <column name="sku_code"/>
+        </createIndex>
+
+        <createIndex tableName="lab_grown_diamonds" indexName="idx_lgd_cert_number">
+            <column name="cert_number"/>
+        </createIndex>
+
+        <!-- Filter indexes -->
+        <createIndex tableName="lab_grown_diamonds" indexName="idx_lgd_color_clarity">
+            <column name="color"/>
+            <column name="clarity"/>
+        </createIndex>
+
+        <createIndex tableName="lab_grown_diamonds" indexName="idx_lgd_carat_weight">
+            <column name="carat_weight"/>
+        </createIndex>
+
+        <createIndex tableName="lab_grown_diamonds" indexName="idx_lgd_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="lab_grown_diamonds" indexName="idx_lgd_manufacturer">
+            <column name="manufacturer_code"/>
+        </createIndex>
+
+        <createIndex tableName="lab_grown_diamonds" indexName="idx_lgd_invoice">
+            <column name="invoice_number"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="lab_grown_diamonds" indexName="idx_lgd_sku_code"/>
+            <dropIndex tableName="lab_grown_diamonds" indexName="idx_lgd_cert_number"/>
+            <dropIndex tableName="lab_grown_diamonds" indexName="idx_lgd_color_clarity"/>
+            <dropIndex tableName="lab_grown_diamonds" indexName="idx_lgd_carat_weight"/>
+            <dropIndex tableName="lab_grown_diamonds" indexName="idx_lgd_status"/>
+            <dropIndex tableName="lab_grown_diamonds" indexName="idx_lgd_manufacturer"/>
+            <dropIndex tableName="lab_grown_diamonds" indexName="idx_lgd_invoice"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="065-3" author="mirror">
+        <comment>Add foreign key to mirror_products (optional link for unified inventory)</comment>
+        <addForeignKeyConstraint
+                constraintName="fk_lab_grown_diamonds_mirror_product"
+                baseTableName="lab_grown_diamonds"
+                baseColumnNames="mirror_product_id"
+                referencedTableName="mirror_products"
+                referencedColumnNames="id"
+                onDelete="SET NULL"/>
+        <rollback>
+            <dropForeignKeyConstraint
+                    baseTableName="lab_grown_diamonds"
+                    constraintName="fk_lab_grown_diamonds_mirror_product"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add POD-related permissions -->
+    <changeSet id="114-insert-pod-permissions" author="system">
+        <!-- Partner Portal Permissions -->
+        <insert tableName="permissions">
+            <column name="name" value="POD_PARTNER_DASHBOARD"/>
+            <column name="description" value="View partner dashboard"/>
+            <column name="resource" value="POD_PARTNER"/>
+            <column name="action" value="dashboard"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="POD_PARTNER_PODS_VIEW"/>
+            <column name="description" value="View own PODs"/>
+            <column name="resource" value="POD"/>
+            <column name="action" value="view_own"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="POD_PARTNER_SCANS_VIEW"/>
+            <column name="description" value="View own scan analytics"/>
+            <column name="resource" value="POD_SCAN"/>
+            <column name="action" value="view_own"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="POD_PARTNER_COMMISSIONS_VIEW"/>
+            <column name="description" value="View own commissions"/>
+            <column name="resource" value="POD_COMMISSION"/>
+            <column name="action" value="view_own"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="POD_PARTNER_PROFILE_MODIFY"/>
+            <column name="description" value="Modify own partner profile"/>
+            <column name="resource" value="POD_PARTNER"/>
+            <column name="action" value="modify_own"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+
+        <!-- Admin POD Permissions -->
+        <insert tableName="permissions">
+            <column name="name" value="POD_ADMIN_PARTNERS_MANAGE"/>
+            <column name="description" value="Manage all partners"/>
+            <column name="resource" value="POD_PARTNER"/>
+            <column name="action" value="manage"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="POD_ADMIN_PODS_MANAGE"/>
+            <column name="description" value="Manage all PODs"/>
+            <column name="resource" value="POD"/>
+            <column name="action" value="manage"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="POD_ADMIN_QR_MANAGE"/>
+            <column name="description" value="Manage QR codes"/>
+            <column name="resource" value="POD_QR"/>
+            <column name="action" value="manage"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="POD_ADMIN_SCANS_VIEW"/>
+            <column name="description" value="View all scan analytics"/>
+            <column name="resource" value="POD_SCAN"/>
+            <column name="action" value="view_all"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="POD_ADMIN_ATTRIBUTIONS_MANAGE"/>
+            <column name="description" value="Manage order attributions"/>
+            <column name="resource" value="POD_ATTRIBUTION"/>
+            <column name="action" value="manage"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="POD_ADMIN_COMMISSIONS_MANAGE"/>
+            <column name="description" value="Manage all commissions"/>
+            <column name="resource" value="POD_COMMISSION"/>
+            <column name="action" value="manage"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="POD_ADMIN_DASHBOARD"/>
+            <column name="description" value="View admin POD dashboard"/>
+            <column name="resource" value="POD_ADMIN"/>
+            <column name="action" value="dashboard"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+
+        <insert tableName="permissions">
+            <column name="name" value="POD_ADMIN_REPORTS"/>
+            <column name="description" value="Generate POD reports"/>
+            <column name="resource" value="POD_ADMIN"/>
+            <column name="action" value="reports"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+    </changeSet>
+
+    <!-- Add PARTNER role -->
+    <changeSet id="114-insert-partner-role" author="system">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT COUNT(*) FROM roles WHERE name = 'PARTNER'</sqlCheck>
+        </preConditions>
+
+        <insert tableName="roles">
+            <column name="name" value="PARTNER"/>
+            <column name="description" value="POD Partner role - access to partner portal"/>
+            <column name="created_by" value="SYSTEM"/>
+            <column name="updated_by" value="SYSTEM"/>
+        </insert>
+    </changeSet>
+
+    <!-- Assign permissions to PARTNER role -->
+    <changeSet id="114-assign-partner-permissions" author="system">
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'PARTNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_PARTNER_DASHBOARD')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'PARTNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_PARTNER_PODS_VIEW')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'PARTNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_PARTNER_SCANS_VIEW')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'PARTNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_PARTNER_COMMISSIONS_VIEW')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'PARTNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_PARTNER_PROFILE_MODIFY')"/>
+        </insert>
+
+        <!-- Partners also get basic USER permissions -->
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'PARTNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_READ')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'PARTNER')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'USER_MODIFY')"/>
+        </insert>
+    </changeSet>
+
+    <!-- Assign POD admin permissions to ADMIN role -->
+    <changeSet id="114-assign-admin-pod-permissions" author="system">
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_PARTNERS_MANAGE')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_PODS_MANAGE')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_QR_MANAGE')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_SCANS_VIEW')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_ATTRIBUTIONS_MANAGE')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_COMMISSIONS_MANAGE')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_DASHBOARD')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_REPORTS')"/>
+        </insert>
+    </changeSet>
+
+    <!-- Assign POD admin permissions to SUPER_ADMIN role -->
+    <changeSet id="114-assign-super-admin-pod-permissions" author="system">
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_PARTNERS_MANAGE')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_PODS_MANAGE')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_QR_MANAGE')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_SCANS_VIEW')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_ATTRIBUTIONS_MANAGE')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_COMMISSIONS_MANAGE')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_DASHBOARD')"/>
+        </insert>
+
+        <insert tableName="role_permissions">
+            <column name="role_id" valueComputed="(SELECT id FROM roles WHERE name = 'SUPER_ADMIN')"/>
+            <column name="permission_id" valueComputed="(SELECT id FROM permissions WHERE name = 'POD_ADMIN_REPORTS')"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ChangeSet để thêm cột 'title' -->
+    <changeSet id="004-add-title-to-users" author="your-name">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="users" columnName="title"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="users">
+            <column name="title" type="VARCHAR(3)"/>
+        </addColumn>
+    </changeSet>
+
+    <!-- ChangeSet để thêm cột 'date_of_birth' -->
+    <changeSet id="004-add-date_of_birth-to-users" author="your-name">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="users" columnName="date_of_birth"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="users">
+            <column name="date_of_birth" type="DATE"/>
+        </addColumn>
+    </changeSet>
+
+    <!-- ChangeSet để thêm cột 'nationality' -->
+    <changeSet id="004-add-nationality-to-users" author="your-name">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="users" columnName="nationality"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="users">
+            <column name="nationality" type="VARCHAR(50)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

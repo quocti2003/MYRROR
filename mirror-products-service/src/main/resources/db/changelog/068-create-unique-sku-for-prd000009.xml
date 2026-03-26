@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="068-create-unique-sku-for-prd000009" author="claude">
+        <comment>Create a unique SKU for PRD000009 following proper architecture</comment>
+
+        <!-- Create a unique SKU for the Diamond Solitaire Engagement Ring -->
+        <insert tableName="skus">
+            <column name="id" value="SKU-DSER-001"/>
+            <column name="sku_name" value="Diamond Solitaire Engagement Ring SKU"/>
+            <column name="sku_code" value="SKU-DSER-001"/>
+            <column name="description" value="Unique SKU for Diamond Solitaire Engagement Ring (PRD000009) - 1ct diamond, 18K gold"/>
+            <column name="misa_synced" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+        <!-- Update PRD000009 to use the new unique SKU -->
+        <sql>
+            UPDATE products
+            SET sku_id = 'SKU-DSER-001',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = 'PRD000009';
+        </sql>
+
+        <rollback>
+            <!-- Revert PRD000009 back to CAT000001 -->
+            <sql>
+                UPDATE products
+                SET sku_id = 'CAT000001',
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = 'PRD000009';
+            </sql>
+
+            <!-- Remove the created SKU -->
+            <delete tableName="skus">
+                <where>id = 'SKU-DSER-001'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

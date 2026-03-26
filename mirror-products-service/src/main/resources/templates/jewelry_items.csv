@@ -1,0 +1,6 @@
+prefix,material,material_color,material_weight,is_coated,coating_material,stone_origin,main_shape,main_weight,side_stones,country_of_origin,item_name,variant,full_description
+RNG,18KWHITEGOLD,WHITE,3.5G,false,,LABGROWN,ROUND,1.00CT,DIAMONDS,CN,Diamond Solitaire Ring,,18K White Gold Lab Grown Round 1ct Diamond Ring
+NCK,18KYELLOWGOLD,YELLOW,5.2G,false,,NATURAL,PEAR,2.00CT,NONE,IN,Pear Diamond Necklace,,18K Yellow Gold Natural Pear 2ct Necklace
+EAR,18KROSEGOLD,ROSE,2.8G,false,,LABGROWN,OVAL,0.75CT,SAPPHIRES,TH,Oval Diamond Earrings,,18K Rose Gold Lab Grown Oval 0.75ct Earrings with Sapphires
+BRC,PLATINUM,WHITE,8.0G,false,,NATURAL,EMERALD,1.50CT,RUBIES,HK,Emerald Tennis Bracelet,,Platinum Natural Emerald 1.5ct Bracelet with Rubies
+PDT,SILVER,WHITE,4.2G,true,RHODIUM,LABGROWN,CUSHION,0.50CT,EMERALDS,CN,Cushion Halo Pendant,,Silver Lab Grown Cushion 0.5ct Pendant with Emeralds

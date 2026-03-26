@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="110-create-pod-qr-codes-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="pod_qr_codes"/>
+            </not>
+        </preConditions>
+
+        <comment>Create pod_qr_codes table for QR code management</comment>
+
+        <createTable tableName="pod_qr_codes">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (PQR prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="pod_id" type="VARCHAR(255)" remarks="Reference to pods">
+                <constraints nullable="false"/>
+            </column>
+            <column name="product_id" type="VARCHAR(255)" remarks="Reference to mirror_products">
+                <constraints nullable="false"/>
+            </column>
+            <column name="short_code" type="VARCHAR(20)" remarks="Short unique code for URL (e.g., ABC123)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="full_url" type="VARCHAR(500)" remarks="Full redirect URL"/>
+            <column name="qr_image_url" type="VARCHAR(500)" remarks="URL to QR code image in S3/R2"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE" remarks="QR code status (ACTIVE, INACTIVE, EXPIRED)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="scan_count" type="BIGINT" defaultValueNumeric="0" remarks="Total number of scans">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_scanned_at" type="TIMESTAMP" remarks="Last scan timestamp"/>
+            <column name="expires_at" type="TIMESTAMP" remarks="Expiration timestamp (optional)"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Indexes -->
+        <createIndex tableName="pod_qr_codes" indexName="idx_qr_code_short_code">
+            <column name="short_code"/>
+        </createIndex>
+
+        <createIndex tableName="pod_qr_codes" indexName="idx_qr_code_pod">
+            <column name="pod_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_qr_codes" indexName="idx_qr_code_product">
+            <column name="product_id"/>
+        </createIndex>
+
+        <createIndex tableName="pod_qr_codes" indexName="idx_qr_code_status">
+            <column name="status"/>
+        </createIndex>
+
+        <!-- Foreign keys -->
+        <addForeignKeyConstraint
+            baseTableName="pod_qr_codes"
+            baseColumnNames="pod_id"
+            constraintName="fk_qr_code_pod"
+            referencedTableName="pods"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+            baseTableName="pod_qr_codes"
+            baseColumnNames="product_id"
+            constraintName="fk_qr_code_product"
+            referencedTableName="mirror_products"
+            referencedColumnNames="id"
+            onDelete="CASCADE"
+            onUpdate="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>

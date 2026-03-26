@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add missing columns to pod_partners table that were skipped due to preconditions -->
+
+    <!-- Drop old email column if both email and contact_email exist -->
+    <changeSet id="108a-drop-old-email-column" author="system">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <columnExists tableName="pod_partners" columnName="email"/>
+                <columnExists tableName="pod_partners" columnName="contact_email"/>
+            </and>
+        </preConditions>
+        <dropColumn tableName="pod_partners" columnName="email"/>
+    </changeSet>
+
+    <!-- Drop old name column if both name and contact_name exist -->
+    <changeSet id="108a-drop-old-name-column" author="system">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <columnExists tableName="pod_partners" columnName="name"/>
+                <columnExists tableName="pod_partners" columnName="contact_name"/>
+            </and>
+        </preConditions>
+        <dropColumn tableName="pod_partners" columnName="name"/>
+    </changeSet>
+
+    <!-- Drop old phone column if both phone and contact_phone exist -->
+    <changeSet id="108a-drop-old-phone-column" author="system">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <columnExists tableName="pod_partners" columnName="phone"/>
+                <columnExists tableName="pod_partners" columnName="contact_phone"/>
+            </and>
+        </preConditions>
+        <dropColumn tableName="pod_partners" columnName="phone"/>
+    </changeSet>
+
+    <!-- Drop old partner_type column if business_type exists -->
+    <changeSet id="108a-drop-partner-type-column" author="system">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <columnExists tableName="pod_partners" columnName="partner_type"/>
+                <columnExists tableName="pod_partners" columnName="business_type"/>
+            </and>
+        </preConditions>
+        <dropColumn tableName="pod_partners" columnName="partner_type"/>
+    </changeSet>
+
+    <changeSet id="108a-add-address-line1" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="address_line1"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="address_line1" type="VARCHAR(255)" remarks="Address line 1"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-address-line2" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="address_line2"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="address_line2" type="VARCHAR(255)" remarks="Address line 2"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-city" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="city"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="city" type="VARCHAR(100)" remarks="City"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-state" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="state"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="state" type="VARCHAR(100)" remarks="State/Province"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-postal-code" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="postal_code"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="postal_code" type="VARCHAR(20)" remarks="Postal/ZIP code"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-country" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="country"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="country" type="VARCHAR(100)" remarks="Country"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-approved-at" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="approved_at"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="approved_at" type="TIMESTAMP" remarks="Timestamp when partner was approved"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-approved-by" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="approved_by"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="approved_by" type="VARCHAR(100)" remarks="User who approved the partner"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-business-license" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="business_license"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="business_license" type="VARCHAR(100)" remarks="Business license number"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-tax-id" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="tax_id"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="tax_id" type="VARCHAR(50)" remarks="Tax identification number"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-notes" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="notes"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="notes" type="TEXT" remarks="Internal notes"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-commission-rate" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="commission_rate"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="commission_rate" type="DECIMAL(5,2)" defaultValueNumeric="5.00" remarks="Default commission rate percentage">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-status" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="status"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="status" type="VARCHAR(20)" defaultValue="PENDING" remarks="Partner status">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-tier" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="tier"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="tier" type="VARCHAR(20)" defaultValue="BRONZE" remarks="Partner tier">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-user-id" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="user_id"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="user_id" type="BIGINT" remarks="Reference to users table for portal access"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-business-name" author="system">
+        <validCheckSum>9:5af212b10913b12aadf4c38ad9aff854</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="business_name"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="business_name" type="VARCHAR(255)" defaultValue="Unknown Business" remarks="Partner business name">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-business-type" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="business_type"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="business_type" type="VARCHAR(50)" defaultValue="OTHER" remarks="Type of business">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-contact-name" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="contact_name"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="contact_name" type="VARCHAR(100)" defaultValue="Unknown Contact" remarks="Primary contact person name">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-contact-email" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="contact_email"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="contact_email" type="VARCHAR(255)" defaultValue="unknown@example.com" remarks="Primary contact email">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-contact-phone" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="contact_phone"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="contact_phone" type="VARCHAR(50)" remarks="Primary contact phone"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-created-at" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="created_at"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-updated-at" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="updated_at"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-is-deleted" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="is_deleted"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="108a-add-is-active" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="pod_partners" columnName="is_active"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="pod_partners">
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

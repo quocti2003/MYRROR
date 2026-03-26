@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Drop legacy certificate_code column from mirror_products -->
+    <!-- Certificate relationships are now managed via product_certificates join table -->
+    <changeSet id="082-drop-certificate-code-index" author="system">
+        <preConditions onFail="MARK_RAN">
+            <indexExists tableName="mirror_products" indexName="idx_mirror_products_certificate_code"/>
+        </preConditions>
+
+        <comment>Drop index on certificate_code before dropping column</comment>
+
+        <dropIndex tableName="mirror_products" indexName="idx_mirror_products_certificate_code"/>
+    </changeSet>
+
+    <changeSet id="082-drop-certificate-code-column" author="system">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="mirror_products" columnName="certificate_code"/>
+        </preConditions>
+
+        <comment>Drop legacy certificate_code column - now using product_certificates join table for many-to-many relationship</comment>
+
+        <dropColumn tableName="mirror_products" columnName="certificate_code"/>
+    </changeSet>
+
+</databaseChangeLog>

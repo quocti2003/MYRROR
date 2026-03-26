@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Refactor user_otps: Remove expires_at, add expiration_seconds -->
+    <changeSet id="008-1" author="nam">
+        <comment>Add expiration_seconds column to store duration instead of absolute timestamp</comment>
+        <addColumn tableName="user_otps">
+            <column name="expiration_seconds" type="bigint" defaultValueNumeric="300">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!-- Drop old index that uses expires_at -->
+    <changeSet id="008-2" author="nam">
+        <comment>Drop old cleanup index that uses expires_at</comment>
+        <dropIndex tableName="user_otps" indexName="idx_otp_cleanup"/>
+    </changeSet>
+
+    <!-- Drop expires_at column -->
+    <changeSet id="008-3" author="nam">
+        <comment>Drop redundant expires_at column</comment>
+        <dropColumn tableName="user_otps" columnName="expires_at"/>
+    </changeSet>
+
+    <!-- Create new cleanup index using created_at -->
+    <changeSet id="008-4" author="nam">
+        <comment>Create new cleanup index using created_at and verified_at</comment>
+        <createIndex indexName="idx_otp_cleanup" tableName="user_otps">
+            <column name="created_at"/>
+            <column name="verified_at"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

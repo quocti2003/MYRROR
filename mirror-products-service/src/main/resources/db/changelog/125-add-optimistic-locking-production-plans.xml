@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ========================================== -->
+    <!-- Optimistic Locking for Production Plans    -->
+    <!-- Sprint 6: Sourcing Reports (QA Risk Fix)   -->
+    <!-- ========================================== -->
+
+    <!-- Add version column for optimistic locking to prevent race conditions
+         during concurrent approval/rejection operations -->
+    <changeSet id="125-01-add-version-column-production-plans" author="backend-developer">
+        <addColumn tableName="production_plans">
+            <column name="version" type="BIGINT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <comment>
+            Adds optimistic locking via @Version annotation to prevent concurrent
+            modification issues during production plan approval workflows.
+            The version field is automatically incremented by JPA on each update.
+        </comment>
+    </changeSet>
+
+</databaseChangeLog>

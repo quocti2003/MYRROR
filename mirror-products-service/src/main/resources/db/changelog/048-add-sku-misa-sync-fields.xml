@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add misa_synced boolean field -->
+    <changeSet id="048-1" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="skus"/>
+                <not>
+                    <columnExists tableName="skus" columnName="misa_synced"/>
+                </not>
+            </and>
+        </preConditions>
+
+        <addColumn tableName="skus">
+            <column name="misa_synced" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <createIndex tableName="skus" indexName="idx_sku_misa_synced">
+            <column name="misa_synced"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="skus" indexName="idx_sku_misa_synced"/>
+            <dropColumn tableName="skus" columnName="misa_synced"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Add misa_sync_date timestamp -->
+    <changeSet id="048-2" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="skus"/>
+                <not>
+                    <columnExists tableName="skus" columnName="misa_sync_date"/>
+                </not>
+            </and>
+        </preConditions>
+
+        <addColumn tableName="skus">
+            <column name="misa_sync_date" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="skus" columnName="misa_sync_date"/>
+        </rollback>
+    </changeSet>
+
+    <!-- Add misa_inventory_id for tracking MISA inventory item -->
+    <changeSet id="048-3" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="skus"/>
+                <not>
+                    <columnExists tableName="skus" columnName="misa_inventory_id"/>
+                </not>
+            </and>
+        </preConditions>
+
+        <addColumn tableName="skus">
+            <column name="misa_inventory_id" type="VARCHAR(100)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <createIndex tableName="skus" indexName="idx_sku_misa_inventory_id">
+            <column name="misa_inventory_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropIndex tableName="skus" indexName="idx_sku_misa_inventory_id"/>
+            <dropColumn tableName="skus" columnName="misa_inventory_id"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

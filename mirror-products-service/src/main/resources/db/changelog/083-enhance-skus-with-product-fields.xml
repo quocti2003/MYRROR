@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="083-enhance-skus-with-product-fields" author="mirror">
+        <comment>
+            Add MirrorProduct fields to Sku entity for API consolidation.
+            This merges /api/sku-codes/ into /api/skus/ endpoint.
+        </comment>
+
+        <!-- Pricing fields -->
+        <addColumn tableName="skus">
+            <column name="price" type="DECIMAL(19,2)"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="currency" type="VARCHAR(3)" defaultValue="VND"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="cost" type="DECIMAL(19,2)"/>
+        </addColumn>
+
+        <!-- Jewelry-specific fields -->
+        <addColumn tableName="skus">
+            <column name="metal_type" type="VARCHAR(50)"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="metal_purity" type="VARCHAR(20)"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="stone_type" type="VARCHAR(50)"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="weight_grams" type="DECIMAL(8,3)"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="dimensions" type="TEXT"/>
+        </addColumn>
+
+        <!-- Category -->
+        <addColumn tableName="skus">
+            <column name="category" type="VARCHAR(100)"/>
+        </addColumn>
+
+        <!-- Media fields -->
+        <addColumn tableName="skus">
+            <column name="image_url" type="VARCHAR(1000)"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="image_urls" type="TEXT"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="tags" type="TEXT"/>
+        </addColumn>
+
+        <!-- Design fields -->
+        <addColumn tableName="skus">
+            <column name="design_id" type="VARCHAR(100)"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="designer_id" type="BIGINT"/>
+        </addColumn>
+
+        <!-- Inventory fields -->
+        <addColumn tableName="skus">
+            <column name="stock_quantity" type="INTEGER" defaultValue="0"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="min_stock_level" type="INTEGER" defaultValue="1"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="location" type="VARCHAR(100)"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="barcode" type="VARCHAR(100)"/>
+        </addColumn>
+
+        <!-- MISA integration -->
+        <addColumn tableName="skus">
+            <column name="misa_item_code" type="VARCHAR(50)"/>
+        </addColumn>
+
+        <!-- Status fields -->
+        <addColumn tableName="skus">
+            <column name="status" type="VARCHAR(20)" defaultValue="DRAFT"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="published_at" type="TIMESTAMP"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="fulfillment_completed_at" type="TIMESTAMP"/>
+        </addColumn>
+        <addColumn tableName="skus">
+            <column name="featured" type="BOOLEAN" defaultValue="false"/>
+        </addColumn>
+
+        <!-- Add unique constraint on barcode -->
+        <addUniqueConstraint tableName="skus" columnNames="barcode" constraintName="uk_skus_barcode"/>
+    </changeSet>
+
+</databaseChangeLog>

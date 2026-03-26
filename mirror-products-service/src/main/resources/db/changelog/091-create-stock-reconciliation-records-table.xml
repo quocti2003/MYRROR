@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="091-create-stock-reconciliation-records-table" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="stock_reconciliation_records"/>
+            </not>
+        </preConditions>
+
+        <comment>Create stock reconciliation records table for storing inventory check history</comment>
+
+        <createTable tableName="stock_reconciliation_records">
+            <column name="id" type="VARCHAR(255)" remarks="Primary key (REC prefix)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="document_number" type="VARCHAR(100)" remarks="Document number (e.g., KK-1704700000000)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="warehouse_id" type="VARCHAR(100)" remarks="MISA warehouse ID"/>
+            <column name="warehouse_name" type="VARCHAR(255)" remarks="Warehouse name"/>
+            <column name="reconciliation_date" type="TIMESTAMP" remarks="Date/time of reconciliation">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="VARCHAR(255)" remarks="User ID who created the record"/>
+            <column name="created_by_name" type="VARCHAR(255)" remarks="User name who created the record"/>
+            <column name="summary" type="JSONB" remarks="Summary statistics (total, match, missing, excess, notInMisa)"/>
+            <column name="items_data" type="JSONB" remarks="Full reconciliation items data"/>
+            <column name="report_file_key" type="VARCHAR(500)" remarks="R2/S3 file key for DOCX report"/>
+            <column name="report_file_name" type="VARCHAR(255)" remarks="Original report file name"/>
+            <column name="report_file_url" type="VARCHAR(1000)" remarks="Public URL for report download"/>
+            <column name="notes" type="VARCHAR(2000)" remarks="Additional notes"/>
+            <column name="total_items" type="INTEGER" remarks="Total number of items in reconciliation"/>
+            <column name="matched_items" type="INTEGER" remarks="Number of items that matched"/>
+            <column name="missing_items" type="INTEGER" remarks="Number of items missing (physical less than system)"/>
+            <column name="excess_items" type="INTEGER" remarks="Number of items in excess (physical greater than system)"/>
+            <column name="not_in_system_items" type="INTEGER" remarks="Number of items not found in MISA system"/>
+            <column name="created_at" type="TIMESTAMP" remarks="Creation timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" remarks="Last update timestamp"/>
+            <column name="is_deleted" type="BOOLEAN" defaultValueBoolean="false" remarks="Soft delete flag">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true" remarks="Active status flag">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Add indexes for common queries -->
+        <createIndex tableName="stock_reconciliation_records" indexName="idx_recon_warehouse_id">
+            <column name="warehouse_id"/>
+        </createIndex>
+
+        <createIndex tableName="stock_reconciliation_records" indexName="idx_recon_created_by">
+            <column name="created_by"/>
+        </createIndex>
+
+        <createIndex tableName="stock_reconciliation_records" indexName="idx_recon_date">
+            <column name="reconciliation_date"/>
+        </createIndex>
+
+        <createIndex tableName="stock_reconciliation_records" indexName="idx_recon_document_number">
+            <column name="document_number"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

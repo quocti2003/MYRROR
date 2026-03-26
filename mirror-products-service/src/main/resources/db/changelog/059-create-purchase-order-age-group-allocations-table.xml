@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.11.xsd">
+
+    <changeSet id="059-1" author="claude">
+        <comment>Create purchase_order_age_group_allocations table - Allocate PO quantities by age group</comment>
+        <createTable tableName="purchase_order_age_group_allocations">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="purchase_order_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="age_group_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="allocation_percentage" type="DECIMAL(5,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantity" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="059-2" author="claude">
+        <comment>Add foreign key constraints</comment>
+        <addForeignKeyConstraint
+            constraintName="fk_po_age_group_allocations_purchase_order"
+            baseTableName="purchase_order_age_group_allocations"
+            baseColumnNames="purchase_order_id"
+            referencedTableName="purchase_orders"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+            constraintName="fk_po_age_group_allocations_age_group"
+            baseTableName="purchase_order_age_group_allocations"
+            baseColumnNames="age_group_id"
+            referencedTableName="age_groups"
+            referencedColumnNames="id"
+            onDelete="RESTRICT"/>
+    </changeSet>
+
+    <changeSet id="059-3" author="claude">
+        <comment>Create indexes for purchase_order_age_group_allocations</comment>
+        <createIndex tableName="purchase_order_age_group_allocations" indexName="idx_po_age_group_allocations_po_id">
+            <column name="purchase_order_id"/>
+        </createIndex>
+        <createIndex tableName="purchase_order_age_group_allocations" indexName="idx_po_age_group_allocations_age_group_id">
+            <column name="age_group_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

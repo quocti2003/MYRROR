@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Appointment Confirmed</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 4px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: normal;
+            font-size: 28px;
+            color: #000;
+            margin: 0;
+        }
+        .confirmation-badge {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .confirmation-badge span {
+            display: inline-block;
+            background-color: #f5f5f5;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #666;
+        }
+        .details {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #fafafa;
+            border-radius: 4px;
+        }
+        .detail-row {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+        .detail-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 100px;
+            flex-shrink: 0;
+        }
+        .detail-value {
+            font-size: 14px;
+            color: #333;
+        }
+        .message {
+            text-align: center;
+            margin: 30px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #999;
+        }
+        .footer a {
+            color: #666;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Your Appointment is Confirmed</h1>
+        </div>
+
+        <p>Dear <span th:text="${customerTitle}">Mr</span>. <span th:text="${customerName}">Customer</span>,</p>
+
+        <p>Thank you for booking an appointment with Mirror. We're delighted to welcome you.</p>
+
+        <div class="details">
+            <div class="detail-row">
+                <span class="detail-label">Service</span>
+                <span class="detail-value" th:text="${service}">In-store appointment</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Location</span>
+                <span class="detail-value" th:text="${venueName}">Mirror Diamond SHOWROOM</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Address</span>
+                <span class="detail-value" th:text="${venueAddress}">Address</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Date</span>
+                <span class="detail-value" th:text="${appointmentDate}">December 16, 2025</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Time</span>
+                <span class="detail-value" th:text="${appointmentTime}">09:00 AM</span>
+            </div>
+        </div>
+
+        <div class="message">
+            <p>We look forward to seeing you. If you need to reschedule or cancel your appointment, please contact us at least 24 hours in advance.</p>
+        </div>
+
+        <div class="footer">
+            <p>Mirror Diamond</p>
+            <p>This email was sent to <span th:text="${customerEmail}">customer@example.com</span></p>
+        </div>
+    </div>
+</body>
+</html>

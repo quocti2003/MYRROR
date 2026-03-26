@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    
+    <changeSet id="010-add-folder-path-to-s3-files" author="system">
+        <comment>Add folder_path column to s3_files table for folder management</comment>
+        
+        <addColumn tableName="s3_files">
+            <column name="folder_path" type="VARCHAR(1000)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        
+        <rollback>
+            <dropColumn tableName="s3_files" columnName="folder_path"/>
+        </rollback>
+    </changeSet>
+    
+</databaseChangeLog>

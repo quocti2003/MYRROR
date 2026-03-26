@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="092-extend-locations-for-warehouses" author="system">
+        <comment>Extend locations table to support warehouse type with MISA integration</comment>
+
+        <!-- Add MISA warehouse ID for sync -->
+        <addColumn tableName="locations">
+            <column name="misa_warehouse_id" type="VARCHAR(100)" remarks="MISA AMIS warehouse ID for sync"/>
+        </addColumn>
+
+        <!-- Add MISA warehouse code -->
+        <addColumn tableName="locations">
+            <column name="misa_warehouse_code" type="VARCHAR(50)" remarks="MISA AMIS warehouse code"/>
+        </addColumn>
+
+        <!-- Add internal flag to hide warehouses from customer booking -->
+        <addColumn tableName="locations">
+            <column name="is_internal" type="BOOLEAN" defaultValueBoolean="false" remarks="If true, hidden from customer-facing features">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <!-- Add capacity for warehouses -->
+        <addColumn tableName="locations">
+            <column name="capacity" type="INTEGER" remarks="Maximum storage capacity (number of items or racks)"/>
+        </addColumn>
+
+        <!-- Add manager info -->
+        <addColumn tableName="locations">
+            <column name="manager_name" type="VARCHAR(255)" remarks="Warehouse manager name"/>
+        </addColumn>
+        <addColumn tableName="locations">
+            <column name="manager_phone" type="VARCHAR(50)" remarks="Warehouse manager phone"/>
+        </addColumn>
+
+        <!-- Add last sync timestamp for MISA integration -->
+        <addColumn tableName="locations">
+            <column name="misa_last_synced_at" type="TIMESTAMP" remarks="Last sync time with MISA AMIS"/>
+        </addColumn>
+
+        <!-- Create index on misa_warehouse_id for sync lookups -->
+        <createIndex tableName="locations" indexName="idx_locations_misa_warehouse_id">
+            <column name="misa_warehouse_id"/>
+        </createIndex>
+
+        <!-- Create index on is_internal for filtering -->
+        <createIndex tableName="locations" indexName="idx_locations_is_internal">
+            <column name="is_internal"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Note: LocationType enum will be updated in Java code to include WAREHOUSE -->
+    <!-- The type column already allows any string value via @Enumerated(EnumType.STRING) -->
+
+</databaseChangeLog>

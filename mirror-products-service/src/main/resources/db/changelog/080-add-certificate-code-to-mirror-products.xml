@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Add certificate_code column to mirror_products table -->
+    <changeSet id="080-add-certificate-code-column" author="system">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="mirror_products" columnName="certificate_code"/>
+            </not>
+        </preConditions>
+
+        <addColumn tableName="mirror_products">
+            <column name="certificate_code" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <comment>Add optional certificate_code column to mirror_products for linking to certificates table</comment>
+    </changeSet>
+
+    <!-- Add index for certificate_code lookups -->
+    <changeSet id="080-add-certificate-code-index" author="system">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="mirror_products" columnName="certificate_code"/>
+            <not>
+                <indexExists tableName="mirror_products" indexName="idx_mirror_products_certificate_code"/>
+            </not>
+        </preConditions>
+
+        <createIndex tableName="mirror_products" indexName="idx_mirror_products_certificate_code">
+            <column name="certificate_code"/>
+        </createIndex>
+
+        <comment>Add index for certificate_code lookups</comment>
+    </changeSet>
+
+</databaseChangeLog>

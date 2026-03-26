@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Create rfid_tags table for tracking RFID tags -->
+    <changeSet id="122-1" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="rfid_tags"/>
+            </not>
+        </preConditions>
+        <createTable tableName="rfid_tags">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="epc" type="VARCHAR(24)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="product_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="print_job_id" type="VARCHAR(50)"/>
+            <column name="print_job_item_id" type="VARCHAR(50)"/>
+            <column name="status" type="VARCHAR(50)" defaultValue="ACTIVE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="scan_count" type="INTEGER" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_scanned_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="last_scanned_device" type="VARCHAR(100)"/>
+            <column name="last_scanned_location" type="VARCHAR(255)"/>
+            <column name="encoded_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="voided_at" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="voided_reason" type="TEXT"/>
+            <column name="voided_by" type="VARCHAR(50)"/>
+            <column name="metadata" type="JSONB"/>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+            baseTableName="rfid_tags"
+            baseColumnNames="product_id"
+            constraintName="fk_rfid_tags_product"
+            referencedTableName="mirror_products"
+            referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+            baseTableName="rfid_tags"
+            baseColumnNames="print_job_id"
+            constraintName="fk_rfid_tags_print_job"
+            referencedTableName="print_jobs"
+            referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+            baseTableName="rfid_tags"
+            baseColumnNames="print_job_item_id"
+            constraintName="fk_rfid_tags_print_job_item"
+            referencedTableName="print_job_items"
+            referencedColumnNames="id"/>
+
+        <createIndex tableName="rfid_tags" indexName="idx_rfid_tags_epc" unique="true">
+            <column name="epc"/>
+        </createIndex>
+
+        <createIndex tableName="rfid_tags" indexName="idx_rfid_tags_product">
+            <column name="product_id"/>
+        </createIndex>
+
+        <createIndex tableName="rfid_tags" indexName="idx_rfid_tags_status">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex tableName="rfid_tags" indexName="idx_rfid_tags_print_job">
+            <column name="print_job_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Create rfid_scan_logs table -->
+    <changeSet id="122-2" author="mirror">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="rfid_scan_logs"/>
+            </not>
+        </preConditions>
+        <createTable tableName="rfid_scan_logs">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="epc" type="VARCHAR(24)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag_id" type="VARCHAR(50)"/>
+            <column name="product_id" type="VARCHAR(50)"/>
+            <column name="device_id" type="VARCHAR(100)"/>
+            <column name="device_name" type="VARCHAR(255)"/>
+            <column name="device_type" type="VARCHAR(50)"/>
+            <column name="location" type="VARCHAR(255)"/>
+            <column name="latitude" type="DECIMAL(10,8)"/>
+            <column name="longitude" type="DECIMAL(11,8)"/>
+            <column name="ip_address" type="VARCHAR(50)"/>
+            <column name="user_agent" type="TEXT"/>
+            <column name="user_id" type="VARCHAR(50)"/>
+            <column name="session_id" type="VARCHAR(100)"/>
+            <column name="is_known_tag" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="scan_type" type="VARCHAR(50)"/>
+            <column name="scanned_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITH TIME ZONE" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active" type="BOOLEAN" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+            baseTableName="rfid_scan_logs"
+            baseColumnNames="tag_id"
+            constraintName="fk_rfid_scan_logs_tag"
+            referencedTableName="rfid_tags"
+            referencedColumnNames="id"/>
+
+        <createIndex tableName="rfid_scan_logs" indexName="idx_rfid_scan_logs_epc">
+            <column name="epc"/>
+        </createIndex>
+
+        <createIndex tableName="rfid_scan_logs" indexName="idx_rfid_scan_logs_tag">
+            <column name="tag_id"/>
+        </createIndex>
+
+        <createIndex tableName="rfid_scan_logs" indexName="idx_rfid_scan_logs_product">
+            <column name="product_id"/>
+        </createIndex>
+
+        <createIndex tableName="rfid_scan_logs" indexName="idx_rfid_scan_logs_device">
+            <column name="device_id"/>
+        </createIndex>
+
+        <createIndex tableName="rfid_scan_logs" indexName="idx_rfid_scan_logs_scanned_at">
+            <column name="scanned_at" descending="true"/>
+        </createIndex>
+
+        <createIndex tableName="rfid_scan_logs" indexName="idx_rfid_scan_logs_location">
+            <column name="location"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Create sequences -->
+    <changeSet id="122-3" author="mirror">
+        <sql>
+            INSERT INTO id_sequences (entity_type, current_value)
+            VALUES ('RFT', 0), ('RSL', 0)
+            ON CONFLICT (entity_type) DO NOTHING;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

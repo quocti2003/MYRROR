@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="022-rename-s3-files-primary-key" author="system">
+        <comment>Rename file_id column to id in s3_files table to match BaseEntity</comment>
+        
+        <renameColumn tableName="s3_files" 
+                     oldColumnName="file_id" 
+                     newColumnName="id" 
+                     columnDataType="VARCHAR(255)"/>
+
+        <rollback>
+            <renameColumn tableName="s3_files" 
+                         oldColumnName="id" 
+                         newColumnName="file_id" 
+                         columnDataType="VARCHAR(255)"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

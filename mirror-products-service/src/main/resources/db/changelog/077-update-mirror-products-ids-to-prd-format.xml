@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- Update mirror_products IDs to PRD format and fix all foreign key references -->
+    <changeSet id="077-1" author="claude">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="mirror_products"/>
+        </preConditions>
+
+        <comment>Update mirror_products IDs from numeric format to PRD000001 format</comment>
+
+        <!-- Step 1: Drop all foreign key constraints that reference mirror_products -->
+        <sql splitStatements="false">
+            DO $$
+            BEGIN
+                IF EXISTS (SELECT 1 FROM information_schema.table_constraints
+                          WHERE constraint_name = 'fk_lab_grown_diamonds_mirror_product') THEN
+                    ALTER TABLE lab_grown_diamonds DROP CONSTRAINT fk_lab_grown_diamonds_mirror_product;
+                END IF;
+            END $$;
+        </sql>
+
+        <!-- Step 2: Clean up orphaned vendor_products records (PRD000009 doesn't exist in mirror_products) -->
+        <sql>
+            DELETE FROM vendor_products
+            WHERE id NOT IN (
+                SELECT vp.id
+                FROM vendor_products vp
+                INNER JOIN products p ON vp.product_id = p.id
+            );
+        </sql>
+
+        <!-- Step 3: Create ID mapping table -->
+        <sql>
+            CREATE TEMPORARY TABLE id_mapping AS
+            SELECT
+                id as old_id,
+                'PRD' || LPAD(ROW_NUMBER() OVER (ORDER BY CAST(id AS INTEGER))::TEXT, 6, '0') as new_id
+            FROM mirror_products;
+        </sql>
+
+        <!-- Step 4: Add temporary column for new ID -->
+        <addColumn tableName="mirror_products">
+            <column name="id_new" type="VARCHAR(30)"/>
+        </addColumn>
+
+        <!-- Step 5: Update mirror_products with new PRD format IDs -->
+        <sql>
+            UPDATE mirror_products mp
+            SET id_new = im.new_id
+            FROM id_mapping im
+            WHERE mp.id = im.old_id;
+        </sql>
+
+        <!-- Step 6: Update lab_grown_diamonds.mirror_product_id if any exist -->
+        <sql>
+            UPDATE lab_grown_diamonds lgd
+            SET mirror_product_id = im.new_id
+            FROM id_mapping im
+            WHERE lgd.mirror_product_id = im.old_id;
+        </sql>
+
+        <!-- Step 7: Update designer_id (self-reference) -->
+        <sql>
+            UPDATE mirror_products mp
+            SET designer_id = CAST(im.new_id AS BIGINT)
+            FROM id_mapping im
+            WHERE mp.designer_id IS NOT NULL
+            AND mp.designer_id::TEXT = im.old_id;
+        </sql>
+
+        <!-- Step 8: Drop primary key constraint -->
+        <dropPrimaryKey tableName="mirror_products" constraintName="mirror_products_pkey"/>
+
+        <!-- Step 9: Drop old ID column -->
+        <dropColumn tableName="mirror_products" columnName="id"/>
+
+        <!-- Step 10: Rename new ID column to id -->
+        <renameColumn tableName="mirror_products"
+                      oldColumnName="id_new"
+                      newColumnName="id"
+                      columnDataType="VARCHAR(30)"/>
+
+        <!-- Step 11: Add NOT NULL and primary key constraints -->
+        <addNotNullConstraint tableName="mirror_products"
+                              columnName="id"
+                              columnDataType="VARCHAR(30)"/>
+
+        <addPrimaryKey tableName="mirror_products"
+                       columnNames="id"
+                       constraintName="mirror_products_pkey"/>
+
+        <!-- Step 12: Recreate lab_grown_diamonds foreign key -->
+        <sql splitStatements="false">
+            DO $$
+            BEGIN
+                IF EXISTS (SELECT 1 FROM information_schema.columns
+                          WHERE table_name = 'lab_grown_diamonds'
+                          AND column_name = 'mirror_product_id') THEN
+                    ALTER TABLE lab_grown_diamonds
+                    ADD CONSTRAINT fk_lab_grown_diamonds_mirror_product
+                    FOREIGN KEY (mirror_product_id)
+                    REFERENCES mirror_products(id)
+                    ON DELETE SET NULL;
+                END IF;
+            END $$;
+        </sql>
+
+        <rollback>
+            <comment>Cannot safely rollback ID format migration</comment>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
