@@ -1,0 +1,18 @@
+name: Trigger K6 Performance Test
+
+# Khi push code len branch full-local thi tu dong trigger Repo B chay k6 test
+on:
+  push:
+    branches: [full-local]
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger K6 test in Repo B
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.PAT_TOKEN }}" \
+            https://api.github.com/repos/quocti2003/k6-automated-performance-test/dispatches \
+            -d '{"event_type": "run-k6-test", "client_payload": {"ref": "${{ github.sha }}"}}'
